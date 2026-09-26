@@ -138,6 +138,16 @@ class Store private constructor(context: Context) {
         _autoCloseDelay.value = clean
     }
 
+    private val _closeOnHome = MutableStateFlow(prefs.getBoolean(CLOSE_ON_HOME, true))
+
+    /** Whether games left on the home screen (ES-DE) close after the delay too, screen on or not. */
+    val closeOnHome: StateFlow<Boolean> = _closeOnHome.asStateFlow()
+
+    fun setCloseOnHome(on: Boolean) {
+        prefs.edit { putBoolean(CLOSE_ON_HOME, on) }
+        _closeOnHome.value = on
+    }
+
     private val _autoCloseApps = MutableStateFlow(prefs.getStringSet(AUTO_CLOSE_APPS, null)?.toSet() ?: emptySet())
 
     /** Apps without a profile that auto-close too (a browser, say). */
@@ -281,6 +291,7 @@ class Store private constructor(context: Context) {
         private const val LOG = "log"
         private const val AUTO_CLOSE = "autoClose"
         private const val AUTO_CLOSE_DELAY = "autoCloseDelay"
+        private const val CLOSE_ON_HOME = "closeOnHome"
         private const val AUTO_CLOSE_APPS = "autoCloseApps"
         private const val KEEP_ALIVE_ON = "keepAliveOn"
         private const val KEEP_ALIVE = "keepAlive"

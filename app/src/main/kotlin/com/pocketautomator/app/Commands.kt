@@ -108,17 +108,19 @@ object Commands {
      * the middle of that made Android start the app again (seen on the Flip 2).
      */
     fun close(pkg: String, taskIds: List<Int>): String =
-        (listOf("am force-stop $pkg") + taskIds.map { "am stack remove $it" }).joinToString("; ")
+        (listOf("am force-stop $pkg") + taskIds.map { "am stack remove $it" } + CARDS_LOOP.replace("\$1", pkg)).joinToString("; ")
 
     /**
-     * For the app $1: if none of its processes ("pkg" or "pkg:name") is
-     * running, removes its Recents cards and prints their IDs. A quit app's
-     * card is only in Recents, not the window hierarchy, hence dumpsys.
+     * Removes every Recents card of the app $1 and prints their IDs. A card
+     * whose app isn't running is only in Recents, not in the window
+     * hierarchy the task list comes from, hence dumpsys.
      */
-    const val CLEAR_IF_QUIT =
-        "ps -A -o NAME= | grep -qE \"^$1(:|\$)\" && exit 0; " +
-            "for id in \$(dumpsys activity recents | grep -E \"(A=[0-9]+:|I=)$1[}/]\" | sed -n 's/.*#\\([0-9]*\\) type.*/\\1/p'); " +
+    private const val CARDS_LOOP =
+        "for id in \$(dumpsys activity recents | grep -E \"(A=[0-9]+:|I=)$1[}/]\" | sed -n 's/.*#\\([0-9]*\\) type.*/\\1/p'); " +
             "do am stack remove \$id && echo \$id; done"
+
+    /** For the app $1: if none of its processes ("pkg" or "pkg:name") runs, clears its Recents cards ([CARDS_LOOP]). */
+    const val CLEAR_IF_QUIT = "ps -A -o NAME= | grep -qE \"^$1(:|\$)\" && exit 0; " + CARDS_LOOP
 
     /** Hands a running app's task to another screen without restarting it. */
     fun moveTask(taskId: Int, displayId: Int): String = "am display move-stack $taskId $displayId"

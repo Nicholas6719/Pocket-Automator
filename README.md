@@ -42,9 +42,11 @@ switch, over the game.
 
 Emulators you've finished with get closed so they don't pile up in Recents.
 Quit a game and its leftover card is cleared from Recents within a few
-seconds. Leave one still running (back to ES-DE, say), and it is closed 10
-seconds (adjustable) after either:
+seconds. Leave one still running, and it is closed 10 seconds (adjustable)
+after any of:
 
+- you're back in ES-DE (the home screen), screen on or off ("Close games
+  left in ES-DE" on the Auto-close page; on by default),
 - the screen turns off, or
 - a different emulator opens.
 

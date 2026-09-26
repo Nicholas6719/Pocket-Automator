@@ -46,6 +46,27 @@ class AutoCloseTest {
     }
 
     @Test
+    fun `back in ES-DE closes the game after the delay, and returning keeps it`() {
+        val c = AutoClose(delayMs = { 10_000 }, isEmulator = { it in emulators }, closable = { true }, closeOnHome = { true })
+        c.onFront(azahar, 0)
+        c.onFront(esde, 1_000, home = true)
+        assertEquals(11_000L, c.next())
+        // Back to the game in time: it stays.
+        c.onFront(azahar, 5_000)
+        assertNull(c.next())
+        c.onFront(esde, 6_000, home = true)
+        assertEquals(listOf(azahar), c.due(16_000))
+    }
+
+    @Test
+    fun `with it off, ES-DE alone doesn't close anything`() {
+        val c = AutoClose(delayMs = { 10_000 }, isEmulator = { it in emulators }, closable = { true }, closeOnHome = { false })
+        c.onFront(azahar, 0)
+        c.onFront(esde, 1_000, home = true)
+        assertNull(c.next())
+    }
+
+    @Test
     fun `nothing closes before the app in front is known`() {
         val c = AutoClose(delayMs = { 10_000 }, isEmulator = { it in emulators }, closable = { true }, open = { listOf(dolphin) })
         c.onScreenOff(0)
@@ -161,11 +182,11 @@ class AutoCloseTest {
 
     @Test
     fun `close commands stop the app before clearing its Recents cards`() {
-        assertEquals(
-            "am force-stop $azahar; am stack remove 12; am stack remove 15",
-            Commands.close(azahar, listOf(12, 15)),
-        )
-        assertEquals("am force-stop $azahar", Commands.close(azahar, emptyList()))
+        val close = Commands.close(azahar, listOf(12, 15))
+        assertTrue(close.startsWith("am force-stop $azahar; am stack remove 12; am stack remove 15; for id in "))
+        // Cards only in Recents are found by package name, too.
+        assertTrue(close.contains("(A=[0-9]+:|I=)$azahar[}/]"))
+        assertTrue(Commands.close(azahar, emptyList()).startsWith("am force-stop $azahar; for id in "))
     }
 }
 

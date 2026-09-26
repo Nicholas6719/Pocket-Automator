@@ -44,6 +44,7 @@ fun BackgroundScreen(apps: List<InstalledApp>, onAddApps: () -> Unit, onBack: ()
     val profiles by store.profiles.collectAsStateWithLifecycle()
     val on by store.autoClose.collectAsStateWithLifecycle()
     val seconds by store.autoCloseDelay.collectAsStateWithLifecycle()
+    val onHome by store.closeOnHome.collectAsStateWithLifecycle()
     val extras by store.autoCloseApps.collectAsStateWithLifecycle()
     var waiting by remember { mutableStateOf(emptyMap<String, Long>()) }
     LaunchedEffect(Unit) {
@@ -58,9 +59,20 @@ fun BackgroundScreen(apps: List<InstalledApp>, onAddApps: () -> Unit, onBack: ()
             item {
                 ToggleCard(
                     title = "Auto-close emulators you've left",
-                    text = "Once you leave an emulator (back to ES-DE, say), it closes $seconds seconds after the screen goes off or another emulator opens. Sleeping mid-game never closes the game you're in, and coming back before then keeps it open. Save before you leave: closing drops anything unsaved.",
+                    text = "Once you leave an emulator, it closes $seconds seconds after " +
+                        (if (onHome) "you're back in ES-DE, " else "") +
+                        "the screen goes off, or another emulator opens. Quit a game and its card leaves Recents within a few seconds. " +
+                        "Sleeping mid-game never closes the game you're in, and coming back before then keeps it open. Save before you leave: closing drops anything unsaved.",
                     checked = on,
                     onChange = store::setAutoClose,
+                )
+            }
+            item {
+                ToggleCard(
+                    title = "Close games left in ES-DE",
+                    text = "Back in ES-DE with a game still running, it closes after $seconds seconds even with the screen on. Off: it waits for the screen to go off or another emulator.",
+                    checked = onHome,
+                    onChange = store::setCloseOnHome,
                 )
             }
             item {

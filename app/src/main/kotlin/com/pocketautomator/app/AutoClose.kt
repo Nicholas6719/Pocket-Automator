@@ -5,7 +5,8 @@ package com.pocketautomator.app
  * from Android so the rules can be checked without a device.
  *
  * A tracked app is *left behind* once something else comes to the front. It is
- * closed [delayMs] after either of two things:
+ * closed [delayMs] after any of these:
+ * - you're back on the home screen (ES-DE), when [closeOnHome] is on,
  * - the screen turns off (the one in front then is never closed: sleeping
  *   mid-game keeps the game), or
  * - a different emulator opens.
@@ -27,6 +28,8 @@ class AutoClose(
     private val closable: (String) -> Boolean,
     /** The apps that have a Recents card now. */
     private val open: () -> Collection<String> = { emptyList() },
+    /** Whether being back on the home screen starts the countdown too. */
+    private val closeOnHome: () -> Boolean = { false },
 ) {
     private var front: String? = null
     private val left = linkedSetOf<String>()
@@ -37,13 +40,14 @@ class AutoClose(
     val waiting: Map<String, Long> get() = pending.toMap()
     val leftBehind: Set<String> get() = left.toSet()
 
-    fun onFront(pkg: String, now: Long) {
+    /** [pkg] came to the front; [home] when it's the home screen (ES-DE). */
+    fun onFront(pkg: String, now: Long, home: Boolean = false) {
         val before = front
         front = pkg
         if (before != null && before != pkg && tracked(before)) left += before
         left -= pkg
         pending -= pkg
-        if (isEmulator(pkg) && before != pkg) schedule(now)
+        if (before != pkg && (isEmulator(pkg) || (home && closeOnHome()))) schedule(now)
     }
 
     fun onScreenOff(now: Long) = schedule(now)

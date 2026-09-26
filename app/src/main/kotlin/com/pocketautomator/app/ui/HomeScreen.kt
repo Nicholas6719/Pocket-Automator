@@ -89,6 +89,7 @@ fun HomeScreen(
     val now by store.now.collectAsStateWithLifecycle()
     val autoClose by store.autoClose.collectAsStateWithLifecycle()
     val delay by store.autoCloseDelay.collectAsStateWithLifecycle()
+    val closeOnHome by store.closeOnHome.collectAsStateWithLifecycle()
     val extras by store.autoCloseApps.collectAsStateWithLifecycle()
     val keepAliveOn by store.keepAliveOn.collectAsStateWithLifecycle()
     val kept by store.keepAlive.collectAsStateWithLifecycle()
@@ -182,7 +183,8 @@ fun HomeScreen(
                     title = "Auto-close",
                     text = if (autoClose) {
                         val count = profiles.count { !it.isDefault && it.apps.isNotEmpty() && it.autoClose } + extras.size
-                        "On for $count app${if (count == 1) "" else "s"} · closes them $delay s after you've left them and the screen goes off or another emulator opens. Choose which apps here."
+                        "On for $count app${if (count == 1) "" else "s"} · closes them $delay s after you've left them and " +
+                            (if (closeOnHome) "you're back in ES-DE, " else "") + "the screen goes off or another emulator opens. Choose which apps here."
                     } else {
                         "Off · emulators stay open until you close them"
                     },

@@ -50,6 +50,7 @@ class Automator(private val context: Context) {
         tracked = { pkg -> pkg in store.autoCloseApps.value || store.profiles.value.any { !it.isDefault && pkg in it.apps } },
         closable = ::canClose,
         open = { tasks.mapNotNull { it.pkg } },
+        closeOnHome = { store.closeOnHome.value },
     )
     private val closeDue = Runnable { closeDue() }
     private val wakeLock = context.getSystemService(PowerManager::class.java)
@@ -74,7 +75,7 @@ class Automator(private val context: Context) {
         if (pkg == app) return
         val previous = app
         app = pkg
-        closer.onFront(pkg, SystemClock.elapsedRealtime())
+        closer.onFront(pkg, SystemClock.elapsedRealtime(), home = task.type == TaskList.TYPE_HOME)
         previous?.let(::watchForQuit)
         scheduleClose()
         if (task.type != TaskList.TYPE_HOME && pkg != context.packageName) detectGame(pkg)
@@ -138,7 +139,7 @@ class Automator(private val context: Context) {
      */
     private fun watchForQuit(pkg: String) {
         if (pkg == context.packageName || !canClose(pkg)) return
-        for (wait in longArrayOf(3_000, 8_000)) main.postDelayed({ clearIfQuit(pkg) }, wait)
+        for (wait in longArrayOf(2_000, 5_000, 9_000)) main.postDelayed({ clearIfQuit(pkg) }, wait)
     }
 
     private fun clearIfQuit(pkg: String) {
