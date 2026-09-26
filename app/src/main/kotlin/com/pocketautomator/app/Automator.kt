@@ -54,6 +54,7 @@ class Automator(private val context: Context) {
                     Plan.profileFor(store.profiles.value, pkg).let { !it.isDefault && it.autoClose }
                 )
         },
+        open = { tasks.mapNotNull { it.pkg } },
     )
     private val closeDue = Runnable { closeDue() }
     private val wakeLock = context.getSystemService(PowerManager::class.java)

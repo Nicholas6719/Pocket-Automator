@@ -48,7 +48,9 @@ Once you leave an emulator (back to ES-DE, say), it is closed 10 seconds
 - a different emulator opens.
 
 Sleeping mid-game never closes the game you're in, and coming back before the
-10 seconds are up keeps it open. Pick which emulators it applies to on the
+10 seconds are up keeps it open. An emulator counts as left behind whenever it
+has a Recents card and isn't in front, so games already in the background when
+Pocket Automator restarts (after an update, say) still close. Pick which emulators it applies to on the
 **Auto-close** page, and **Add apps** without a profile (a browser, say) to
 close them the same way. Home screens (ES-DE), Shizuku and Pocket Automator
 are never closed. Closing is a force stop (then its Recents card is cleared),
@@ -108,9 +110,8 @@ and `scripts/game-end` folders that writes the game down in a
 **Pocket Automator** folder beside ES-DE's. The Games page shows whether ES-DE
 has custom event scripts on (Menu → Other settings), and can turn it on.
 
-Where emulator settings go (Eden and Dolphin: the files their own per-game
-settings screens use; ARMSX2 and DuckStation were checked on a Flip 2 by
-starting a game and seeing the setting take effect):
+Where emulator settings go (each was checked on a Flip 2 by starting a game
+and seeing the setting take effect):
 
 | Emulator | Where | How the game is found |
 |---|---|---|

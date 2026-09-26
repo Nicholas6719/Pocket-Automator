@@ -30,6 +30,29 @@ class AutoCloseTest {
     }
 
     @Test
+    fun `games already in the background when Pocket Automator restarts still close`() {
+        // It never saw Dolphin leave: it only knows Dolphin still has a Recents card.
+        var cards = listOf(esde, dolphin, syncthing)
+        val c = AutoClose(delayMs = { 10_000 }, isEmulator = { it in emulators }, closable = { true }, open = { cards })
+        c.onFront(esde, 0)
+        c.onFront(azahar, 1_000)
+        assertEquals(11_000L, c.next())
+        assertEquals(listOf(dolphin), c.due(11_000))
+        // Syncthing isn't an emulator or picked for auto-close, so it's left alone.
+        cards = listOf(esde, azahar, syncthing)
+        c.onFront(esde, 20_000)
+        c.onScreenOff(21_000)
+        assertEquals(listOf(azahar), c.due(31_000))
+    }
+
+    @Test
+    fun `nothing closes before the app in front is known`() {
+        val c = AutoClose(delayMs = { 10_000 }, isEmulator = { it in emulators }, closable = { true }, open = { listOf(dolphin) })
+        c.onScreenOff(0)
+        assertNull(c.next())
+    }
+
+    @Test
     fun `sleeping with the emulator in front keeps it`() {
         val c = closer()
         c.onFront(esde, 0)
