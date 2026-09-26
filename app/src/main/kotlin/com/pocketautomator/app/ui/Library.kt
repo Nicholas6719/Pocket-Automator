@@ -20,6 +20,11 @@ class Library(val home: File?, games: List<EsDe.Game>, installed: Set<String>) {
     private val byGame = entries.associateBy { it.game }
 
     val size: Int get() = entries.size
+
+    /** Every game (apps and emulators in ES-DE's lists aren't games), by name. */
+    val games: List<Entry> by lazy { entries.filter { EsDe.isGame(it.game) }.sortedBy { it.game.name.lowercase() } }
+
+    fun find(id: String): Entry? = entries.firstOrNull { it.game.id == id }
     val recent: List<Entry> = EsDe.recent(games, 14).mapNotNull { byGame[it] }
 
     /** [pkg]'s games, most recently played first, then the rest with art. */

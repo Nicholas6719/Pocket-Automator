@@ -7,6 +7,7 @@ import android.os.Looper
 import android.os.PowerManager
 import android.os.SystemClock
 import android.view.Display
+import java.io.File
 import java.util.concurrent.Executors
 
 /**
@@ -23,6 +24,25 @@ class Automator(private val context: Context) {
 
     /** Every root task, as last reported: which Recents cards an app has (main thread). */
     var tasks: List<TaskEntry> = emptyList()
+        set(value) {
+            field = value
+            val open = value.mapNotNull { it.pkg }.toSet()
+            // A game ends with its emulator's last card.
+            games.keys.retainAll(open)
+            // Azahar closed: its own resolution goes back, if a game's was swapped in.
+            val azahar = Emulator.AZAHAR.pkg in open
+            if (azaharOpen != false && !azahar) GameSettings.restoreAzahar(context)
+            azaharOpen = azahar
+        }
+
+    /** Whether Azahar had a card last time; null before the first report, so a leftover swap is put back at start. */
+    private var azaharOpen: Boolean? = null
+
+    /** The game ES-DE started in each emulator still open (main thread). */
+    private val games = mutableMapOf<String, GameEvent>()
+    private var lastEvent = 0L
+    private var esde: File? = null
+    private var esdeChecked = 0L
 
     private val closer = AutoClose(
         delayMs = { store.autoCloseDelay.value * 1000L },
@@ -42,7 +62,7 @@ class Automator(private val context: Context) {
 
     /** The app in front and the profile last put into effect (main thread). */
     private var app: String? = null
-    private var appliedId: Int? = null
+    private var appliedKey: String? = null
     private var appliedSettings: Map<Knob, Int>? = null
 
     /** The app in front changed to [task] (main thread). */
@@ -52,20 +72,56 @@ class Automator(private val context: Context) {
         app = pkg
         closer.onFront(pkg, SystemClock.elapsedRealtime())
         scheduleClose()
-        store.setNow { it.copy(app = pkg) }
-        val profile = Plan.profileFor(store.profiles.value, pkg)
+        if (task.type != TaskList.TYPE_HOME && pkg != context.packageName) detectGame(pkg)
+        val (key, profile) = effective(pkg)
+        store.setNow { it.copy(app = pkg, game = games[pkg]) }
         val arriving = !profile.isDefault
-        apply(profile, announce = profile.id != appliedId, reason = pkg)
+        apply(key, profile, announce = key != appliedKey, reason = pkg)
         if (arriving) profile.settings[Knob.GAME_SCREEN]?.let { place(task, it) }
     }
 
-    /** Profiles were edited: put the one in use back into effect if anything about it changed. */
+    /**
+     * An app just came to the front: if ES-DE started a game in the last
+     * half minute (its hook wrote it down), that's the game in it.
+     */
+    private fun detectGame(pkg: String) {
+        if (!store.gameDetection.value) return
+        val now = System.currentTimeMillis()
+        if (esde == null && now - esdeChecked > 60_000) {
+            esdeChecked = now
+            esde = EsDe.home()
+        }
+        val event = esde?.let { Hooks.readEvent(it) } ?: return
+        if (event.time <= lastEvent || now / 1000 - event.time > 30) return
+        lastEvent = event.time
+        games[pkg] = event
+        store.log("game: ${event.name} (${event.system}) in $pkg")
+        if (pkg == Emulator.EDEN.pkg) main.postDelayed({ GameSettings.learnEdenId(context, event) }, 20_000)
+    }
+
+    /**
+     * The profile for [pkg], with the settings of the game in it on top, and
+     * a key that tells them apart: "p<id>" or "g<game id>".
+     */
+    private fun effective(pkg: String?): Pair<String, Profile> {
+        val profile = Plan.profileFor(store.profiles.value, pkg)
+        val game = pkg?.let { games[it] }?.let { store.game(it.id) }?.takeIf { it.settings.isNotEmpty() }
+            ?: return "p${profile.id}" to profile
+        // A game with settings of its own counts as a game even under Default.
+        return "g${game.id}" to profile.copy(
+            id = if (profile.isDefault) GAME_ID else profile.id,
+            name = game.name,
+            settings = profile.settings + game.settings,
+        )
+    }
+
+    /** Profiles or games' settings were edited: put the one in use back into effect if anything about it changed. */
     fun onProfilesChanged() {
         if (!store.enabled.value) return
-        val profile = Plan.profileFor(store.profiles.value, app)
-        val changed = profile.id != appliedId
+        val (key, profile) = effective(app)
+        val changed = key != appliedKey
         if (changed || profile.settings != appliedSettings) {
-            apply(profile, announce = changed && app != null, reason = "profiles edited")
+            apply(key, profile, announce = changed && app != null, reason = "profiles edited")
         }
     }
 
@@ -105,22 +161,22 @@ class Automator(private val context: Context) {
 
     /** Nothing has been put into effect yet (this app itself is in front): Default applies, quietly. */
     fun ensureApplied() {
-        if (appliedId == null) apply(store.default(), announce = false, reason = "started")
+        if (appliedKey == null) store.default().let { apply("p${it.id}", it, announce = false, reason = "started") }
     }
 
     /** Nothing is being watched any more (Shizuku stopped, or automation turned off). */
     fun forget() {
         app = null
-        appliedId = null
+        appliedKey = null
         appliedSettings = null
-        store.setNow { it.copy(app = null, profileId = null) }
+        store.setNow { it.copy(app = null, profileId = null, game = null) }
     }
 
     /** Puts [profile] into effect right away, as the editor's Apply button does. */
-    fun applyNow(profile: Profile) = apply(profile, announce = true, reason = "applied by hand")
+    fun applyNow(profile: Profile) = apply("p${profile.id}", profile, announce = true, reason = "applied by hand")
 
-    private fun apply(profile: Profile, announce: Boolean, reason: String) {
-        appliedId = profile.id
+    private fun apply(key: String, profile: Profile, announce: Boolean, reason: String) {
+        appliedKey = key
         appliedSettings = profile.settings
         store.setNow { it.copy(profileId = profile.id) }
         // Said as the game opens rather than once the writes are done: the fan's pause makes those take a second.
@@ -183,6 +239,9 @@ class Automator(private val context: Context) {
     }
 
     companion object {
+        /** What the status card shows as in use while a game's own settings apply under Default. */
+        const val GAME_ID = -1
+
         /** "Heavy games · High Performance · Smart fan". */
         fun message(profile: Profile): String {
             val parts = mutableListOf(profile.name)

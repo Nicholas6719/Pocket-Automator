@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.pocketautomator.app.AutomatorService
 import com.pocketautomator.app.Commands
 import com.pocketautomator.app.Device
+import com.pocketautomator.app.GamesJson
 import com.pocketautomator.app.Knob
 import com.pocketautomator.app.ProfilesJson
 import com.pocketautomator.app.Shell
@@ -56,11 +57,29 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AutomatorTheme {
-                // 0 home, 1 edit, 2 apps, 3 diagnostics, 4 auto-close, 5 auto-close apps, 6 keep alive, 7 keep-alive apps
+                // 0 home, 1 edit, 2 apps, 3 diagnostics, 4 auto-close, 5 auto-close apps, 6 keep alive,
+                // 7 keep-alive apps, 8 games, 9 a game
                 var screen by rememberSaveable { mutableStateOf(0) }
                 var profileId by rememberSaveable { mutableStateOf(0) }
+                var gameId by rememberSaveable { mutableStateOf("") }
+                // Where a game's page goes back to, and where the profile editor does.
+                var gameBack by rememberSaveable { mutableStateOf(0) }
+                var editBack by rememberSaveable { mutableStateOf(0) }
+                val openGame = { id: String -> gameBack = screen; gameId = id; screen = 9 }
                 when (screen) {
-                    1 -> EditScreen(profileId, apps, library, knobs, refreshRates, onChooseApps = { screen = 2 }, onBack = { screen = 0 })
+                    1 -> EditScreen(
+                        profileId, apps, library, knobs, refreshRates,
+                        onChooseApps = { screen = 2 },
+                        onOpenGame = openGame,
+                        onBack = { screen = editBack; editBack = 0 },
+                    )
+                    8 -> GamesScreen(apps, library, onOpen = openGame, onBack = { screen = 0 })
+                    9 -> GameScreen(
+                        gameId, apps, library, knobs, refreshRates,
+                        onOpenProfile = { profileId = it; editBack = 9; screen = 1 },
+                        onGames = { screen = 8 },
+                        onBack = { screen = if (gameBack == 9) 0 else gameBack },
+                    )
                     2 -> AppsScreen(profileId, apps, onBack = { screen = 1 })
                     3 -> DiagnosticsScreen(library, onBack = { screen = 0 })
                     4 -> BackgroundScreen(apps, onAddApps = { screen = 5 }, onBack = { screen = 0 })
@@ -75,7 +94,9 @@ class MainActivity : ComponentActivity() {
                         onShizuku = ::fixShizuku,
                         onBackground = { screen = 4 },
                         onKeepAlive = { screen = 6 },
-                        onEdit = { profileId = it; screen = 1 },
+                        onEdit = { profileId = it; editBack = 0; screen = 1 },
+                        onOpenGame = openGame,
+                        onGames = { screen = 8 },
                         onNew = {
                             profileId = Store.get(this).create("New profile").id
                             screen = 1
@@ -189,7 +210,8 @@ class MainActivity : ComponentActivity() {
             ?.supportedModes?.map { it.refreshRate.roundToInt() }?.distinct()?.sorted().orEmpty()
 
     private fun writeBackup(uri: Uri) {
-        val text = ProfilesJson.toJson(Store.get(this).profiles.value).toString(2)
+        val store = Store.get(this)
+        val text = ProfilesJson.toJson(store.profiles.value).put("games", GamesJson.toJson(store.games.value)).toString(2)
         val ok = runCatching { contentResolver.openOutputStream(uri, "wt")!!.use { it.write(text.toByteArray()) } }.isSuccess
         Toast.makeText(this, if (ok) "Profiles saved" else "Couldn't save the file", Toast.LENGTH_SHORT).show()
     }
@@ -202,7 +224,11 @@ class MainActivity : ComponentActivity() {
             return
         }
         Store.get(this).replaceAll(profiles)
-        Toast.makeText(this, "Restored ${profiles.size} profiles", Toast.LENGTH_SHORT).show()
+        // Games' settings too, when the file has them (older backups don't).
+        val games = runCatching { org.json.JSONObject(text!!).optJSONArray("games") }.getOrNull()
+        if (games != null) Store.get(this).replaceGames(GamesJson.fromJson(games))
+        val what = "${profiles.size} profiles" + if (games != null) " and ${games.length()} games" else ""
+        Toast.makeText(this, "Restored $what", Toast.LENGTH_SHORT).show()
     }
 
     private companion object {

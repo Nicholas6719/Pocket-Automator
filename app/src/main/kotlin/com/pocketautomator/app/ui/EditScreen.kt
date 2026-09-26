@@ -71,6 +71,7 @@ fun EditScreen(
     knobs: List<Knob>,
     refreshRates: List<Int>,
     onChooseApps: () -> Unit,
+    onOpenGame: (String) -> Unit,
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -94,7 +95,7 @@ fun EditScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             item {
-                Header(profile, linked, library, color, onBack, onRename = { renaming = true })
+                Header(profile, linked, library, color, onBack, onRename = { renaming = true }, onOpenGame = onOpenGame)
             }
             if (profile.isDefault) {
                 item {
@@ -189,6 +190,7 @@ private fun Header(
     color: Color,
     onBack: () -> Unit,
     onRename: () -> Unit,
+    onOpenGame: (String) -> Unit,
 ) {
     val shape = RoundedCornerShape(24.dp)
     val covers = linked.firstOrNull()?.let { library.forEmulator(it.pkg, 4) }.orEmpty()
@@ -216,22 +218,29 @@ private fun Header(
             // This emulator's games from ES-DE, beside the name rather than under it.
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 covers.forEach { entry ->
-                    GameArt(entry.cover, Modifier.width(76.dp).height(108.dp).clip(RoundedCornerShape(10.dp)), maxSide = 260)
+                    val cover = RoundedCornerShape(10.dp)
+                    GameArt(
+                        entry.cover,
+                        Modifier.width(76.dp).height(108.dp).clip(cover).focusOutline(cover).clickable { onOpenGame(entry.game.id) },
+                        maxSide = 260,
+                    )
                 }
             }
         }
     }
 }
 
-/** Big tiles, one per mode, plus "Don't change". */
+val DontChange = Look(Icons.Rounded.DoNotTouch, Color(0xFF8E8E99), "Don't change", "Leave it as it is")
+
+/** Big tiles, one per mode, plus [none] (by default "Don't change"). */
 @Composable
-private fun TileRow(current: Int?, options: List<Pair<Look, Int>>, onPick: (Int?) -> Unit) {
+fun TileRow(current: Int?, options: List<Pair<Look, Int>>, none: Look = DontChange, onPick: (Int?) -> Unit) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         options.forEach { (look, value) ->
             Tile(look, selected = current == value, modifier = Modifier.weight(1f)) { onPick(value) }
         }
         Tile(
-            Look(Icons.Rounded.DoNotTouch, Color(0xFF8E8E99), "Don't change", "Leave it as it is"),
+            none,
             selected = current == null,
             modifier = Modifier.weight(1f),
         ) { onPick(null) }
@@ -293,7 +302,7 @@ private fun LinkedApps(profile: Profile, apps: List<InstalledApp>, onChooseApps:
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun KnobCard(knob: Knob, value: Int?, refreshRates: List<Int>, onChange: (Int?) -> Unit) {
+fun KnobCard(knob: Knob, value: Int?, refreshRates: List<Int>, none: String = "Don't change", onChange: (Int?) -> Unit) {
     SectionCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(knobIcon(knob), contentDescription = null, tint = AccentAlt, modifier = Modifier.size(22.dp))
@@ -301,7 +310,7 @@ private fun KnobCard(knob: Knob, value: Int?, refreshRates: List<Int>, onChange:
         }
         hint(knob)?.let { Muted(it) }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Choice("Don't change", value == null) { onChange(null) }
+            Choice(none, value == null) { onChange(null) }
             if (knob == Knob.BRIGHTNESS) {
                 Choice("Auto", value == Knob.BRIGHTNESS_AUTO) { onChange(Knob.BRIGHTNESS_AUTO) }
                 Choice("Set level", value != null && value != Knob.BRIGHTNESS_AUTO) {
@@ -331,7 +340,7 @@ private fun KnobCard(knob: Knob, value: Int?, refreshRates: List<Int>, onChange:
 }
 
 @Composable
-private fun Choice(label: String, selected: Boolean, onClick: () -> Unit) {
+fun Choice(label: String, selected: Boolean, onClick: () -> Unit) {
     FilterChip(selected = selected, onClick = onClick, label = { Text(label) }, modifier = Modifier.focusOutline(MaterialTheme.shapes.small))
 }
 

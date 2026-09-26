@@ -48,6 +48,10 @@ class AutomatorService : Service() {
         watcher.start()
         registerReceiver(screen, IntentFilter(Intent.ACTION_SCREEN_OFF))
         scope.launch { store.profiles.drop(1).collect { watcher.reconsider() } }
+        // Games' own settings: handheld ones take effect now, emulator ones go into the emulators' files.
+        scope.launch { store.games.drop(1).collect { watcher.reconsider() } }
+        scope.launch { store.games.collect { GameSettings.requestSync(this@AutomatorService) } }
+        scope.launch { store.gameDetection.drop(1).collect { GameSettings.requestSync(this@AutomatorService) } }
         scope.launch {
             store.enabled.drop(1).collect { on ->
                 watcher.refresh()
@@ -137,6 +141,7 @@ class AutomatorService : Service() {
             }
             RetroidLists.protect(this)
             automator.refreshReadings()
+            GameSettings.requestSync(this)
         }
     }
 

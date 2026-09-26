@@ -34,6 +34,8 @@ class Store private constructor(context: Context) {
     data class Now(
         val app: String? = null,
         val profileId: Int? = null,
+        /** The game ES-DE started in [app], when known. */
+        val game: GameEvent? = null,
         val readings: Commands.Readings? = null,
         val watching: Boolean = false,
     )
@@ -174,6 +176,72 @@ class Store private constructor(context: Context) {
         get() = prefs.getBoolean(KEEP_ALIVE_SEEDED, false)
         set(value) = prefs.edit { putBoolean(KEEP_ALIVE_SEEDED, value) }
 
+    private val _games = MutableStateFlow(
+        GamesJson.fromJson(prefs.getString(GAMES, null)?.let { runCatching { JSONArray(it) }.getOrNull() }),
+    )
+
+    /** Games with settings of their own (see [GameProfile]). */
+    val games: StateFlow<List<GameProfile>> = _games.asStateFlow()
+
+    fun game(id: String): GameProfile? = _games.value.firstOrNull { it.id == id }
+
+    /** Replaces every game's settings, as a restore does. */
+    fun replaceGames(games: List<GameProfile>) {
+        val clean = games.filter { !it.isEmpty }.distinctBy { it.id }
+        prefs.edit { putString(GAMES, GamesJson.toJson(clean).toString()) }
+        _games.value = clean
+    }
+
+    /** Changes [base]'s settings; a game left with none of its own is dropped. */
+    fun editGame(base: GameProfile, change: (GameProfile) -> GameProfile) {
+        val updated = change(game(base.id) ?: base)
+        replaceGames(_games.value.filter { it.id != base.id } + updated)
+    }
+
+    fun deleteGame(id: String) = replaceGames(_games.value.filter { it.id != id })
+
+    private val _gameDetection = MutableStateFlow(prefs.getBoolean(GAME_DETECTION, true))
+
+    /** Whether ES-DE's game hook is installed, so games get their own settings. */
+    val gameDetection: StateFlow<Boolean> = _gameDetection.asStateFlow()
+
+    fun setGameDetection(on: Boolean) {
+        prefs.edit { putBoolean(GAME_DETECTION, on) }
+        _gameDetection.value = on
+    }
+
+    /** Eden's title IDs for games (game id → title ID), found or learned. */
+    val edenIds: Map<String, String>
+        get() = runCatching {
+            val o = JSONObject(prefs.getString(EDEN_IDS, null) ?: "{}")
+            o.keys().asSequence().associateWith { o.getString(it) }
+        }.getOrDefault(emptyMap())
+
+    @Synchronized
+    fun setEdenId(game: String, id: String) {
+        val o = JSONObject(edenIds + (game to id))
+        prefs.edit { putString(EDEN_IDS, o.toString()) }
+    }
+
+    /** What Pocket Automator wrote into emulators' files (see [GameSettings]). */
+    var applied: List<GameSettings.Applied>
+        get() = GameSettings.appliedFromJson(prefs.getString(APPLIED, null))
+        set(value) = prefs.edit { putString(APPLIED, GameSettings.appliedToJson(value)) }
+
+    /** Azahar's config.ini on shared storage, once found. */
+    var azaharConfig: String?
+        get() = prefs.getString(AZAHAR_CONFIG, null)
+        set(value) = prefs.edit { putString(AZAHAR_CONFIG, value) }
+
+    private val _gameStatus = MutableStateFlow(emptyMap<String, String>())
+
+    /** Why a game's emulator setting isn't in effect ("game id|knob key" → text). Not stored. */
+    val gameStatus: StateFlow<Map<String, String>> = _gameStatus.asStateFlow()
+
+    fun setGameStatus(status: Map<String, String>) {
+        _gameStatus.value = status
+    }
+
     /** Whether each switch shows a short message. */
     var messages: Boolean
         get() = prefs.getBoolean(MESSAGES, true)
@@ -207,6 +275,11 @@ class Store private constructor(context: Context) {
         private const val KEEP_ALIVE_ON = "keepAliveOn"
         private const val KEEP_ALIVE = "keepAlive"
         private const val KEEP_ALIVE_SEEDED = "keepAliveSeeded"
+        private const val GAMES = "games"
+        private const val GAME_DETECTION = "gameDetection"
+        private const val EDEN_IDS = "edenIds"
+        private const val APPLIED = "applied"
+        private const val AZAHAR_CONFIG = "azaharConfig"
         private const val LOG_SIZE = 60
 
         @Volatile private var instance: Store? = null

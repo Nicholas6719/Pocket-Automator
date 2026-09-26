@@ -82,6 +82,46 @@ Pocket Automator reads ES-DE's `gamelists` and `downloaded_media` folders
 (internal storage or SD card) and never writes to them; it grants itself
 "all files access" through Shizuku to do that.
 
+## Game profiles
+
+Tap a game (in Jump back in, the **Games** page, or on an emulator's
+profile) to give it settings of its own. ES-DE stays your frontend:
+
+- **Handheld**: performance, fan and the rest, on top of its emulator's
+  profile. Anything left on "Same as profile" follows the profile.
+- **Emulator**: for Eden (resolution, GPU accuracy, GPU driver), Dolphin
+  (resolution) and Azahar (resolution).
+
+How it knows the game: ES-DE runs "custom event scripts" as a game starts and
+ends. Pocket Automator puts a small script in ES-DE's `scripts/game-start`
+and `scripts/game-end` folders that writes the game down in a
+**Pocket Automator** folder beside ES-DE's. The Games page shows whether ES-DE
+has custom event scripts on (Menu → Other settings), and can turn it on.
+
+Where emulator settings go:
+
+| Emulator | Where | How the game is found |
+|---|---|---|
+| Eden | `config/custom/<title ID>.ini`, Eden's own per-game settings | Title ID from the NSP or file name; for XCIs it's matched from your last session, or learned the first time the game starts from ES-DE |
+| Dolphin | `GameSettings/<game ID>.ini`, Dolphin's own per-game settings | Game ID read from the disc image (ISO, RVZ, WIA, WBFS, CISO) |
+| Azahar | No per-game settings on Android, so the hook swaps the resolution into `config.ini` as the game starts, and puts Azahar's own back once you're in ES-DE again (or Azahar closes) | ROM file name |
+
+**Never over yours:** a setting you've given a game in the emulator itself is
+left alone (the game's page says so), and Pocket Automator only takes back
+values it wrote that are still there. Resetting a game puts the emulator's
+file back as it was.
+
+**Always a way back**, with or without the app:
+
+- A game's page: **Reset this game**. The Games page: **Undo all emulator changes**.
+- The **Pocket Automator** folder beside ES-DE's has `backups/` (each
+  emulator file as it was before its first change), a `README.txt`, and
+  `Undo game settings.sh`, which takes every change back (and removes the
+  ES-DE hook) without the app: run it from Retroid's settings (Run script
+  as Root). Deleting the folder turns the hook off.
+- Back up / Restore on the home screen includes games' settings, so they
+  move between handhelds.
+
 ## Requirements
 
 - A Retroid Pocket Flip 2 (tested) or Duo (untested until it ships).

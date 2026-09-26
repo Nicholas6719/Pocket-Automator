@@ -25,7 +25,12 @@ object EsDe {
         val playCount: Int,
         /** Emulator label from ES-DE ("Azahar (Standalone)"), per game or per system. */
         val emulatorLabel: String?,
-    )
+        /** The ROM as the gamelist has it, relative to the system's folder ("./Mario Kart 7.cci"). */
+        val path: String = "",
+    ) {
+        /** How Pocket Automator names a game: its system and ROM file name ("n3ds/Mario Kart 7"). */
+        val id: String get() = "$system/$file"
+    }
 
     /** Parses one gamelist.xml. Plain text matching, so it runs anywhere (and in tests). */
     fun parse(system: String, xml: String): List<Game> {
@@ -45,6 +50,7 @@ object EsDe {
                 lastPlayed = tag("lastplayed")?.let(::time) ?: 0L,
                 playCount = tag("playcount")?.toIntOrNull() ?: 0,
                 emulatorLabel = tag("altemulator") ?: systemLabel,
+                path = path,
             )
         }.toList()
     }
@@ -117,6 +123,22 @@ object EsDe {
             (File("/storage").listFiles()?.filter { it.name != "self" && it.name != "emulated" }?.map { File(it, "ES-DE") }.orEmpty())
         return candidates.firstOrNull { File(it, "gamelists").listFiles()?.isNotEmpty() == true }
     }
+
+    /** ES-DE's own setting [name] from es_settings.xml, or null. Blocking. */
+    fun setting(home: File, name: String): String? {
+        val xml = runCatching { File(home, "settings/es_settings.xml").readText() }.getOrNull() ?: return null
+        return Regex("<\\w+ name=\"${Regex.escape(name)}\" value=\"(.*?)\" />").find(xml)?.groupValues?.get(1)?.let(::unescape)
+    }
+
+    /** The folder with a folder per system, as ES-DE's ROM directory setting says (by default, ROMs beside ES-DE). */
+    fun romDir(home: File): File {
+        val set = setting(home, "ROMDirectory").orEmpty()
+            .replace("%ESPATH%", home.path).replace("~", "/sdcard")
+        return if (set.isNotBlank()) File(set) else File(home.parentFile, "ROMs")
+    }
+
+    /** [game]'s ROM file. */
+    fun romFile(home: File, game: Game): File = File(romDir(home), game.system + "/" + game.path.removePrefix("./"))
 
     /** Cover art first, then other pictures ES-DE downloaded. */
     private val COVER_TYPES = listOf("covers", "miximages", "3dboxes", "screenshots", "titlescreens")

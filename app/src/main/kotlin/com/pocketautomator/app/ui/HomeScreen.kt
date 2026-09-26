@@ -29,6 +29,7 @@ import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.SportsEsports
 import androidx.compose.material.icons.rounded.VideogameAsset
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -55,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pocketautomator.app.AutomatorService
 import com.pocketautomator.app.Device
+import com.pocketautomator.app.GameProfile
 import com.pocketautomator.app.Knob
 import com.pocketautomator.app.Plan
 import com.pocketautomator.app.Profile
@@ -70,6 +72,8 @@ fun HomeScreen(
     library: Library,
     onShizuku: () -> Unit,
     onEdit: (Int) -> Unit,
+    onOpenGame: (String) -> Unit,
+    onGames: () -> Unit,
     onNew: () -> Unit,
     onBackground: () -> Unit,
     onKeepAlive: () -> Unit,
@@ -96,7 +100,9 @@ fun HomeScreen(
             delay(4_000)
         }
     }
-    val openGame = { entry: Library.Entry -> onEdit(Plan.profileFor(profiles, entry.emulator).id) }
+    val games by store.games.collectAsStateWithLifecycle()
+    val detection by store.gameDetection.collectAsStateWithLifecycle()
+    val openGame = { entry: Library.Entry -> onOpenGame(entry.game.id) }
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         LazyColumn(
@@ -124,7 +130,23 @@ fun HomeScreen(
 
             if (library.recent.isNotEmpty()) {
                 item { Heading("Jump back in") }
-                item { GameRow(library.recent, apps, profiles, openGame) }
+                item { GameRow(library.recent, apps, profiles, games, openGame) }
+            }
+            if (library.size > 0 || games.isNotEmpty()) {
+                item {
+                    ActionCard(
+                        icon = Icons.Rounded.SportsEsports,
+                        color = Color(0xFFFFB14D),
+                        title = "Games",
+                        text = when {
+                            !detection -> "Game detection is off · games use their emulator's profile"
+                            games.isEmpty() -> "Give a game its own settings: performance, fan, and its emulator's resolution"
+                            games.size == 1 -> "1 game has its own settings"
+                            else -> "${games.size} games have their own settings"
+                        },
+                        onClick = onGames,
+                    )
+                }
             }
 
             item {
@@ -239,6 +261,7 @@ private fun Hero(
                     when {
                         !enabled -> "Automation is off"
                         !ready -> "Waiting for Shizuku"
+                        now.game != null && now.app != null -> now.game.name
                         profile == null -> "Getting ready…"
                         else -> profile.name
                     },
@@ -250,6 +273,7 @@ private fun Hero(
                 )
                 val subtitle = when {
                     !enabled || !ready -> null
+                    now.game != null && app != null -> "Playing on ${app.label}" + (profile?.let { " · ${it.name}" } ?: " · its own settings")
                     app != null && profile?.isDefault == false -> "Playing on ${app.label}"
                     app != null -> "In front: ${app.label}"
                     else -> null
@@ -299,12 +323,19 @@ private fun Hero(
     }
 }
 
-/** A row of covers; each opens the profile of the emulator that runs it. */
+/** A row of covers; each opens the game's page. */
 @Composable
-private fun GameRow(games: List<Library.Entry>, apps: List<InstalledApp>, profiles: List<Profile>, onOpen: (Library.Entry) -> Unit) {
+private fun GameRow(
+    games: List<Library.Entry>,
+    apps: List<InstalledApp>,
+    profiles: List<Profile>,
+    own: List<GameProfile>,
+    onOpen: (Library.Entry) -> Unit,
+) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(games, key = { "${it.game.system}/${it.game.file}" }) { entry ->
-            val mode = Plan.profileFor(profiles, entry.emulator).settings[Knob.PERFORMANCE]
+        items(games, key = { it.game.id }) { entry ->
+            val mode = own.firstOrNull { it.id == entry.game.id }?.settings?.get(Knob.PERFORMANCE)
+                ?: Plan.profileFor(profiles, entry.emulator).settings[Knob.PERFORMANCE]
             GameCover(entry, apps.firstOrNull { it.pkg == entry.emulator }, mode, onClick = { onOpen(entry) })
         }
     }
