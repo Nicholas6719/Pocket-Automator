@@ -58,7 +58,7 @@ object GameSettings {
         val store = Store.get(context)
         val home = EsDe.home()
         val status = mutableMapOf<String, String>()
-        val games = store.games.value
+        val games = wanted(context, home)
         val azahar = store.azaharConfig ?: home?.let { findAzaharConfig() }?.also { store.azaharConfig = it }
 
         if (home != null) {
@@ -66,39 +66,79 @@ object GameSettings {
             if (store.gameDetection.value) Hooks.install(home, azahar) else Hooks.remove(home)
             Hooks.writeIfChanged(File(folder, "azahar.txt"), Hooks.azaharList(games))
             if (azahar == null) {
-                games.filter { EmuKnobs.AZAHAR_RESOLUTION.key in it.emu }.forEach {
-                    status[it.id + "|" + EmuKnobs.AZAHAR_RESOLUTION.key] = "Azahar's settings folder wasn't found, so this can't be applied yet."
+                games.forEach { (g, emu) ->
+                    emu.keys.filter { it.startsWith("azahar.") }.forEach {
+                        status["${g.id}|$it"] = "Azahar's settings folder wasn't found, so this can't be applied yet."
+                    }
                 }
             }
         }
 
         if (Shell.ready) {
             reconcileFiles(context, home, games, status)
-        } else if (games.any { g -> g.emu.keys.any { !it.startsWith("azahar.") } }) {
+        } else if (games.values.any { emu -> emu.keys.any { !it.startsWith("azahar.") } }) {
             store.log("game settings wait for Shizuku")
         }
         store.setGameStatus(status)
         if (home != null) writeUndo(home, store.applied, azahar)
     }
 
+    /**
+     * Every game's emulator settings as they should be: yours, and the
+     * community suggestions used automatically for games you have (see
+     * [Suggestions.effective]).
+     */
+    private fun wanted(context: Context, home: File?): Map<GameProfile, Map<String, String>> {
+        val store = Store.get(context)
+        val auto = store.suggestAuto.value
+        val mine = store.games.value
+        val suggested = Suggestions.byKey(context)
+        val out = linkedMapOf<GameProfile, Map<String, String>>()
+        for (game in mine) {
+            val emu = Suggestions.effective(game.emu, suggested[Suggestions.key(game.system, game.name)], auto)
+            if (emu.isNotEmpty()) out[game] = emu
+        }
+        // Games of yours the community has settings for, found in ES-DE's lists by name.
+        if (auto && home != null) {
+            val taken = mine.map { it.id }.toSet()
+            val systems = suggested.values.filter { s -> s.settings.any { it.auto } }.map { it.system }.toSet()
+            val romDir = EsDe.romDir(home)
+            for (system in systems) {
+                val list = runCatching { EsDe.parse(system, File(home, "gamelists/$system/gamelist.xml").readText()) }.getOrNull() ?: continue
+                for (g in list) {
+                    val s = suggested[Suggestions.key(system, g.name)] ?: continue
+                    if (g.id in taken || s.settings.none { it.auto }) continue
+                    if (!File(romDir, system + "/" + g.path.removePrefix("./")).isFile) continue
+                    out[GameProfile.of(g)] = Suggestions.effective(null, s, true)
+                }
+            }
+        }
+        return out
+    }
+
     /** Eden's and Dolphin's per-game files. */
-    private fun reconcileFiles(context: Context, home: File?, games: List<GameProfile>, status: MutableMap<String, String>) {
+    private fun reconcileFiles(context: Context, home: File?, games: Map<GameProfile, Map<String, String>>, status: MutableMap<String, String>) {
         val store = Store.get(context)
         data class Want(val game: GameProfile, val knob: EmuKnob, val value: String)
 
         val wanted = mutableMapOf<Pair<String, String>, Want>()
-        for (g in games) {
-            for ((key, value) in g.emu) {
+        for ((g, emu) in games) {
+            for ((key, value) in emu) {
                 val knob = EmuKnobs.byKey(key) ?: continue
                 if (knob.emulator == Emulator.AZAHAR) continue
-                val file = when (knob.emulator) {
-                    Emulator.EDEN -> edenId(context, home, g)?.let { "$EDEN_FILES/config/custom/$it.ini" }
-                        ?: run { status["${g.id}|$key"] = "Start it once from ES-DE, and Pocket Automator will learn Eden's ID for it."; null }
-                    Emulator.DOLPHIN -> dolphinFile(home, g)
-                        ?: run { status["${g.id}|$key"] = "Couldn't read the game's ID from its disc image."; null }
-                    Emulator.AZAHAR -> null
-                } ?: continue
-                wanted[file to key] = Want(g, knob, value)
+                val targets = when (knob.emulator) {
+                    Emulator.EDEN -> listOfNotNull(edenId(context, home, g)?.let { "$EDEN_FILES/config/custom/$it.ini" })
+                        .ifEmpty { status["${g.id}|$key"] = "Start it once from ES-DE, and Pocket Automator will learn Eden's ID for it."; emptyList() }
+                    Emulator.DOLPHIN -> listOfNotNull(dolphinFile(home, g))
+                        .ifEmpty { status["${g.id}|$key"] = "Couldn't read the game's ID from its disc image."; emptyList() }
+                    Emulator.ARMSX2 -> armsx2Files(context, g)
+                        .ifEmpty { status["${g.id}|$key"] = "Pocket Automator doesn't know this game's PS2 ID yet: start it once from ES-DE."; emptyList() }
+                    Emulator.DUCKSTATION -> listOfNotNull(duckstationFile(context, g))
+                        .ifEmpty { status["${g.id}|$key"] = "Pocket Automator doesn't know this game's PS1 serial."; emptyList() }
+                    Emulator.AZAHAR -> emptyList()
+                }
+                // PS2 games can have a file per disc revision: each gets the setting, the right one is used.
+                for (file in targets) wanted[file to key] = Want(g, knob, value)
             }
         }
 
@@ -169,14 +209,28 @@ object GameSettings {
     /** Eden's title ID for [game]: known, from the NSP or file name, or matched from play history. */
     private fun edenId(context: Context, home: File?, game: GameProfile): String? {
         val store = Store.get(context)
-        store.edenIds[game.id]?.let { return it }
         val rom = home?.let { File(EsDe.romDir(it), game.system + "/" + game.path.removePrefix("./")) }
+        // Read from the cart itself when possible: surer than anything else.
+        val fromCart = rom?.let { cartIds.getOrPut(it.path) { edenHeaderKey()?.let { key -> GameIds.switchFromCart(it, key) } } }
+        if (fromCart != null) {
+            if (store.edenIds[game.id] != fromCart) store.setEdenId(game.id, fromCart)
+            return fromCart
+        }
+        store.edenIds[game.id]?.let { return it }
         val id = GameIds.switchFromName(game.romName)
             ?: rom?.takeIf { it.name.endsWith(".nsp", true) }?.let(GameIds::switchFromNsp)
+            ?: Suggestions.find(context, game.system, game.name)?.gameId?.takeIf { GameIds.switchFromName("[$it]") != null }?.let(GameIds::base)
             ?: home?.let { fromHistory(it, game, store.edenIds.values.toSet()) }
         if (id != null) store.setEdenId(game.id, id)
         return id
     }
+
+    private val cartIds = mutableMapOf<String, String?>()
+    private var headerKey: ByteArray? = null
+
+    /** Eden's NCA header key from its prod.keys (read once; never stored). */
+    private fun edenHeaderKey(): ByteArray? =
+        headerKey ?: GameIds.headerKey(read("$EDEN_FILES/keys/prod.keys"))?.also { headerKey = it }
 
     /** [game]'s title ID matched from its last session: see [GameIds.fromSessions]. */
     private fun fromHistory(home: File, game: GameProfile, taken: Set<String>): String? {
@@ -198,6 +252,52 @@ object GameSettings {
         store.log("learned Eden's ID for ${event.name}: $id")
         if (store.game(event.id)?.emu?.keys?.any { it.startsWith("eden.") } == true) requestSync(context)
     }
+
+    const val DUCKSTATION_FILES = "/storage/emulated/0/Android/data/com.github.stenzek.duckstation/files"
+
+    /**
+     * ARMSX2's per-game files for [game], one per known serial and CRC
+     * (PCSX2 names them <serial>_<CRC>.ini). The ID comes from the bundled
+     * table, or from ARMSX2's recent games (the serial) and its patch
+     * archive (the CRCs for that serial).
+     */
+    private fun armsx2Files(context: Context, game: GameProfile): List<String> {
+        val root = armsx2Root() ?: return emptyList()
+        val ids = mutableSetOf<String>()
+        Suggestions.find(context, game.system, game.name)?.gameId?.split(',')?.map { it.trim() }?.filter { it.contains('_') }?.let(ids::addAll)
+        val recent = runCatching { File(root, "recent_games.json").readText() }.getOrNull()
+        GameIds.ps2SerialFromRecent(recent, game.romName)?.let { serial ->
+            ids += armsx2Crcs(root)[serial].orEmpty().map { "${serial}_$it" }
+        }
+        return ids.sorted().map { "$root/gamesettings/$it.ini" }
+    }
+
+    private var ps2Crcs: Map<String, List<String>>? = null
+
+    /** Serial → CRCs, from the names in ARMSX2's patches.zip ("SLUS-21921_8A1D18EE.pnach"). */
+    private fun armsx2Crcs(root: File): Map<String, List<String>> = ps2Crcs ?: runCatching {
+        java.util.zip.ZipFile(File(root, "resources/patches.zip")).use { zip ->
+            zip.entries().asSequence().mapNotNull { Regex("([A-Z]{4}-\\d{5})_([0-9A-F]{8})\\.pnach").matchEntire(it.name.substringAfterLast('/')) }
+                .groupBy({ it.groupValues[1] }, { it.groupValues[2] })
+        }
+    }.getOrDefault(emptyMap()).also { ps2Crcs = it }
+
+    private var armsx2RootCache: File? = null
+
+    /** ARMSX2's data folder (picked in ARMSX2): the one with its PCSX2-Android.ini. */
+    fun armsx2Root(): File? = armsx2RootCache?.takeIf { File(it, "PCSX2-Android.ini").isFile } ?: run {
+        val roots = listOf(File("/storage/emulated/0")) +
+            File("/storage").listFiles().orEmpty().filter { it.name != "self" && it.name != "emulated" }
+        roots.asSequence().flatMap { root ->
+            val level1 = root.listFiles().orEmpty().filter { it.isDirectory && it.name != "Android" }
+            (level1 + level1.flatMap { d -> d.listFiles().orEmpty().filter { it.isDirectory } }).asSequence()
+        }.firstOrNull { File(it, "PCSX2-Android.ini").isFile }?.also { armsx2RootCache = it }
+    }
+
+    /** DuckStation's per-game file for [game], named by its serial. */
+    private fun duckstationFile(context: Context, game: GameProfile): String? =
+        Suggestions.find(context, game.system, game.name)?.gameId?.takeIf { it.matches(Regex("[A-Z]{4}-\\d{5}")) }
+            ?.let { "$DUCKSTATION_FILES/gamesettings/$it.ini" }
 
     private val dolphinIds = mutableMapOf<String, String?>()
 
@@ -230,24 +330,39 @@ object GameSettings {
     }
 
     /**
-     * Azahar was closed: put its own resolution back if the hook swapped
-     * one in and it's still there (Azahar may have saved it meanwhile).
+     * Azahar was closed: put its own values back where the hook swapped a
+     * game's in and they're still there (Azahar may have saved them meanwhile).
      */
     fun restoreAzahar(context: Context) = worker.execute {
         val store = Store.get(context)
         val home = EsDe.home() ?: return@execute
         val marker = File(Hooks.folder(home), "azahar-restore.txt").takeIf { it.isFile } ?: return@execute
         val config = store.azaharConfig?.let(::File)?.takeIf { it.isFile }
-        val (original, swapped) = marker.readText().trim().split('\t').let { it.getOrNull(0) to it.getOrNull(1) }
-        if (config != null && original != null) {
-            val text = config.readText()
-            val now = Ini.get(text, "Renderer", "resolution_factor")
-            if (now == swapped) {
-                config.writeText(text.replace(Regex("(?m)^resolution_factor *=.*$"), "resolution_factor = $original"))
-                store.log("Azahar's resolution back to $original")
+        if (config != null) {
+            val restored = restoreSwaps(config.readText(), marker.readText())
+            if (restored != null) {
+                config.writeText(restored)
+                store.log("Azahar's own settings are back")
             }
         }
         marker.delete()
+    }
+
+    /**
+     * [config] with each "key|own value|game's value" line of [marker] undone,
+     * where the key still has the game's value; null if nothing changes.
+     */
+    fun restoreSwaps(config: String, marker: String): String? {
+        var text = config
+        for (line in marker.lines()) {
+            val parts = line.split('|')
+            if (parts.size < 3 || parts[0].isBlank()) continue
+            val (key, own, game) = parts
+            val pattern = Regex("(?m)^" + Regex.escape(key) + " *=(.*)$")
+            val now = pattern.find(text)?.groupValues?.get(1)?.trim() ?: continue
+            if (now == game) text = pattern.replaceFirst(text, Regex.escapeReplacement("$key = $own"))
+        }
+        return text.takeIf { it != config }
     }
 
     /** Eden's installed GPU drivers. */
@@ -257,20 +372,29 @@ object GameSettings {
     /** What a game's page shows: each setting's own value and the emulator's. Blocking. */
     data class Inspection(val knobs: List<EmuKnob>, val global: Map<String, String?>)
 
-    fun inspect(emulator: Emulator, azaharConfig: String?): Inspection = when (emulator) {
-        Emulator.EDEN -> {
-            val config = read("$EDEN_FILES/config/config.ini").orEmpty()
-            val knobs = listOf(EmuKnobs.EDEN_RESOLUTION, EmuKnobs.EDEN_ACCURACY, EmuKnobs.edenDriver(edenDrivers()))
-            Inspection(knobs, knobs.associate { it.key to Ini.get(config, it.section, it.name) })
+    fun inspect(emulator: Emulator, azaharConfig: String?): Inspection {
+        val knobs = when (emulator) {
+            Emulator.EDEN -> EmuKnobs.of(emulator).map { if (it.key == EmuKnobs.EDEN_DRIVER.key) EmuKnobs.edenDriver(edenDrivers()) else it }
+            else -> EmuKnobs.of(emulator)
         }
-        Emulator.DOLPHIN -> {
-            val gfx = dolphinDir()?.let { read("$it/Config/GFX.ini") }.orEmpty()
-            Inspection(listOf(EmuKnobs.DOLPHIN_RESOLUTION), mapOf(EmuKnobs.DOLPHIN_RESOLUTION.key to (Ini.get(gfx, "Settings", "InternalResolution") ?: "1")))
+        // The emulator-wide config files, read once each.
+        val files = mutableMapOf<String?, String>()
+        fun config(name: String?): String = files.getOrPut(name) {
+            when (emulator) {
+                Emulator.EDEN -> read("$EDEN_FILES/config/config.ini")
+                Emulator.DOLPHIN -> dolphinDir()?.let { read("$it/Config/${name ?: "Dolphin.ini"}") }
+                Emulator.AZAHAR -> azaharConfig?.let { runCatching { File(it).readText() }.getOrNull() }
+                Emulator.ARMSX2 -> armsx2Root()?.let { runCatching { File(it, "PCSX2-Android.ini").readText() }.getOrNull() }
+                // DuckStation keeps its own settings in private storage.
+                Emulator.DUCKSTATION -> null
+            }.orEmpty()
         }
-        Emulator.AZAHAR -> {
-            val config = azaharConfig?.let { runCatching { File(it).readText() }.getOrNull() }.orEmpty()
-            Inspection(listOf(EmuKnobs.AZAHAR_RESOLUTION), mapOf(EmuKnobs.AZAHAR_RESOLUTION.key to Ini.get(config, "Renderer", "resolution_factor")))
+        val global = knobs.associate { k ->
+            val value = Ini.get(config(k.globalFile), k.globalSection ?: k.section, k.globalName ?: k.name)
+            // DuckStation's own settings aren't readable, so its value isn't guessed at.
+            k.key to if (emulator == Emulator.DUCKSTATION) null else (value?.takeIf { it.isNotEmpty() || k.key == EmuKnobs.EDEN_DRIVER.key } ?: k.default)
         }
+        return Inspection(knobs, global)
     }
 
     // Files in Android/data go through Shizuku's shell.
@@ -293,6 +417,8 @@ object GameSettings {
         val emulator = when {
             path.contains("eden") -> "Eden"
             path.contains("dolphin") -> "Dolphin"
+            path.contains("duckstation") -> "DuckStation"
+            path.contains("/gamesettings/") -> "ARMSX2"
             else -> "Other"
         }
         val dir = File(Hooks.folder(home), "backups/$emulator").path
@@ -331,9 +457,16 @@ object GameSettings {
             }
             out.append("f=${q(a.file)}; [ -f \"\$f\" ] && sed -i $sed \"\$f\"\n")
         }
-        out.append("# Azahar: its own resolution back, if a game's is swapped in\n")
+        out.append("# Azahar: its own settings back, if a game's are swapped in\n")
         out.append("C=${q(azahar.orEmpty())}; M=${q(File(folder, "azahar-restore.txt").path)}\n")
-        out.append("if [ -f \"\$M\" ] && [ -f \"\$C\" ]; then sed -i \"s/^resolution_factor *=.*/resolution_factor = \$(cut -f1 \"\$M\")/\" \"\$C\"; fi\n")
+        val d = '$'
+        out.append(
+            """
+            |if [ -f "${d}M" ] && [ -f "${d}C" ]; then
+            |  while IFS='|' read -r k o a; do [ -n "${d}k" ] && sed -i "s/^${d}k *=.*/${d}k = ${d}o/" "${d}C"; done < "${d}M"
+            |fi
+            |""".trimMargin(),
+        )
         out.append("rm -f \"\$M\" ${q(File(folder, "azahar.txt").path)}\n")
         out.append("# ES-DE's game hook\n")
         out.append("rm -f ${Hooks.stubs(home).joinToString(" ") { q(it.path) }} ${q(File(folder, "on-game.sh").path)}\n")

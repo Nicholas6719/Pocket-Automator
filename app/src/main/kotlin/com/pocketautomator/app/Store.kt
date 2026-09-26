@@ -210,6 +210,16 @@ class Store private constructor(context: Context) {
         _gameDetection.value = on
     }
 
+    private val _suggestAuto = MutableStateFlow(prefs.getBoolean(SUGGEST_AUTO, true))
+
+    /** Whether community suggestions are used for settings you haven't chosen yourself. */
+    val suggestAuto: StateFlow<Boolean> = _suggestAuto.asStateFlow()
+
+    fun setSuggestAuto(on: Boolean) {
+        prefs.edit { putBoolean(SUGGEST_AUTO, on) }
+        _suggestAuto.value = on
+    }
+
     /** Eden's title IDs for games (game id → title ID), found or learned. */
     val edenIds: Map<String, String>
         get() = runCatching {
@@ -277,6 +287,7 @@ class Store private constructor(context: Context) {
         private const val KEEP_ALIVE_SEEDED = "keepAliveSeeded"
         private const val GAMES = "games"
         private const val GAME_DETECTION = "gameDetection"
+        private const val SUGGEST_AUTO = "suggestAuto"
         private const val EDEN_IDS = "edenIds"
         private const val APPLIED = "applied"
         private const val AZAHAR_CONFIG = "azaharConfig"

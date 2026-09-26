@@ -89,8 +89,18 @@ profile) to give it settings of its own. ES-DE stays your frontend:
 
 - **Handheld**: performance, fan and the rest, on top of its emulator's
   profile. Anything left on "Same as profile" follows the profile.
-- **Emulator**: for Eden (resolution, GPU accuracy, GPU driver), Dolphin
-  (resolution) and Azahar (resolution).
+- **Emulator**: graphics and CPU settings for five emulators:
+  - **Eden**: resolution, GPU accuracy, console mode, CPU accuracy, ASTC
+    decoding, asynchronous shaders, GPU driver (only drivers already
+    installed), and more (CPU/GPU clocks, VSync, frame pacing, DMA
+    accuracy, VRAM, memory layout, anti-aliasing and others).
+  - **Dolphin**: resolution, shader compilation, EFB access and copies,
+    dual core, texture cache, CPU clock override, widescreen hack, and more.
+  - **Azahar**: resolution, CPU clock, accurate multiplication, shaders,
+    texture filter and screen layout.
+  - **ARMSX2**: resolution, EE cycle rate and skip, blending accuracy,
+    hardware download mode, MTVU, texture filtering and upscaling fixes.
+  - **DuckStation**: resolution, widescreen, aspect ratio, PGXP and CPU overclock.
 
 How it knows the game: ES-DE runs "custom event scripts" as a game starts and
 ends. Pocket Automator puts a small script in ES-DE's `scripts/game-start`
@@ -98,13 +108,39 @@ and `scripts/game-end` folders that writes the game down in a
 **Pocket Automator** folder beside ES-DE's. The Games page shows whether ES-DE
 has custom event scripts on (Menu → Other settings), and can turn it on.
 
-Where emulator settings go:
+Where emulator settings go (Eden and Dolphin: the files their own per-game
+settings screens use; ARMSX2 and DuckStation were checked on a Flip 2 by
+starting a game and seeing the setting take effect):
 
 | Emulator | Where | How the game is found |
 |---|---|---|
-| Eden | `config/custom/<title ID>.ini`, Eden's own per-game settings | Title ID from the NSP or file name; for XCIs it's matched from your last session, or learned the first time the game starts from ES-DE |
-| Dolphin | `GameSettings/<game ID>.ini`, Dolphin's own per-game settings | Game ID read from the disc image (ISO, RVZ, WIA, WBFS, CISO) |
-| Azahar | No per-game settings on Android, so the hook swaps the resolution into `config.ini` as the game starts, and puts Azahar's own back once you're in ES-DE again (or Azahar closes) | ROM file name |
+| Eden | `config/custom/<title ID>.ini`, Eden's own per-game settings | Title ID read from the cart: an NSP's ticket, or an XCI's program NCA header (decrypted with Eden's own `prod.keys`); failing that, the file name, the bundled table, your last session, or learned the first time the game starts from ES-DE |
+| Dolphin | `GameSettings/<game ID>.ini`, loaded over the fixes Dolphin ships for the game | Game ID read from the disc image (ISO, RVZ, WIA, WBFS, CISO) |
+| Azahar | No per-game settings on Android, so the hook swaps each setting into `config.ini` as the game starts, and puts Azahar's own back once you're in ES-DE again (or Azahar closes) | ROM file name |
+| ARMSX2 | `gamesettings/<serial>_<CRC>.ini` in ARMSX2's folder, which the PS2 core loads over ARMSX2's settings | Serial and CRC from the bundled table (made from PCSX2's game list), or ARMSX2's recent games plus its patch archive |
+| DuckStation | `gamesettings/<serial>.ini`, DuckStation's own per-game settings | Serial from the bundled table |
+
+### Community settings
+
+`app/src/main/assets/suggestions.json` holds community reports for 225 games
+(matched by system and title as ES-DE shows it): how each runs on a Snapdragon
+865 (Retroid Pocket 5, Mini, Flip 2) and the settings its sources use, each
+with the reason and a link. It was gathered from an RP5 compatibility
+spreadsheet, Flip 2 and RP5 guides and videos, the Dolphin wiki's game
+pages, ARMSX2's release notes and issues, and DuckStation's game database.
+(EmuReady wasn't used.)
+
+- A game's page shows its report and marks the community's value on each
+  setting. The Games page lists the games that are heavy on this chip.
+- **Auto, but never over yours:** only fixes a source calls necessary are
+  applied by themselves (for example, GPU accuracy for Yoshi's Crafted World,
+  "No readbacks" for Gran Turismo 4, EFB copies for Metroid Prime's rain).
+  Lower resolutions are only ever suggested. Anything you pick, "Same as" the
+  emulator included, wins, and one switch on the Games page turns community
+  settings off.
+- Emulators also apply their own community databases (Dolphin's per-game
+  INIs, PCSX2's GameIndex and ARMSX2's mobile overrides, Azahar's per-game
+  fixes, PPSSPP's compatibility list); the bundled reports don't repeat those.
 
 **Never over yours:** a setting you've given a game in the emulator itself is
 left alone (the game's page says so), and Pocket Automator only takes back
@@ -113,7 +149,8 @@ file back as it was.
 
 **Always a way back**, with or without the app:
 
-- A game's page: **Reset this game**. The Games page: **Undo all emulator changes**.
+- A game's page: **Reset this game**. The Games page: **Undo all emulator
+  changes** (which also turns community settings off).
 - The **Pocket Automator** folder beside ES-DE's has `backups/` (each
   emulator file as it was before its first change), a `README.txt`, and
   `Undo game settings.sh`, which takes every change back (and removes the

@@ -8,7 +8,9 @@ import java.io.RandomAccessFile
 enum class Emulator(val pkg: String, val title: String) {
     EDEN("dev.eden.eden_emulator", "Eden"),
     DOLPHIN("org.dolphinemu.dolphinemu", "Dolphin"),
-    AZAHAR("org.azahar_emu.azahar", "Azahar");
+    AZAHAR("org.azahar_emu.azahar", "Azahar"),
+    ARMSX2("com.armsx2", "ARMSX2"),
+    DUCKSTATION("com.github.stenzek.duckstation", "DuckStation");
 
     companion object {
         fun of(pkg: String?): Emulator? = entries.firstOrNull { it.pkg == pkg }
@@ -28,54 +30,370 @@ data class EmuKnob(
     val section: String,
     val name: String,
     val options: List<EmuOption>,
+    /** What it does, in a line. */
+    val hint: String? = null,
+    /** Shown under "More settings". */
+    val advanced: Boolean = false,
+    /** The emulator's own value when its config leaves it blank. */
+    val default: String? = null,
+    /** Where the emulator-wide value lives, when it isn't the same file, section and name. */
+    val globalFile: String? = null,
+    val globalSection: String? = null,
+    val globalName: String? = null,
 ) {
     fun label(value: String?): String? = options.firstOrNull { it.value == value }?.label
 }
 
 object EmuKnobs {
 
-    // Eden's ResolutionSetup: 0 = ¼×, 1 = ½×, 2 = ¾×, 3 = 1× (720p), 4 = 1¼×, 5 = 1½× (1080p), 6 = 2×.
+    private fun o(vararg pairs: Pair<String, String>) = pairs.map { EmuOption(it.first, it.second) }
+    private val onOff = o("true" to "On", "false" to "Off")
+    private val onOffCaps = o("True" to "On", "False" to "Off")
+
+    // ---- Eden: config/custom/<title ID>.ini, sections as Eden writes them.
+    // Values from Eden's settings_enums.h (ResolutionSetup starts at ¼×; 5 = 1½×).
+
     val EDEN_RESOLUTION = EmuKnob(
         "eden.resolution", Emulator.EDEN, "Resolution", "Renderer", "resolution_setup",
-        listOf(
-            EmuOption("1", "½× · 360p"),
-            EmuOption("2", "¾× · 540p"),
-            EmuOption("3", "1× · 720p"),
-            EmuOption("5", "1½× · 1080p"),
-            EmuOption("6", "2× · 1440p"),
-        ),
+        o("1" to "½× · 360p", "2" to "¾× · 540p", "3" to "1× · 720p", "4" to "1¼× · 900p", "5" to "1½× · 1080p", "6" to "2× · 1440p"),
+        hint = "The resolution the game renders at. The screen is 1080p.",
     )
     val EDEN_ACCURACY = EmuKnob(
         "eden.accuracy", Emulator.EDEN, "GPU accuracy", "Renderer", "gpu_accuracy",
-        listOf(EmuOption("0", "Low · faster"), EmuOption("1", "High · fewer glitches")),
+        o("0" to "Low · fastest", "1" to "Medium", "2" to "High · fewest glitches"),
+        hint = "Higher fixes some effects (lighting, particles) at a real cost in speed.",
+    )
+    val EDEN_DOCKED = EmuKnob(
+        "eden.docked", Emulator.EDEN, "Console mode", "System", "use_docked_mode",
+        o("0" to "Handheld", "1" to "Docked"),
+        hint = "Docked makes games render for a TV: sharper, and heavier.",
+    )
+    val EDEN_CPU_ACCURACY = EmuKnob(
+        "eden.cpu_accuracy", Emulator.EDEN, "CPU accuracy", "Cpu", "cpu_accuracy",
+        o("0" to "Auto", "1" to "Accurate", "2" to "Unsafe · faster", "3" to "Paranoid · slowest"),
+        hint = "Unsafe is faster; Accurate fixes the odd game that crashes or misbehaves.",
+    )
+    val EDEN_ASTC = EmuKnob(
+        "eden.astc", Emulator.EDEN, "ASTC texture decoding", "Renderer", "accelerate_astc",
+        o("0" to "CPU", "1" to "GPU", "2" to "CPU, in the background"),
+        hint = "How compressed textures are unpacked. GPU is usually fastest on this chip.",
+    )
+    val EDEN_ASTC_RECOMPRESSION = EmuKnob(
+        "eden.astc_recompression", Emulator.EDEN, "ASTC recompression", "Renderer", "astc_recompression",
+        o("0" to "Off", "1" to "BC1 · smallest", "2" to "BC3"),
+        hint = "Saves graphics memory in texture-heavy games, at some quality.", advanced = true,
+    )
+    val EDEN_ASYNC_SHADERS = EmuKnob(
+        "eden.async_shaders", Emulator.EDEN, "Asynchronous shaders", "Renderer", "use_asynchronous_shaders",
+        onOff, hint = "Less stutter while shaders build, with brief missing effects instead.",
+    )
+    val EDEN_CPU_CLOCK = EmuKnob(
+        "eden.cpu_clock", Emulator.EDEN, "CPU clock", "Cpu", "fast_cpu_time",
+        o("0" to "Off", "1" to "Boost", "2" to "Fast"),
+        hint = "Runs the Switch's CPU faster: helps games that dip, may break timing in some.", advanced = true,
+    )
+    val EDEN_GPU_CLOCK = EmuKnob(
+        "eden.gpu_clock", Emulator.EDEN, "GPU clock", "Renderer", "fast_gpu_time",
+        o("0" to "Off", "1" to "Boost", "2" to "Fast"),
+        hint = "Tells games the GPU is faster, which can steady the frame rate.", advanced = true,
+    )
+    val EDEN_ANISOTROPY = EmuKnob(
+        "eden.anisotropy", Emulator.EDEN, "Anisotropic filtering", "Renderer", "max_anisotropy",
+        o("0" to "Automatic", "1" to "Default", "2" to "2×", "3" to "4×", "4" to "8×", "5" to "16×"),
+        advanced = true,
+    )
+    val EDEN_VSYNC = EmuKnob(
+        "eden.vsync", Emulator.EDEN, "VSync", "Renderer", "use_vsync",
+        o("0" to "Off (Immediate)", "1" to "Mailbox", "2" to "On (FIFO)", "3" to "FIFO relaxed"),
+        advanced = true,
+    )
+    val EDEN_FRAME_PACING = EmuKnob(
+        "eden.frame_pacing", Emulator.EDEN, "Frame pacing", "Renderer", "frame_pacing_mode",
+        o("0" to "Auto", "1" to "30 fps", "2" to "60 fps", "3" to "90 fps", "4" to "120 fps"),
+        advanced = true,
+    )
+    val EDEN_DMA_ACCURACY = EmuKnob(
+        "eden.dma_accuracy", Emulator.EDEN, "DMA accuracy", "Renderer", "dma_accuracy",
+        o("0" to "Default", "1" to "Unsafe · faster", "2" to "Safe"),
+        advanced = true,
+    )
+    val EDEN_REACTIVE_FLUSHING = EmuKnob(
+        "eden.reactive_flushing", Emulator.EDEN, "Reactive flushing", "Renderer", "use_reactive_flushing",
+        onOff, hint = "Fixes missing shadows or effects in some games; costs speed.", advanced = true,
+    )
+    val EDEN_NVDEC = EmuKnob(
+        "eden.nvdec", Emulator.EDEN, "Video decoding", "Renderer", "nvdec_emulation",
+        o("0" to "Off", "1" to "CPU", "2" to "GPU"),
+        hint = "For in-game videos. Off skips them.", advanced = true,
+    )
+    val EDEN_VRAM = EmuKnob(
+        "eden.vram", Emulator.EDEN, "VRAM usage", "Renderer", "vram_usage_mode",
+        o("0" to "Conservative", "1" to "Aggressive"),
+        advanced = true,
+    )
+    val EDEN_MEMORY = EmuKnob(
+        "eden.memory", Emulator.EDEN, "Memory layout", "Core", "memory_layout_mode",
+        o("0" to "4 GB", "1" to "6 GB", "2" to "8 GB"),
+        hint = "More than 4 GB is only for mods that need it.", advanced = true,
+    )
+    val EDEN_BLOOM = EmuKnob(
+        "eden.fix_bloom", Emulator.EDEN, "Fix bloom effects", "Renderer", "fix_bloom_effects",
+        onOff, advanced = true,
+    )
+    val EDEN_RESCALE_HACK = EmuKnob(
+        "eden.rescale_hack", Emulator.EDEN, "Legacy rescale pass", "Renderer", "rescale_hack",
+        onOff, hint = "Fixes lines or seams some games show when upscaled.", advanced = true,
+    )
+    val EDEN_FORCE_MAX_CLOCK = EmuKnob(
+        "eden.force_max_clock", Emulator.EDEN, "Force maximum GPU clocks", "Renderer", "force_max_clock",
+        onOff, hint = "Keeps the GPU at full speed: steadier frame rate, more heat and battery.", advanced = true,
+    )
+    val EDEN_DISK_CACHE = EmuKnob(
+        "eden.disk_shader_cache", Emulator.EDEN, "Disk shader cache", "Renderer", "use_disk_shader_cache",
+        onOff, hint = "Keeps built shaders between sessions, so there's less stutter next time.", advanced = true,
+    )
+    val EDEN_ANTI_ALIASING = EmuKnob(
+        "eden.anti_aliasing", Emulator.EDEN, "Anti-aliasing", "Renderer", "anti_aliasing",
+        o("0" to "None", "1" to "FXAA", "2" to "SMAA"),
+        advanced = true,
     )
 
     /** Its options are the drivers installed in Eden (see [edenDriver]). */
     val EDEN_DRIVER = EmuKnob("eden.driver", Emulator.EDEN, "GPU driver", "GpuDriver", "driver_path", emptyList())
 
+    // ---- Dolphin: GameSettings/<game ID>.ini, loaded over Dolphin's own fixes for the game.
+    // Global values: GFX.ini [Settings]/[Enhancements]/[Hacks] and Dolphin.ini [Core].
+
     val DOLPHIN_RESOLUTION = EmuKnob(
         "dolphin.resolution", Emulator.DOLPHIN, "Resolution", "Video_Settings", "InternalResolution",
-        listOf(
-            EmuOption("1", "1× · 480p"),
-            EmuOption("2", "2× · for 720p"),
-            EmuOption("3", "3× · for 1080p"),
-            EmuOption("4", "4× · for 1440p"),
-        ),
+        o("1" to "1× · 480p", "2" to "2× · for 720p", "3" to "3× · for 1080p", "4" to "4× · for 1440p"),
+        default = "1", globalFile = "GFX.ini", globalSection = "Settings",
+    )
+    val DOLPHIN_SHADERS = EmuKnob(
+        "dolphin.shader_mode", Emulator.DOLPHIN, "Shader compilation", "Video_Settings", "ShaderCompilationMode",
+        o("0" to "Specialized (stutters)", "1" to "Exclusive ubershaders", "2" to "Hybrid ubershaders", "3" to "Skip drawing"),
+        hint = "How new effects are built. Hybrid avoids most stutter; Skip drawing is lightest.",
+        default = "0", globalFile = "GFX.ini", globalSection = "Settings",
+    )
+    val DOLPHIN_WAIT_SHADERS = EmuKnob(
+        "dolphin.wait_shaders", Emulator.DOLPHIN, "Compile shaders before starting", "Video_Settings", "WaitForShadersBeforeStarting",
+        onOffCaps, default = "False", globalFile = "GFX.ini", globalSection = "Settings", advanced = true,
+    )
+    val DOLPHIN_EFB_ACCESS = EmuKnob(
+        "dolphin.efb_access", Emulator.DOLPHIN, "Skip EFB access from CPU", "Video_Hacks", "EFBAccessEnable",
+        o("False" to "Skip · faster", "True" to "Don't skip · accurate"),
+        hint = "Some games need it (lens flares, cursors, some physics).",
+        default = "False", globalFile = "GFX.ini", globalSection = "Hacks",
+    )
+    val DOLPHIN_EFB_TEXTURE = EmuKnob(
+        "dolphin.efb_to_texture", Emulator.DOLPHIN, "Store EFB copies to texture only", "Video_Hacks", "EFBToTextureEnable",
+        o("True" to "On · faster", "False" to "Off · accurate"),
+        hint = "Off fixes effects some games draw into memory (heat haze, scanners).",
+        default = "True", globalFile = "GFX.ini", globalSection = "Hacks",
+    )
+    val DOLPHIN_XFB_TEXTURE = EmuKnob(
+        "dolphin.xfb_to_texture", Emulator.DOLPHIN, "Store XFB copies to texture only", "Video_Hacks", "XFBToTextureEnable",
+        o("True" to "On · faster", "False" to "Off · accurate"),
+        default = "True", globalFile = "GFX.ini", globalSection = "Hacks", advanced = true,
+    )
+    val DOLPHIN_DEFER_EFB = EmuKnob(
+        "dolphin.defer_efb", Emulator.DOLPHIN, "Defer EFB copies to RAM", "Video_Hacks", "DeferEFBCopies",
+        o("True" to "On · faster", "False" to "Off · accurate"),
+        default = "True", globalFile = "GFX.ini", globalSection = "Hacks", advanced = true,
+    )
+    val DOLPHIN_EFB_SCALED = EmuKnob(
+        "dolphin.efb_scaled", Emulator.DOLPHIN, "Scaled EFB copy", "Video_Hacks", "EFBScaledCopy",
+        onOffCaps, default = "True", globalFile = "GFX.ini", globalSection = "Hacks", advanced = true,
+    )
+    val DOLPHIN_BBOX = EmuKnob(
+        "dolphin.bbox", Emulator.DOLPHIN, "Bounding box", "Video_Hacks", "BBoxEnable",
+        onOffCaps, hint = "Needed by a few games (Paper Mario, Super Paper Mario).",
+        default = "False", globalFile = "GFX.ini", globalSection = "Hacks", advanced = true,
+    )
+    val DOLPHIN_VERTEX_ROUNDING = EmuKnob(
+        "dolphin.vertex_rounding", Emulator.DOLPHIN, "Vertex rounding", "Video_Hacks", "VertexRounding",
+        onOffCaps, hint = "Fixes lines in some 2D games when upscaled.",
+        default = "False", globalFile = "GFX.ini", globalSection = "Hacks", advanced = true,
+    )
+    val DOLPHIN_TEXTURE_CACHE = EmuKnob(
+        "dolphin.texture_cache", Emulator.DOLPHIN, "Texture cache accuracy", "Video_Settings", "SafeTextureCacheColorSamples",
+        o("0" to "Safe", "512" to "Medium", "128" to "Fast"),
+        hint = "Safe fixes wrong textures in a few games.",
+        default = "128", globalFile = "GFX.ini", globalSection = "Settings", advanced = true,
+    )
+    val DOLPHIN_ANISOTROPY = EmuKnob(
+        "dolphin.anisotropy", Emulator.DOLPHIN, "Anisotropic filtering", "Video_Enhancements", "MaxAnisotropy",
+        o("-1" to "Game default", "0" to "1×", "1" to "2×", "2" to "4×", "3" to "8×", "4" to "16×"),
+        default = "-1", globalFile = "GFX.ini", globalSection = "Enhancements", advanced = true,
+    )
+    val DOLPHIN_WIDESCREEN = EmuKnob(
+        "dolphin.widescreen_hack", Emulator.DOLPHIN, "Widescreen hack", "Video_Settings", "wideScreenHack",
+        onOffCaps, hint = "Stretches 4:3 games to 16:9 by widening the view; may show pop-in at the edges.",
+        default = "False", globalFile = "GFX.ini", globalSection = "Settings", advanced = true,
+    )
+    val DOLPHIN_DUAL_CORE = EmuKnob(
+        "dolphin.dual_core", Emulator.DOLPHIN, "Dual core", "Core", "CPUThread",
+        onOffCaps, hint = "Much faster; a few games need it off to run correctly.",
+        default = "True", globalFile = "Dolphin.ini", globalSection = "Core",
+    )
+    val DOLPHIN_SYNC_GPU = EmuKnob(
+        "dolphin.sync_gpu", Emulator.DOLPHIN, "Synchronize GPU thread", "Core", "SyncGPU",
+        onOffCaps, hint = "Fixes random crashes some games have with dual core.",
+        default = "False", globalFile = "Dolphin.ini", globalSection = "Core", advanced = true,
+    )
+    val DOLPHIN_OVERCLOCK_ON = EmuKnob(
+        "dolphin.overclock_on", Emulator.DOLPHIN, "CPU clock override", "Core", "OverclockEnable",
+        onOffCaps, hint = "Underclocking helps heavy games keep speed; overclocking smooths games that dip on console.",
+        default = "False", globalFile = "Dolphin.ini", globalSection = "Core", advanced = true,
+    )
+    val DOLPHIN_OVERCLOCK = EmuKnob(
+        "dolphin.overclock", Emulator.DOLPHIN, "CPU clock", "Core", "Overclock",
+        o("0.5" to "50%", "0.75" to "75%", "0.9" to "90%", "1.0" to "100%", "1.5" to "150%", "2.0" to "200%"),
+        hint = "Takes effect with the CPU clock override on.",
+        default = "1.0", globalFile = "Dolphin.ini", globalSection = "Core", advanced = true,
     )
 
-    // Azahar's resolution_factor: multiples of the 3DS's 400×240.
+    // ---- Azahar: config.ini keys, swapped in by the ES-DE hook. Values from Azahar's settings.
+
     val AZAHAR_RESOLUTION = EmuKnob(
         "azahar.resolution", Emulator.AZAHAR, "Resolution", "Renderer", "resolution_factor",
-        listOf(
-            EmuOption("1", "1× · 240p"),
-            EmuOption("2", "2× · 480p"),
-            EmuOption("3", "3× · 720p"),
-            EmuOption("4", "4× · 960p"),
-            EmuOption("5", "5× · for 1080p"),
-        ),
+        o("1" to "1× · 240p", "2" to "2× · 480p", "3" to "3× · 720p", "4" to "4× · 960p", "5" to "5× · for 1080p"),
+    )
+    val AZAHAR_CPU_CLOCK = EmuKnob(
+        "azahar.cpu_clock", Emulator.AZAHAR, "CPU clock", "Core", "cpu_clock_percentage",
+        o("50" to "50%", "75" to "75%", "100" to "100%", "125" to "125%", "150" to "150%", "200" to "200%"),
+        hint = "Lower helps heavy games keep speed (they may freeze); higher smooths games that lag on a real 3DS.",
+        default = "100",
+    )
+    val AZAHAR_ACCURATE_MUL = EmuKnob(
+        "azahar.accurate_mul", Emulator.AZAHAR, "Accurate multiplication", "Renderer", "shaders_accurate_mul",
+        onOff, hint = "Fixes wrong lighting or outlines in some games; a little slower.",
+        default = "false",
+    )
+    val AZAHAR_ASYNC_SHADERS = EmuKnob(
+        "azahar.async_shaders", Emulator.AZAHAR, "Asynchronous shaders", "Renderer", "async_shader_compilation",
+        onOff, default = "true", advanced = true,
+    )
+    val AZAHAR_HW_SHADER = EmuKnob(
+        "azahar.hw_shader", Emulator.AZAHAR, "Hardware shaders", "Renderer", "use_hw_shader",
+        onOff, default = "true", advanced = true,
+    )
+    val AZAHAR_TEXTURE_FILTER = EmuKnob(
+        "azahar.texture_filter", Emulator.AZAHAR, "Texture filter", "Renderer", "texture_filter",
+        o("0" to "None", "1" to "Anime4K", "2" to "Bicubic", "3" to "ScaleForce", "4" to "xBRZ", "5" to "MMPX"),
+        default = "0", advanced = true,
+    )
+    val AZAHAR_TEXTURE_SAMPLING = EmuKnob(
+        "azahar.texture_sampling", Emulator.AZAHAR, "Texture sampling", "Renderer", "texture_sampling",
+        o("0" to "Game controlled", "1" to "Nearest", "2" to "Linear"),
+        default = "0", advanced = true,
+    )
+    val AZAHAR_LAYOUT = EmuKnob(
+        "azahar.layout", Emulator.AZAHAR, "Screen layout", "Layout", "layout_option",
+        o("0" to "Original", "1" to "Single screen", "2" to "Large screen", "3" to "Side by side", "4" to "Hybrid"),
+        default = "2", advanced = true,
     )
 
-    val all = listOf(EDEN_RESOLUTION, EDEN_ACCURACY, EDEN_DRIVER, DOLPHIN_RESOLUTION, AZAHAR_RESOLUTION)
+    // ---- ARMSX2: gamesettings/<serial>_<CRC>.ini, which PCSX2's core reads over ARMSX2's settings.
+    // Keys as ARMSX2 writes them in PCSX2-Android.ini.
+
+    val ARMSX2_UPSCALE = EmuKnob(
+        "armsx2.upscale", Emulator.ARMSX2, "Resolution", "EmuCore/GS", "upscale_multiplier",
+        o("1" to "1× · native", "2" to "2× · 720p", "3" to "3× · for 1080p", "4" to "4× · 1440p"),
+    )
+    val ARMSX2_EE_RATE = EmuKnob(
+        "armsx2.ee_cycle_rate", Emulator.ARMSX2, "EE cycle rate", "EmuCore/Speedhacks", "EECycleRate",
+        o("-3" to "50%", "-2" to "60%", "-1" to "75%", "0" to "100%", "1" to "130%", "2" to "180%", "3" to "300%"),
+        hint = "Underclocking the PS2's main CPU speeds up heavy games (may cause slowdowns in-game).",
+        default = "0",
+    )
+    val ARMSX2_EE_SKIP = EmuKnob(
+        "armsx2.ee_cycle_skip", Emulator.ARMSX2, "EE cycle skip", "EmuCore/Speedhacks", "EECycleSkip",
+        o("0" to "Off", "1" to "Mild", "2" to "Moderate", "3" to "Maximum"),
+        default = "0", advanced = true,
+    )
+    val ARMSX2_MTVU = EmuKnob(
+        "armsx2.mtvu", Emulator.ARMSX2, "MTVU (VU1 on its own thread)", "EmuCore/Speedhacks", "vuThread",
+        onOff, hint = "Faster in most games; a few need it off.", default = "true", advanced = true,
+    )
+    val ARMSX2_INSTANT_VU1 = EmuKnob(
+        "armsx2.instant_vu1", Emulator.ARMSX2, "Instant VU1", "EmuCore/Speedhacks", "vu1Instant",
+        onOff, default = "true", advanced = true,
+    )
+    val ARMSX2_BLENDING = EmuKnob(
+        "armsx2.blending", Emulator.ARMSX2, "Blending accuracy", "EmuCore/GS", "accurate_blending_unit",
+        o("0" to "Minimum", "1" to "Basic", "2" to "Medium", "3" to "High"),
+        hint = "Higher fixes transparency effects at a big cost on phones.", default = "1",
+    )
+    val ARMSX2_HW_DOWNLOAD = EmuKnob(
+        "armsx2.hw_download", Emulator.ARMSX2, "Hardware download mode", "EmuCore/GS", "HWDownloadMode",
+        o("0" to "Accurate", "1" to "No readbacks", "2" to "Unsynchronized", "3" to "Disabled"),
+        hint = "Skipping readbacks speeds up some games; can break effects.", default = "0", advanced = true,
+    )
+    val ARMSX2_FILTER = EmuKnob(
+        "armsx2.texture_filter", Emulator.ARMSX2, "Texture filtering", "EmuCore/GS", "filter",
+        o("0" to "Nearest", "1" to "Bilinear (forced)", "2" to "Bilinear (PS2)", "3" to "Bilinear (forced, not sprites)"),
+        default = "2", advanced = true,
+    )
+    val ARMSX2_USER_HACKS = EmuKnob(
+        "armsx2.user_hacks", Emulator.ARMSX2, "Manual hardware fixes", "EmuCore/GS", "UserHacks",
+        onOff, hint = "Needed for the upscaling fixes below to take effect.", default = "false", advanced = true,
+    )
+    val ARMSX2_HALF_PIXEL = EmuKnob(
+        "armsx2.half_pixel", Emulator.ARMSX2, "Half-pixel offset", "EmuCore/GS", "UserHacks_HalfPixelOffset",
+        o("0" to "Off", "1" to "Normal (vertex)", "2" to "Special (texture)", "3" to "Special (texture, aggressive)", "4" to "Align to native", "5" to "Align to native with texture offset"),
+        hint = "Fixes blur and misaligned effects when upscaled.", default = "0", advanced = true,
+    )
+    val ARMSX2_ROUND_SPRITE = EmuKnob(
+        "armsx2.round_sprite", Emulator.ARMSX2, "Round sprite", "EmuCore/GS", "UserHacks_round_sprite_offset",
+        o("0" to "Off", "1" to "Half", "2" to "Full"),
+        hint = "Fixes lines in 2D elements when upscaled.", default = "0", advanced = true,
+    )
+
+    // ---- DuckStation: gamesettings/<serial>.ini, over DuckStation's settings.
+
+    val DUCKSTATION_RESOLUTION = EmuKnob(
+        "duckstation.resolution", Emulator.DUCKSTATION, "Resolution", "GPU", "ResolutionScale",
+        o("1" to "1× · native", "2" to "2×", "3" to "3× · 720p", "4" to "4×", "5" to "5× · for 1080p"),
+    )
+    val DUCKSTATION_WIDESCREEN = EmuKnob(
+        "duckstation.widescreen", Emulator.DUCKSTATION, "Widescreen rendering", "GPU", "WidescreenHack",
+        onOff, hint = "Draws 3D games in 16:9 (pair with a 16:9 aspect ratio).", default = "false",
+    )
+    val DUCKSTATION_ASPECT = EmuKnob(
+        "duckstation.aspect", Emulator.DUCKSTATION, "Aspect ratio", "Display", "AspectRatio",
+        o("Auto (Game Native)" to "Game's own", "4:3" to "4:3", "16:9" to "16:9", "Stretch To Fill" to "Stretch"),
+        default = "Auto (Game Native)",
+    )
+    val DUCKSTATION_PGXP = EmuKnob(
+        "duckstation.pgxp", Emulator.DUCKSTATION, "PGXP geometry correction", "GPU", "PGXPEnable",
+        onOff, hint = "Stops the PS1's wobbly polygons.", default = "false", advanced = true,
+    )
+    val DUCKSTATION_PGXP_TEXTURE = EmuKnob(
+        "duckstation.pgxp_texture", Emulator.DUCKSTATION, "PGXP texture correction", "GPU", "PGXPTextureCorrection",
+        onOff, default = "true", advanced = true,
+    )
+    val DUCKSTATION_OVERCLOCK = EmuKnob(
+        "duckstation.overclock", Emulator.DUCKSTATION, "CPU overclock", "CPU", "OverclockEnable",
+        onOff, hint = "Smooths games that dropped frames on a real PS1; can break some.", default = "false", advanced = true,
+    )
+
+    val all = listOf(
+        EDEN_RESOLUTION, EDEN_ACCURACY, EDEN_DOCKED, EDEN_CPU_ACCURACY, EDEN_ASTC, EDEN_ASYNC_SHADERS, EDEN_DRIVER,
+        EDEN_ASTC_RECOMPRESSION, EDEN_CPU_CLOCK, EDEN_GPU_CLOCK, EDEN_ANISOTROPY, EDEN_VSYNC, EDEN_FRAME_PACING,
+        EDEN_DMA_ACCURACY, EDEN_REACTIVE_FLUSHING, EDEN_NVDEC, EDEN_VRAM, EDEN_MEMORY, EDEN_BLOOM, EDEN_RESCALE_HACK,
+        EDEN_ANTI_ALIASING, EDEN_FORCE_MAX_CLOCK, EDEN_DISK_CACHE,
+        DOLPHIN_RESOLUTION, DOLPHIN_SHADERS, DOLPHIN_EFB_ACCESS, DOLPHIN_EFB_TEXTURE, DOLPHIN_DUAL_CORE,
+        DOLPHIN_WAIT_SHADERS, DOLPHIN_XFB_TEXTURE, DOLPHIN_DEFER_EFB, DOLPHIN_EFB_SCALED, DOLPHIN_BBOX,
+        DOLPHIN_VERTEX_ROUNDING, DOLPHIN_TEXTURE_CACHE, DOLPHIN_ANISOTROPY, DOLPHIN_WIDESCREEN, DOLPHIN_SYNC_GPU,
+        DOLPHIN_OVERCLOCK_ON, DOLPHIN_OVERCLOCK,
+        AZAHAR_RESOLUTION, AZAHAR_CPU_CLOCK, AZAHAR_ACCURATE_MUL, AZAHAR_ASYNC_SHADERS, AZAHAR_HW_SHADER,
+        AZAHAR_TEXTURE_FILTER, AZAHAR_TEXTURE_SAMPLING, AZAHAR_LAYOUT,
+        ARMSX2_UPSCALE, ARMSX2_EE_RATE, ARMSX2_BLENDING, ARMSX2_EE_SKIP, ARMSX2_MTVU, ARMSX2_INSTANT_VU1,
+        ARMSX2_HW_DOWNLOAD, ARMSX2_FILTER, ARMSX2_USER_HACKS, ARMSX2_HALF_PIXEL, ARMSX2_ROUND_SPRITE,
+        DUCKSTATION_RESOLUTION, DUCKSTATION_WIDESCREEN, DUCKSTATION_ASPECT, DUCKSTATION_PGXP,
+        DUCKSTATION_PGXP_TEXTURE, DUCKSTATION_OVERCLOCK,
+    )
 
     fun byKey(key: String) = all.firstOrNull { it.key == key }
 
@@ -196,6 +514,88 @@ object GameIds {
         }
     }.getOrNull()
 
+    /** A PS2 game's serial from ARMSX2's recent_games.json, by its ROM file name. */
+    fun ps2SerialFromRecent(json: String?, romName: String): String? = runCatching {
+        val a = org.json.JSONArray(json ?: return null)
+        (0 until a.length()).mapNotNull { a.optJSONObject(it) }.firstOrNull { o ->
+            java.net.URLDecoder.decode(o.optString("uri").replace("+", "%2B"), "UTF-8").substringAfterLast('/') == romName
+        }?.optString("serial")?.takeIf { it.matches(Regex("[A-Z]{4}-\\d{5}")) }
+    }.getOrNull()
+
+    /** Eden's NCA header key, from its prod.keys file (needed to read XCIs). */
+    fun headerKey(prodKeys: String?): ByteArray? {
+        val text = prodKeys ?: return null
+        return Regex("(?m)^\\s*header_key\\s*=\\s*([0-9a-fA-F]{64})\\s*$").find(text)?.groupValues?.get(1)
+            ?.chunked(2)?.map { it.toInt(16).toByte() }?.toByteArray()
+    }
+
+    /**
+     * A Switch title ID from an XCI (or NSP) without tickets: the program
+     * NCA's header, decrypted with [headerKey], names the game's program ID.
+     * XCI: the root HFS0 at 0x130 → its "secure" partition → the NCAs.
+     */
+    fun switchFromCart(file: File, headerKey: ByteArray): String? = runCatching {
+        RandomAccessFile(file, "r").use { f ->
+            val ncas = if (String(bytes(f, 0x100, 4), Charsets.US_ASCII) == "HEAD") {
+                val root = le64(bytes(f, 0x130, 8), 0)
+                val secure = hfs0(f, root)["secure"] ?: return null
+                hfs0(f, secure.first)
+            } else {
+                pfs0(f)
+            }
+            for ((name, where) in ncas) {
+                if (!name.endsWith(".nca")) continue
+                val header = Xts.decrypt(bytes(f, where.first, 0x400), headerKey, sectorSize = 0x200)
+                if (String(header, 0x200, 4, Charsets.US_ASCII) != "NCA3") continue
+                // Content type 0 is a program; its program ID is the game's (updates share it).
+                if (header[0x205].toInt() != 0) continue
+                return "%016X".format(le64(header, 0x210)).let(::base)
+            }
+            null
+        }
+    }.getOrNull()
+
+    private fun bytes(f: RandomAccessFile, at: Long, n: Int) = ByteArray(n).also { f.seek(at); f.readFully(it) }
+
+    /** An HFS0 partition's files: name → (absolute offset, size). */
+    private fun hfs0(f: RandomAccessFile, at: Long): Map<String, Pair<Long, Long>> {
+        val head = bytes(f, at, 16)
+        if (String(head, 0, 4, Charsets.US_ASCII) != "HFS0") return emptyMap()
+        val count = le32(head, 4)
+        val tableSize = le32(head, 8)
+        if (count !in 1..4096 || tableSize !in 1..1_000_000) return emptyMap()
+        val entries = bytes(f, at + 16, count * 0x40)
+        val names = bytes(f, at + 16 + count * 0x40L, tableSize)
+        val data = at + 16 + count * 0x40L + tableSize
+        return (0 until count).associate { i ->
+            val e = i * 0x40
+            val nameAt = le32(entries, e + 16)
+            val end = (nameAt until names.size).firstOrNull { names[it].toInt() == 0 } ?: names.size
+            String(names, nameAt, end - nameAt, Charsets.US_ASCII) to (data + le64(entries, e) to le64(entries, e + 8))
+        }
+    }
+
+    /** An NSP's (PFS0) files: name → (absolute offset, size). */
+    private fun pfs0(f: RandomAccessFile): Map<String, Pair<Long, Long>> {
+        val head = bytes(f, 0, 16)
+        if (String(head, 0, 4, Charsets.US_ASCII) != "PFS0") return emptyMap()
+        val count = le32(head, 4)
+        val tableSize = le32(head, 8)
+        if (count !in 1..4096 || tableSize !in 1..1_000_000) return emptyMap()
+        val entries = bytes(f, 16, count * 24)
+        val names = bytes(f, 16 + count * 24L, tableSize)
+        val data = 16 + count * 24L + tableSize
+        return (0 until count).associate { i ->
+            val e = i * 24
+            val nameAt = le32(entries, e + 16)
+            val end = (nameAt until names.size).firstOrNull { names[it].toInt() == 0 } ?: names.size
+            String(names, nameAt, end - nameAt, Charsets.US_ASCII) to (data + le64(entries, e) to le64(entries, e + 8))
+        }
+    }
+
+    private fun le64(b: ByteArray, at: Int): Long =
+        (0 until 8).fold(0L) { acc, i -> acc or ((b[at + i].toLong() and 0xFF) shl (8 * i)) }
+
     /** A GameCube/Wii game ID ("GM4E01") from an ISO, GCM, WBFS, CISO, RVZ or WIA file. */
     fun dolphin(file: File): String? = runCatching {
         RandomAccessFile(file, "r").use { f ->
@@ -244,4 +644,43 @@ object GameIds {
      */
     fun startedAfter(launches: Map<String, Long>, since: Long): String? =
         launches.filter { (_, t) -> t in (since - 5)..(since + 120) }.maxByOrNull { it.value }?.key?.let(::base)
+}
+
+/**
+ * AES-128-XTS as the Switch uses it for NCA headers: 32-byte key (data key
+ * then tweak key), and the sector number as a big-endian tweak.
+ */
+object Xts {
+
+    fun decrypt(data: ByteArray, key: ByteArray, sectorSize: Int, firstSector: Long = 0): ByteArray {
+        val dataKey = javax.crypto.spec.SecretKeySpec(key.copyOfRange(0, 16), "AES")
+        val tweakKey = javax.crypto.spec.SecretKeySpec(key.copyOfRange(16, 32), "AES")
+        val aesDecrypt = javax.crypto.Cipher.getInstance("AES/ECB/NoPadding").apply { init(javax.crypto.Cipher.DECRYPT_MODE, dataKey) }
+        val aesTweak = javax.crypto.Cipher.getInstance("AES/ECB/NoPadding").apply { init(javax.crypto.Cipher.ENCRYPT_MODE, tweakKey) }
+        val out = ByteArray(data.size)
+        var sector = firstSector
+        var at = 0
+        while (at + 16 <= data.size) {
+            val tweakIn = ByteArray(16)
+            for (i in 0 until 8) tweakIn[15 - i] = (sector ushr (8 * i)).toByte()
+            val tweak = aesTweak.doFinal(tweakIn)
+            val end = minOf(at + sectorSize, data.size)
+            while (at + 16 <= end) {
+                val block = ByteArray(16) { (data[at + it].toInt() xor tweak[it].toInt()).toByte() }
+                val plain = aesDecrypt.doFinal(block)
+                for (i in 0 until 16) out[at + i] = (plain[i].toInt() xor tweak[i].toInt()).toByte()
+                // Multiply the tweak by x in GF(2^128), little-endian.
+                var carry = 0
+                for (i in 0 until 16) {
+                    val b = tweak[i].toInt() and 0xFF
+                    tweak[i] = ((b shl 1) or carry).toByte()
+                    carry = b ushr 7
+                }
+                if (carry != 0) tweak[0] = (tweak[0].toInt() xor 0x87).toByte()
+                at += 16
+            }
+            sector++
+        }
+        return out
+    }
 }

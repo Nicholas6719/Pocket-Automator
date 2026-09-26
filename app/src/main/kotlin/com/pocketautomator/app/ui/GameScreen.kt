@@ -65,6 +65,8 @@ import com.pocketautomator.app.Knob
 import com.pocketautomator.app.Plan
 import com.pocketautomator.app.Shell
 import com.pocketautomator.app.Store
+import com.pocketautomator.app.Suggestion
+import com.pocketautomator.app.Suggestions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -87,10 +89,12 @@ fun GameScreen(
     val games by store.games.collectAsStateWithLifecycle()
     val status by store.gameStatus.collectAsStateWithLifecycle()
     val detection by store.gameDetection.collectAsStateWithLifecycle()
+    val auto by store.suggestAuto.collectAsStateWithLifecycle()
     val entry = library.find(id)
     val saved = games.firstOrNull { it.id == id }
     val base = saved ?: entry?.let { GameProfile.of(it.game) } ?: run { onBack(); return }
     val emulatorApp = entry?.emulator?.let { pkg -> apps.firstOrNull { it.pkg == pkg } }
+    val suggestion = remember(base.system, base.name) { Suggestions.find(context, base.system, base.name) }
     val profile = Plan.profileFor(profiles, entry?.emulator)
     val emulator = Emulator.of(entry?.emulator)
     var resetting by remember { mutableStateOf(false) }
@@ -153,15 +157,18 @@ fun GameScreen(
             }
 
             item { Heading(emulator?.let { "${it.title} settings" } ?: "Emulator settings") }
+            suggestion?.let { item { CommunityCard(it, auto) } }
             if (emulator == null) {
                 item {
                     Muted(
-                        (emulatorApp?.label ?: "This emulator") + " keeps its own settings for every game. Per-game emulator settings work with Eden, Dolphin and Azahar.",
+                        (emulatorApp?.label ?: "This emulator") + " keeps its own settings for every game. Per-game emulator settings work with Eden, Dolphin, Azahar, ARMSX2 and DuckStation.",
                         Modifier.padding(horizontal = 4.dp),
                     )
                 }
             } else {
-                item { EmulatorSettings(emulator, base, status, onPick = { key, v -> store.editGame(base) { it.copy(emu = it.emu.with(key, v)) } }) }
+                item {
+                    EmulatorSettings(emulator, base, suggestion, auto, status, onPick = { key, v -> store.editGame(base) { it.copy(emu = it.emu.with(key, v)) } })
+                }
             }
 
             item {
@@ -198,12 +205,66 @@ private fun <K, V> Map<K, V>.with(key: K, value: V?): Map<K, V> = if (value == n
 
 private fun describe(value: Int?, knob: Knob) = value?.let { Device.describe(knob, it) } ?: "Not set"
 
-@OptIn(ExperimentalLayoutApi::class)
+/** How the game runs on this chip, by the community's reports, and where that comes from. */
 @Composable
-private fun EmulatorSettings(emulator: Emulator, game: GameProfile, status: Map<String, String>, onPick: (String, String?) -> Unit) {
+private fun CommunityCard(suggestion: Suggestion, auto: Boolean) {
+    val context = LocalContext.current
+    val color = when (suggestion.status) {
+        Suggestion.Status.FULL -> Good
+        Suggestion.Status.PLAYABLE -> Color(0xFF7CC4FF)
+        Suggestion.Status.STRUGGLES -> Warn
+        Suggestion.Status.UNPLAYABLE -> Color(0xFFFF6B6B)
+        Suggestion.Status.UNKNOWN -> Color(0xFF8E8E99)
+    }
+    SectionCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Community", fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+            Text(
+                suggestion.status.label,
+                modifier = Modifier.background(color.copy(alpha = 0.2f), PillShape).padding(horizontal = 10.dp, vertical = 3.dp),
+                color = color,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+        if (suggestion.note.isNotBlank()) Muted(suggestion.note)
+        val used = suggestion.settings.count { it.auto }
+        Muted(
+            when {
+                suggestion.settings.isEmpty() -> "Nothing to change for it."
+                !auto -> "Community settings are off (Games page), so they're only shown below."
+                used == 0 -> "Its suggestions are shown below; none are used unless you pick them."
+                else -> "Settings marked \"community\" below are used unless you choose otherwise."
+            },
+        )
+        suggestion.sources.take(4).forEach { url ->
+            Text(
+                url.removePrefix("https://").removePrefix("www.").take(70),
+                style = MaterialTheme.typography.bodySmall,
+                color = AccentAlt,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.focusOutline(PillShape).clickable {
+                    runCatching { context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))) }
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmulatorSettings(
+    emulator: Emulator,
+    game: GameProfile,
+    suggestion: Suggestion?,
+    auto: Boolean,
+    status: Map<String, String>,
+    onPick: (String, String?) -> Unit,
+) {
     val context = LocalContext.current
     val store = Store.get(context)
-    val needsShizuku = emulator != Emulator.AZAHAR
+    val needsShizuku = emulator != Emulator.AZAHAR && emulator != Emulator.ARMSX2
+    var more by remember { mutableStateOf(false) }
     val inspection by produceState<GameSettings.Inspection?>(null, emulator) {
         value = withContext(Dispatchers.IO) {
             if (needsShizuku && !Shell.ready) null
@@ -218,8 +279,10 @@ private fun EmulatorSettings(emulator: Emulator, game: GameProfile, status: Map<
         Muted(
             when (emulator) {
                 Emulator.EDEN -> "Written to Eden's own per-game settings for this game. Anything you've set for it in Eden itself stays as you set it."
-                Emulator.DOLPHIN -> "Written to Dolphin's own per-game settings for this game. Anything you've set for it in Dolphin itself stays as you set it."
-                Emulator.AZAHAR -> "Azahar has no per-game settings, so this is swapped in as the game starts from ES-DE, and Azahar's own comes back once you're back in ES-DE or Azahar closes."
+                Emulator.DOLPHIN -> "Written to Dolphin's own per-game settings for this game, on top of the fixes Dolphin ships for it. Anything you've set for it in Dolphin itself stays as you set it."
+                Emulator.AZAHAR -> "Azahar has no per-game settings, so these are swapped in as the game starts from ES-DE, and Azahar's own come back once you're back in ES-DE or Azahar closes."
+                Emulator.ARMSX2 -> "Written to the PS2 core's own per-game settings file, which applies over ARMSX2's settings (including ones you set per game in ARMSX2). Anything already in that file stays as it is."
+                Emulator.DUCKSTATION -> "Written to DuckStation's own per-game settings for this game. Anything you've set for it in DuckStation itself stays as you set it."
             },
             Modifier.padding(horizontal = 4.dp),
         )
@@ -227,21 +290,72 @@ private fun EmulatorSettings(emulator: Emulator, game: GameProfile, status: Map<
             SectionCard { Muted(if (needsShizuku && !Shell.ready) "Waiting for Shizuku to read ${emulator.title}'s settings…" else "Reading ${emulator.title}'s settings…") }
             return@Column
         }
-        found.knobs.forEach { knob ->
-            EmuKnobCard(knob, game.emu[knob.key], found.global[knob.key], status["${game.id}|${knob.key}"]) { onPick(knob.key, it) }
+        val rec = { knob: EmuKnob -> suggestion?.settings?.firstOrNull { it.key == knob.key } }
+        val card = @Composable { knob: EmuKnob ->
+            EmuKnobCard(knob, game.emu[knob.key], found.global[knob.key], rec(knob), auto, status["${game.id}|${knob.key}"]) { onPick(knob.key, it) }
+        }
+        // Advanced ones come forward when this game has something for them.
+        val (main, advanced) = found.knobs.partition { !it.advanced || game.emu.containsKey(it.key) || rec(it) != null }
+        main.forEach { card(it) }
+        if (advanced.isNotEmpty()) {
+            TextButton(onClick = { more = !more }, modifier = Modifier.focusOutline(PillShape)) {
+                Text(if (more) "Fewer ${emulator.title} settings" else "More ${emulator.title} settings (${advanced.size})")
+            }
+            if (more) advanced.forEach { card(it) }
         }
     }
 }
 
+/**
+ * One emulator setting: the emulator's own value, the options, and the
+ * community's, if any. A community value used automatically counts as
+ * picked until you pick something else ("Same as" included).
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun EmuKnobCard(knob: EmuKnob, value: String?, global: String?, problem: String?, onPick: (String?) -> Unit) {
+private fun EmuKnobCard(
+    knob: EmuKnob,
+    mine: String?,
+    global: String?,
+    rec: Suggestion.Rec?,
+    auto: Boolean,
+    problem: String?,
+    onPick: (String?) -> Unit,
+) {
+    val used = rec != null && rec.auto && auto
+    val effective = when {
+        mine == Suggestions.GLOBAL -> null
+        mine != null -> mine
+        used -> rec!!.value
+        else -> null
+    }
     SectionCard(border = problem?.let { Warn }) {
         Text(knob.title, fontWeight = FontWeight.SemiBold)
+        knob.hint?.let { Muted(it) }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             val globalLabel = knob.label(global) ?: global?.takeIf { it.isNotEmpty() }?.substringAfterLast('/')
-            Choice("Same as ${knob.emulator.title}" + (globalLabel?.let { " ($it)" } ?: ""), value == null) { onPick(null) }
-            knob.options.forEach { option -> Choice(option.label, value == option.value) { onPick(option.value) } }
+            Choice("Same as ${knob.emulator.title}" + (globalLabel?.let { " ($it)" } ?: ""), effective == null) {
+                // Turning down a suggestion that would otherwise be used is a choice of its own.
+                onPick(if (used) Suggestions.GLOBAL else null)
+            }
+            knob.options.forEach { option ->
+                val community = rec?.value == option.value
+                Choice(option.label + if (community) " · community" else "", effective == option.value) {
+                    onPick(if (community && used) null else option.value)
+                }
+            }
+        }
+        rec?.let { r ->
+            val label = knob.label(r.value) ?: r.value
+            Text(
+                when {
+                    effective == r.value -> "Community: $label. ${r.why}"
+                    used -> "Community suggests $label (${r.why.trimEnd('.')}); you've chosen otherwise."
+                    else -> "Community suggests $label: ${r.why}"
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = AccentAlt,
+            )
         }
         problem?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = Warn) }
     }
@@ -287,7 +401,13 @@ fun GamesScreen(apps: List<InstalledApp>, library: Library, onOpen: (String) -> 
     val store = Store.get(context)
     val games by store.games.collectAsStateWithLifecycle()
     val detection by store.gameDetection.collectAsStateWithLifecycle()
+    val auto by store.suggestAuto.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    // Community reports for the games on this handheld.
+    val reports = remember(library) {
+        val all = Suggestions.byKey(context)
+        library.games.mapNotNull { all[Suggestions.key(it.game.system, it.game.name)]?.let { s -> it to s } }
+    }
     var query by remember { mutableStateOf("") }
     var undoing by remember { mutableStateOf(false) }
     var enabling by remember { mutableStateOf(false) }
@@ -330,6 +450,34 @@ fun GamesScreen(apps: List<InstalledApp>, library: Library, onOpen: (String) -> 
                 }
             }
 
+            item {
+                ToggleCard(
+                    title = "Use community settings",
+                    text = "Settings people use for your games on the ${Suggestions.hardware.ifBlank { "same chip" }} (Retroid Pocket 5, Mini and Flip 2), for settings you haven't chosen yourself. Yours always win, and lower resolutions are only suggested, never applied.",
+                    checked = auto,
+                    onChange = store::setSuggestAuto,
+                )
+            }
+            if (reports.isNotEmpty()) {
+                item {
+                    SectionCard {
+                        Text("How your games run", fontWeight = FontWeight.SemiBold)
+                        val counts = reports.groupingBy { it.second.status }.eachCount()
+                        Muted(
+                            Suggestion.Status.entries.mapNotNull { st -> counts[st]?.let { "$it ${st.label.lowercase()}" } }.joinToString(" · ") +
+                                " · ${reports.count { r -> r.second.settings.any { it.auto } }} with community settings",
+                        )
+                    }
+                }
+                val trouble = reports.filter { it.second.status == Suggestion.Status.STRUGGLES || it.second.status == Suggestion.Status.UNPLAYABLE }
+                if (trouble.isNotEmpty()) {
+                    item { Heading("Heavy on this chip") }
+                    items(trouble.sortedBy { it.first.game.name.lowercase() }, key = { "t" + it.first.game.id }) { (entry, s) ->
+                        GameLine(entry.game.name, entry, apps, s.status.label + if (s.note.isNotBlank()) " · " + s.note else "") { onOpen(entry.game.id) }
+                    }
+                }
+            }
+
             item { Heading("Games with their own settings") }
             if (games.isEmpty()) {
                 item { Muted("None yet. Pick a game below, or tap one in Jump back in.", Modifier.padding(horizontal = 4.dp)) }
@@ -368,7 +516,9 @@ fun GamesScreen(apps: List<InstalledApp>, library: Library, onOpen: (String) -> 
                 val found = library.games.filter { it.game.name.contains(query.trim(), ignoreCase = true) }.take(30)
                 if (found.isEmpty()) item { Muted("No game by that name in ES-DE.", Modifier.padding(horizontal = 4.dp)) }
                 items(found, key = { "f" + it.game.id }) { entry ->
-                    GameLine(entry.game.name, entry, apps, games.firstOrNull { it.id == entry.game.id }?.let(::summaryOf)) { onOpen(entry.game.id) }
+                    val report = reports.firstOrNull { it.first.game.id == entry.game.id }?.second?.status?.takeIf { it != Suggestion.Status.UNKNOWN }?.label
+                    val own = games.firstOrNull { it.id == entry.game.id }?.let(::summaryOf)
+                    GameLine(entry.game.name, entry, apps, listOfNotNull(report, own).joinToString(" · ").ifEmpty { null }) { onOpen(entry.game.id) }
                 }
             }
 
@@ -389,10 +539,11 @@ fun GamesScreen(apps: List<InstalledApp>, library: Library, onOpen: (String) -> 
         AlertDialog(
             onDismissRequest = { undoing = false },
             title = { Text("Undo all emulator changes?") },
-            text = { Text("Every game goes back to its emulators' own settings. Anything you set in the emulators themselves stays.") },
+            text = { Text("Every game goes back to its emulators' own settings, and community settings are turned off (turn them back on above). Anything you set in the emulators themselves stays.") },
             confirmButton = {
                 TextButton(onClick = {
                     undoing = false
+                    store.setSuggestAuto(false)
                     store.replaceGames(store.games.value.map { it.copy(emu = emptyMap()) })
                 }, modifier = Modifier.focusOutline(PillShape)) { Text("Undo", color = MaterialTheme.colorScheme.error) }
             },
@@ -428,8 +579,10 @@ private fun summaryOf(game: GameProfile): String {
     if (others > 0) parts += "$others more"
     game.emu.forEach { (key, value) ->
         val knob = com.pocketautomator.app.EmuKnobs.byKey(key) ?: return@forEach
+        if (value == Suggestions.GLOBAL) return@forEach
         parts += "${knob.title} ${knob.label(value) ?: value.substringAfterLast('/')}"
     }
+    if (game.emu.values.any { it == Suggestions.GLOBAL }) parts += "some community settings turned down"
     return parts.joinToString(" · ").ifEmpty { "Nothing set" }
 }
 

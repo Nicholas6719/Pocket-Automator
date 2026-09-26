@@ -140,9 +140,9 @@ fun HomeScreen(
                         title = "Games",
                         text = when {
                             !detection -> "Game detection is off · games use their emulator's profile"
-                            games.isEmpty() -> "Give a game its own settings: performance, fan, and its emulator's resolution"
-                            games.size == 1 -> "1 game has its own settings"
-                            else -> "${games.size} games have their own settings"
+                            games.isEmpty() -> "Give a game its own settings, and see how your games run on this chip"
+                            games.size == 1 -> "1 game has its own settings · community settings for the rest"
+                            else -> "${games.size} games have their own settings · community settings for the rest"
                         },
                         onClick = onGames,
                     )

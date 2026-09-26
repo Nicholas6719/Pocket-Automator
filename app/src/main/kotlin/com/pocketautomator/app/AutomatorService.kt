@@ -52,6 +52,7 @@ class AutomatorService : Service() {
         scope.launch { store.games.drop(1).collect { watcher.reconsider() } }
         scope.launch { store.games.collect { GameSettings.requestSync(this@AutomatorService) } }
         scope.launch { store.gameDetection.drop(1).collect { GameSettings.requestSync(this@AutomatorService) } }
+        scope.launch { store.suggestAuto.drop(1).collect { GameSettings.requestSync(this@AutomatorService) } }
         scope.launch {
             store.enabled.drop(1).collect { on ->
                 watcher.refresh()

@@ -123,6 +123,12 @@ object Hooks {
      * The hook itself. ES-DE passes the ROM path (with spaces and the like
      * backslash-escaped), the game's name, the system and the system's full
      * name. [azaharConfig] is Azahar's config.ini, if Azahar is set up.
+     *
+     * Azahar: `azahar.txt` has a "ROM<TAB>key|value" line per setting a game
+     * has of its own. As the game starts each one is swapped in, and
+     * `azahar-restore.txt` keeps "key|Azahar's own value|the game's"; they go
+     * back when ES-DE is back in front, unless changed in Azahar meanwhile.
+     * Values may be blank (Azahar's default), hence "|" rather than tabs.
      */
     fun onGame(folder: File, azaharConfig: String?): String {
         val d = '$'
@@ -135,23 +141,28 @@ object Hooks {
         |M="${d}D/azahar-restore.txt"
         |ev=${d}1; shift
         |p=${d}(printf '%s' "${d}1" | sed 's/\\\(.\)/\1/g')
-        |now() { sed -n 's/^resolution_factor *= *//p' "${d}C" | head -n 1; }
-        |put() { sed -i "s/^resolution_factor *=.*/resolution_factor = ${d}1/" "${d}C"; }
-        |# Puts Azahar's own resolution back, unless it was changed in Azahar meanwhile.
+        |now() { sed -n "s/^${d}1 *= *//p" "${d}C" | head -n 1; }
+        |put() { sed -i "s/^${d}1 *=.*/${d}1 = ${d}2/" "${d}C"; }
+        |# Puts Azahar's own values back, unless changed in Azahar meanwhile.
         |back() {
         |  [ -f "${d}M" ] && [ -f "${d}C" ] || return 0
-        |  [ "${d}(now)" = "${d}(cut -f2 "${d}M")" ] && put "${d}(cut -f1 "${d}M")"
+        |  while IFS='|' read -r k o a; do
+        |    [ -n "${d}k" ] && [ "${d}(now "${d}k")" = "${d}a" ] && put "${d}k" "${d}o"
+        |  done < "${d}M"
         |  return 0
         |}
         |if [ "${d}ev" = start ]; then
         |  printf '%s\n%s\n%s\n%s\n' "${d}(date +%s)" "${d}3" "${d}p" "${d}2" > "${d}D/game.txt"
         |  back; rm -f "${d}M"
         |  if [ -f "${d}C" ] && [ -f "${d}D/azahar.txt" ]; then
-        |    v=${d}(awk -F '\t' -v n="${d}{p##*/}" '${d}1 == n { print ${d}2; exit }' "${d}D/azahar.txt")
-        |    o=${d}(now)
-        |    if [ -n "${d}v" ] && [ -n "${d}o" ] && [ "${d}v" != "${d}o" ]; then
-        |      printf '%s\t%s\n' "${d}o" "${d}v" > "${d}M"; put "${d}v"
-        |    fi
+        |    awk -F '\t' -v n="${d}{p##*/}" '${d}1 == n { print ${d}2 }' "${d}D/azahar.txt" > "${d}D/azahar-next.txt"
+        |    while IFS='|' read -r k v; do
+        |      o=${d}(now "${d}k")
+        |      if [ -n "${d}k" ] && [ "${d}v" != "${d}o" ]; then
+        |        printf '%s|%s|%s\n' "${d}k" "${d}o" "${d}v" >> "${d}M"; put "${d}k" "${d}v"
+        |      fi
+        |    done < "${d}D/azahar-next.txt"
+        |    rm -f "${d}D/azahar-next.txt"
         |  fi
         |else
         |  back
@@ -172,10 +183,14 @@ object Hooks {
     fun readEvent(home: File): GameEvent? =
         parseEvent(runCatching { File(folder(home), "game.txt").takeIf { it.isFile }?.readText() }.getOrNull())
 
-    /** Azahar's per-game resolutions for the hook: "ROM file name<TAB>factor" lines. */
-    fun azaharList(games: List<GameProfile>): String =
-        games.mapNotNull { g -> g.emu[EmuKnobs.AZAHAR_RESOLUTION.key]?.let { "${g.romName}\t$it" } }
-            .sorted().joinToString("") { "$it\n" }
+    /** Azahar's per-game settings for the hook: a "ROM file name<TAB>key|value" line each. */
+    fun azaharList(games: Map<GameProfile, Map<String, String>>): String =
+        games.flatMap { (g, emu) ->
+            emu.mapNotNull { (key, value) ->
+                val knob = EmuKnobs.byKey(key)?.takeIf { it.emulator == Emulator.AZAHAR } ?: return@mapNotNull null
+                "${g.romName}\t${knob.name}|$value"
+            }
+        }.sorted().joinToString("") { "$it\n" }
 
     /** Whether ES-DE runs custom event scripts. Blocking. */
     fun enabledInEsDe(home: File) = EsDe.setting(home, "CustomEventScripts") == "true"

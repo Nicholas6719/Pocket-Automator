@@ -1,0 +1,3201 @@
+{
+ "version": 1,
+ "hardware": "Snapdragon 865",
+ "updated": "2026-09-26",
+ "about": "Community reports for these games on Snapdragon 865 handhelds (Retroid Pocket 5, Mini, Flip 2), with the settings their sources use. Only fixes a source calls necessary are applied automatically.",
+ "games": [
+  {
+   "system": "gc",
+   "name": "007: NightFire",
+   "id": "GO7E69",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Animal Crossing",
+   "id": "GAFE01",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Batman Begins",
+   "id": "GINE69",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Crash Bandicoot: The Wrath of Cortex",
+   "id": "GCBE7D",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Def Jam: Fight For NY",
+   "id": "GNWE69",
+   "status": "unknown",
+   "note": "Wiki recommends Manual Texture Sampling on to render VP6 videos (not an allowed key).",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Def_Jam:_Fight_for_NY",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Donkey Kong Jungle Beat",
+   "id": "GYBE01",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "F-Zero GX",
+   "id": "GFZE01",
+   "status": "unknown",
+   "note": "bundled INI forces single-core (CPUThread=False), which is CPU-heavy.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=F-Zero_GX",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Fixes missing sepia images in Master-difficulty end credits.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=F-Zero_GX",
+     "auto": false
+    },
+    {
+     "key": "dolphin.texture_cache",
+     "value": "0",
+     "why": "Safe cache fixes Emblem Editor cursor.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=F-Zero_GX",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "Freedom Fighters",
+   "id": "GFDE69",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Hitman 2 : Silent Assassin",
+   "id": "GHME4F",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "James Bond 007 in Agent Under Fire",
+   "id": "GW7E69",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Lara Croft Tomb Raider: Legend",
+   "id": "GL8E4F",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Luigi's Mansion",
+   "id": "GLME01",
+   "status": "unknown",
+   "note": "",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Luigi's_Mansion"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.dual_core",
+     "value": "False",
+     "why": "Fixes Luigi's corrupted model in the game intro only.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Luigi's_Mansion",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "Mario Kart : Double Dash!!",
+   "id": "GM4E01",
+   "status": "unknown",
+   "note": "",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Mario Party 7",
+   "id": "GP7E01",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Mario Power Tennis",
+   "id": "GOME01",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Medal of Honor: Frontline",
+   "id": "GMFE69",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Metroid Prime",
+   "id": "GM8E01",
+   "status": "full",
+   "note": "heldgames: full speed on SD865 with minor audio hiccups; techxreviews: smooth at 720p on Flip 2 (3x not reported).",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Metroid_Prime_(GC)",
+    "https://heldgames.com/guides/gamecube-wii-emulation-handheld",
+    "https://techxreviews.com/retroid-pocket-flip-2-review/",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Raindrops render with black-line corruption otherwise.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Metroid_Prime_(GC)",
+     "auto": true
+    },
+    {
+     "key": "dolphin.shader_mode",
+     "value": "2",
+     "why": "Wiki recommends Hybrid (or Exclusive) Ubershaders to fix shader-compilation stutter.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Metroid_Prime_(GC)",
+     "auto": false
+    },
+    {
+     "key": "dolphin.resolution",
+     "value": "2",
+     "why": "Reviewer reports smooth play at 720p on Retroid Pocket Flip 2.",
+     "source": "https://techxreviews.com/retroid-pocket-flip-2-review/",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "Metroid Prime 2 : Echoes",
+   "id": "G2ME01",
+   "status": "unknown",
+   "note": "Wiki lists shader-compilation stutter; bundled INI forces single-core and disables EFB-to-texture. No SD865 report found.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Metroid_Prime_2:_Echoes_(GC)",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Mortal Kombat: Deadly Alliance",
+   "id": "GMKE5D",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Need For Speed Carbon",
+   "id": "GW5E69",
+   "status": "unknown",
+   "note": "Wiki: VP6 FMVs show scrambled lines with no known fix. No SD865 report found.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Need_for_Speed:_Carbon_(GC)"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Paper Mario : The Thousand-Year Door",
+   "id": "G8ME01",
+   "status": "unknown",
+   "note": "Wiki's dual-core-off tip only fixes PAL 60Hz reverting to 50Hz; paper effects pixelated above native (no workaround).",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Paper_Mario:_The_Thousand-Year_Door",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Pokémon Colosseum",
+   "id": "GC6E01",
+   "status": "unknown",
+   "note": "Wiki lists no required settings (60 FPS patch softlocks cutscenes).",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Pok%C3%A9mon_Colosseum",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Pokémon XD : Gale of Darkness",
+   "id": "GXXE01",
+   "status": "unknown",
+   "note": "Wiki suggests forcing 4:3 aspect ratio to stop AR flicker; bundled INI forces single-core + MMU (CPU-heavy).",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Pok%C3%A9mon_XD:_Gale_of_Darkness",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Resident Evil 3: Nemesis",
+   "id": "GLEE08",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Shadow The Hedgehog",
+   "id": "GUPE8P",
+   "status": "unknown",
+   "note": "Bundled INI already forces single-core and vertex rounding; wiki fix below only matters for splitscreen.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Shadow_the_Hedgehog",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Fixes second player screen in splitscreen.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Shadow_the_Hedgehog",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "Sonic Riders",
+   "id": "GXEE8P",
+   "status": "unknown",
+   "note": "Wiki: slow model loading at character select unless disc-speed emulation is on (not an allowed key).",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Sonic_Riders"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.widescreen_hack",
+     "value": "False",
+     "why": "Wiki notes the widescreen hack causes clipping (Gecko codes preferred).",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Sonic_Riders",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "SoulCalibur II",
+   "id": "GRSEAF",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Splinter Cell",
+   "id": "GCEE41",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Star Fox : Assault",
+   "id": "GF7E01",
+   "status": "unknown",
+   "note": "Wiki lists no required settings; bundled INI already handles EFB copies and texture cache.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Star_Fox:_Assault",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Star Fox Adventures",
+   "id": "GSAE01",
+   "status": "unknown",
+   "note": "Wiki: performance varies widely; outdoor areas and cutscenes cause slowdowns. No SD865 report found.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Star_Fox_Adventures"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Needed for correct glow effects.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Star_Fox_Adventures",
+     "auto": true
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "Star Wars : Bounty Hunter",
+   "id": "GBWE64",
+   "status": "unknown",
+   "note": "Wiki: purple bar in some FMVs unless XFB-to-texture is off, which may cost performance on weak devices.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Star_Wars:_Bounty_Hunter",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.xfb_to_texture",
+     "value": "False",
+     "why": "Removes purple bar in certain FMVs (may cost performance).",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Star_Wars:_Bounty_Hunter",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "Super Mario Strikers",
+   "id": "G4QE01",
+   "status": "unknown",
+   "note": "Wiki lists only a loading-animation fix.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Strikers"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.xfb_to_texture",
+     "value": "False",
+     "why": "Shows loading animations.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Strikers",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "Super Mario Sunshine",
+   "id": "GMSE01",
+   "status": "full",
+   "note": "techxreviews: full speed on Flip 2 (heldgames claims 85-95% at 1x, conflicting). Wiki: heat-wave/water effects can render wrong at higher IR.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Sunshine",
+    "https://techxreviews.com/retroid-pocket-flip-2-review/",
+    "https://heldgames.com/guides/gamecube-wii-emulation-handheld",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.sync_gpu",
+     "value": "True",
+     "why": "Wiki config: avoids shaky props with dual core enabled.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Sunshine",
+     "auto": true
+    },
+    {
+     "key": "dolphin.anisotropy",
+     "value": "0",
+     "why": "Anisotropic filtering makes water render white.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Sunshine",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "Super Smash Bros. Melee",
+   "id": "GALE01",
+   "status": "unknown",
+   "note": "minor drops possible in 4-player matches with heavy effects.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Super_Smash_Bros._Melee"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Needed only for Special Melee Camera Mode screenshots.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Smash_Bros._Melee",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "Teenage Mutant Ninja Turtles",
+   "id": "GTFEA4",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "The Incredible Hulk Ultimate Destruction",
+   "id": "GHUE7D",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "The Legend of Zelda : Four Swords Adventures",
+   "id": "G4SE01",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "The Legend of Zelda : The Wind Waker",
+   "id": "GZLE01",
+   "status": "unknown",
+   "note": "Wiki: ocean fade-to-blue mipmap issue at higher IR; widescreen hack causes clipping.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=The_Legend_of_Zelda:_The_Wind_Waker",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.widescreen_hack",
+     "value": "False",
+     "why": "Wiki notes the widescreen hack causes clipping.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=The_Legend_of_Zelda:_The_Wind_Waker",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "gc",
+   "name": "The Legend of Zelda : Twilight Princess",
+   "id": "RZDE01",
+   "status": "unknown",
+   "note": "Wiki: Hyrule Field slows progressively (speed hack exists but breaks minimap); bloom offset at higher IR.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=The_Legend_of_Zelda:_Twilight_Princess_(GC)",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "The Simpsons : Hit & Run",
+   "id": "GHQE7D",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Tom Clancy's Ghost Recon",
+   "id": "GGRE41",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "Top Gun: Combat Zones",
+   "id": "GTGE60",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "True Crime: New York City",
+   "id": "G2CE52",
+   "status": "unknown",
+   "note": "Wiki: framerate erratic even on console and raising the emulated CPU clock helps (no value given); many glitches are console-accurate.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=True_Crime:_New_York_City",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "X-Men Legends",
+   "id": "GXLE52",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "gc",
+   "name": "X-Men Legends II: Rise of Apocalypse",
+   "id": "GX2E52",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Ben 10 : Alien Force",
+   "id": "SLUS-21815_DB2DE310",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Ben 10 : Alien Force, Vilgax Attacks",
+   "id": "SLUS-21921_8A1D18EE",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Black",
+   "id": "SLUS-21376_5C891FF1",
+   "status": "playable",
+   "note": "RP Mini (SD865) on AetherSX2/Vulkan ran smooth at 1x native; 2x was laggy. ARMSX2 2.6.9 fixed Black flicker on Turnip and 2.7 restored its readback fix.",
+   "sources": [
+    "https://www.youtube.com/watch?v=NeMEyLo_NMo",
+    "https://github.com/ARMSX2/ARMSX2/releases/tag/2.6.9",
+    "https://github.com/ARMSX2/ARMSX2/releases/tag/2.7"
+   ],
+   "settings": [
+    {
+     "key": "armsx2.upscale",
+     "value": "1",
+     "why": "Tester found 2x laggy on SD865 and dropped to 1x native for smooth play.",
+     "source": "https://www.youtube.com/watch?v=NeMEyLo_NMo",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "ps2",
+   "name": "Burnout Dominator",
+   "id": "SLUS-21596_8C9576A1",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Burnout Revenge",
+   "id": "SLUS-21242_D224D348",
+   "status": "full",
+   "note": "Retro Tech Dad: runs incredibly well at 3x on the SD865 Retroid Pocket Mini (NetherSX2, Vulkan, standard preset).",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Call of Duty 2 : Big Red One",
+   "id": "SLUS-21228_E66C9699",
+   "status": "unknown",
+   "note": "No SD865 report found; ARMSX2 2.7.1 made its ~10,000 small paletted draws per frame faster (automatic).",
+   "sources": [
+    "https://github.com/ARMSX2/ARMSX2/releases/tag/2.7.1"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Call of Duty 3",
+   "id": "SLUS-21426_5E843024",
+   "status": "unknown",
+   "note": "No SD865 report found; ARMSX2 2.7.1 made its paletted-texture draws faster (automatic).",
+   "sources": [
+    "https://github.com/ARMSX2/ARMSX2/releases/tag/2.7.1"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Call of Duty : World at War, Final Fronts",
+   "id": "SLUS-21746_BFF3DBCB",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Crash of the Titans",
+   "id": "SLUS-21583_C6E85EF0",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Def Jam : Fight for NY",
+   "id": "SLUS-21004_4538436F",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Downhill Domination",
+   "id": "SCUS-97177_5AE01D98",
+   "status": "unknown",
+   "note": "No SD865 report found; ARMSX2 2.7 restored its readback fix (it runs slowly without it), already applied via armsx2_overrides.",
+   "sources": [
+    "https://github.com/ARMSX2/ARMSX2/releases/tag/2.7"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "DreamWorks Kung Fu Panda",
+   "id": "SLUS-21757_436D2C83",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Driver : Parallel Lines",
+   "id": "SLUS-21271_D720770D",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "God of War",
+   "id": "SCUS-97399_D6385328",
+   "status": "full",
+   "note": "Retro Tech Dad: excellent performance at 2x on SD865 (NetherSX2, standard preset); ARMSX2 compat list rates it Perfect on SD888.",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic",
+    "https://github.com/ARMSX2/ARMSX2-compat/blob/main/compatibility.json"
+   ],
+   "settings": [
+    {
+     "key": "armsx2.upscale",
+     "value": "2",
+     "why": "Tester ran it at 2x on SD865 with excellent performance, same as God of War II.",
+     "source": "https://www.youtube.com/watch?v=HJS6H9ulUic",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "ps2",
+   "name": "God of War II",
+   "id": "SCUS-97481_2F123FD8",
+   "status": "playable",
+   "note": "Demanding: Retro Tech Dad says it mostly runs very well at 2x on SD865. ARMSX2 says the full-screen haze only renders right at High blending.",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic",
+    "https://github.com/ARMSX2/ARMSX2/releases/tag/2.6.9",
+    "https://github.com/ARMSX2/ARMSX2-compat/blob/main/compatibility.json"
+   ],
+   "settings": [
+    {
+     "key": "armsx2.upscale",
+     "value": "2",
+     "why": "Tester says it is demanding on Android and runs mostly very well at 2x on SD865.",
+     "source": "https://www.youtube.com/watch?v=HJS6H9ulUic",
+     "auto": false
+    },
+    {
+     "key": "armsx2.blending",
+     "value": "3",
+     "why": "ARMSX2 2.6.9: the haze is blended by destination alpha and only comes out right at High (GameIndex only suggests it; may cost speed on Adreno 650).",
+     "source": "https://github.com/ARMSX2/ARMSX2/releases/tag/2.6.9",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "ps2",
+   "name": "Gran Turismo 4",
+   "id": "SCUS-97328_77E61C8A",
+   "status": "playable",
+   "note": "Performance depends on the track. Day tracks run at 3x, night tracks need 2x, and Paris at night is too slow even at 1x on the NTSC version. For a black background, disable framebuffer fetch (not a listed key).",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic",
+    "https://www.youtube.com/watch?v=GHOkCfCP0Uw",
+    "https://github.com/nckstwrt/NetherSX2-Turnip",
+    "https://github.com/ARMSX2/ARMSX2/releases/tag/2.6.9",
+    "https://github.com/ARMSX2/ARMSX2-compat/blob/main/compatibility.json"
+   ],
+   "settings": [
+    {
+     "key": "armsx2.hw_download",
+     "value": "1",
+     "why": "Both SD865 testers set Disable Readbacks for the heavy/night tracks; RETRODAXX calls it very important.",
+     "source": "https://www.youtube.com/watch?v=GHOkCfCP0Uw",
+     "auto": true
+    },
+    {
+     "key": "armsx2.upscale",
+     "value": "2",
+     "why": "Night tracks drop frames at 3x on SD865; both testers settle on 2x.",
+     "source": "https://www.youtube.com/watch?v=HJS6H9ulUic",
+     "auto": false
+    },
+    {
+     "key": "armsx2.blending",
+     "value": "0",
+     "why": "RETRODAXX RP5 GT4 settings use Minimum blending.",
+     "source": "https://www.youtube.com/watch?v=GHOkCfCP0Uw",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "ps2",
+   "name": "Grand Theft Auto : San Andreas",
+   "id": "SLUS-20946_2C6BE434",
+   "status": "full",
+   "note": "Retro Tech Dad: runs very well at 3x on SD865 with the standard preset, no issues.",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Grand Theft Auto : Vice City",
+   "id": "SLUS-20552_248E6126",
+   "status": "full",
+   "note": "Retro Tech Dad: runs very well at 3x on SD865 with the standard preset.",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Grand Theft Auto III",
+   "id": "SLUS-20062_5E115FB6",
+   "status": "full",
+   "note": "Retro Tech Dad: runs very well at 3x on SD865; RETRODAXX also plays it at 3x on RP5.",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic",
+    "https://www.youtube.com/watch?v=Z7UdSsZhnqI"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Hitman 2 : Silent Assassin",
+   "id": "SLUS-20374_7656425F",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Hitman : Blood Money",
+   "id": "SLUS-21108_13E1AD6A",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Jet Li: Rise to Honor",
+   "id": "SCUS-97279_2105AA98",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Killzone",
+   "id": "SCUS-97402_CAAEC49C",
+   "status": "playable",
+   "note": "Ironclad COBRA: runs close to 60 fps on RP5 (SD865) at 1x native with AetherSX2 on Vulkan. The NetherSX2 Classic crash fix (turn off Fast Memory) has no ARMSX2 equivalent.",
+   "sources": [
+    "https://www.youtube.com/watch?v=-lIOl-tAjYw",
+    "https://www.youtube.com/watch?v=iEaaKz5e0Pk"
+   ],
+   "settings": [
+    {
+     "key": "armsx2.upscale",
+     "value": "1",
+     "why": "The SD865 test that ran close to 60 fps used 1x native.",
+     "source": "https://www.youtube.com/watch?v=-lIOl-tAjYw",
+     "auto": false
+    },
+    {
+     "key": "armsx2.ee_cycle_rate",
+     "value": "1",
+     "why": "PS2 Guy says the 130% EE overclock makes it play smoother than a real PS2 (device not stated; costs CPU on SD865).",
+     "source": "https://www.youtube.com/watch?v=iEaaKz5e0Pk",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "ps2",
+   "name": "LEGO Batman : The Videogame",
+   "id": "SLUS-21785_E01F57EC",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Lara Croft Tomb Raider : Legend",
+   "id": "SLUS-21203_BC8B3F50",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Midnight Club 3 : DUB Edition Remix",
+   "id": "SLUS-21355_60A42FF5",
+   "status": "unknown",
+   "note": "No SD865 report; the ARMSX2 compat list (SD888, v1.0 debug) had good speed with slowdowns in parts of the city and audio stutter.",
+   "sources": [
+    "https://github.com/ARMSX2/ARMSX2-compat/blob/main/compatibility.json"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Mortal Kombat : Armageddon",
+   "id": "SLUS-21410_104F08F4",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Need for Speed : Underground",
+   "id": "SLUS-20811_CB99CD12",
+   "status": "unknown",
+   "note": "No SD865 report. ARMSX2 2.6.9 draws vertical bands when upscaled (open issue, seen on Adreno 740); native removes them. The SD888 compat entry ran at mid speed.",
+   "sources": [
+    "https://github.com/ARMSX2/ARMSX2/issues/671",
+    "https://github.com/nckstwrt/NetherSX2-Turnip",
+    "https://github.com/ARMSX2/ARMSX2-compat/blob/main/compatibility.json"
+   ],
+   "settings": [
+    {
+     "key": "armsx2.upscale",
+     "value": "1",
+     "why": "Issue #671: bands appear only when upscaling and switching to native removes them.",
+     "source": "https://github.com/ARMSX2/ARMSX2/issues/671",
+     "auto": false
+    },
+    {
+     "key": "armsx2.blending",
+     "value": "0",
+     "why": "The NetherSX2-Turnip author says Minimum blending makes a big difference for NFS games on lower-powered devices.",
+     "source": "https://github.com/nckstwrt/NetherSX2-Turnip",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "ps2",
+   "name": "Need for Speed : Underground 2",
+   "id": "SLUS-21065_F5C7B45F",
+   "status": "unknown",
+   "note": "No SD865 report; road reflections flicker during races (open ARMSX2 issue #671, no fix yet).",
+   "sources": [
+    "https://github.com/ARMSX2/ARMSX2/issues/671",
+    "https://github.com/nckstwrt/NetherSX2-Turnip"
+   ],
+   "settings": [
+    {
+     "key": "armsx2.blending",
+     "value": "0",
+     "why": "The NetherSX2-Turnip author says Minimum blending makes a big difference for NFS games on lower-powered devices.",
+     "source": "https://github.com/nckstwrt/NetherSX2-Turnip",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "ps2",
+   "name": "Prince of Persia : The Sands of Time",
+   "id": "SLUS-20743_7F6EB3D0",
+   "status": "full",
+   "note": "Retro Tech Dad: an excellent performer at 3x on the SD865 RP Mini.",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Prince of Persia : The Two Thrones",
+   "id": "SLUS-21287_84F3309D",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Prince of Persia : Warrior Within",
+   "id": "SLUS-21022_6B17B39F",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Ratchet & Clank",
+   "id": "SCUS-97199_CE4933D0",
+   "status": "playable",
+   "note": "Reports conflict: Retro Tech Dad ran it well at 3x on the RP Mini, while Retro Game Corps saw slowdown on RP5 in the first two levels even at 2x.",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic",
+    "https://www.youtube.com/watch?v=ZFTrwWQOe5Y"
+   ],
+   "settings": [
+    {
+     "key": "armsx2.upscale",
+     "value": "2",
+     "why": "RGC dropped it to 2x on RP5 (still some slowdown); RTD ran 3x fine on RP Mini.",
+     "source": "https://www.youtube.com/watch?v=ZFTrwWQOe5Y",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "ps2",
+   "name": "Shinobi",
+   "id": "SLUS-20459_BFCC3E7E",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Soulcalibur II",
+   "id": "SLUS-20643_E1B01308",
+   "status": "full",
+   "note": "Retro Tech Dad: runs great at 2x on the SD865 RP Mini.",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic"
+   ],
+   "settings": [
+    {
+     "key": "armsx2.upscale",
+     "value": "2",
+     "why": "Tester ran it at 2x on SD865 and it worked great.",
+     "source": "https://www.youtube.com/watch?v=HJS6H9ulUic",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "ps2",
+   "name": "Soulcalibur III",
+   "id": "SLUS-21216_027C604C",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Spartan : Total Warrior",
+   "id": "SLUS-21212_08277A9E",
+   "status": "unknown",
+   "note": "No SD865 report; the ARMSX2 compat list rates it Perfect (full speed) on SD888.",
+   "sources": [
+    "https://github.com/ARMSX2/ARMSX2-compat/blob/main/compatibility.json"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Spider-Man",
+   "id": "SLUS-20336_015CB6F4",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Spider-Man 2",
+   "id": "SLUS-20776_E2DFCE12",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Spider-Man 3",
+   "id": "SLUS-21552_29873A0C",
+   "status": "unknown",
+   "note": "No gameplay report; in the ARMSX2 2.6.9 SD865 benchmark its replay scene took 17.7 ms per frame at the median.",
+   "sources": [
+    "https://github.com/ARMSX2/ARMSX2/releases/tag/2.6.9"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Star Wars : Battlefront II",
+   "id": "SLUS-21240_02F4B541",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Superman Returns",
+   "id": "SLUS-21434_E1BF5DCA",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Tekken 5",
+   "id": "SLUS-21059_652050D2",
+   "status": "full",
+   "note": "Retro Tech Dad: runs well at 3x on SD865. An ARMSX2 tester (SD 8 Gen 2) noted some effects go missing at Basic blending.",
+   "sources": [
+    "https://www.youtube.com/watch?v=HJS6H9ulUic",
+    "https://github.com/ARMSX2/ARMSX2/issues/33",
+    "https://github.com/ARMSX2/ARMSX2-compat/blob/main/compatibility.json"
+   ],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Test Drive Unlimited",
+   "id": "SLUS-21490_A4303F5A",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "The Incredible Hulk: Ultimate Destruction",
+   "id": "SLUS-21765_EA8D4BDF",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "TimeSplitters : Future Perfect",
+   "id": "SLUS-21148_FB2F4502",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Tony Hawk's Downhill Jam",
+   "id": "SLUS-21456_7D13310A",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "True Crime : New York City",
+   "id": "SLUS-21106_42A9C4EC",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "Ultimate Spider-Man",
+   "id": "SLUS-20870_FDD12792",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "ps2",
+   "name": "X-Men Origins : Wolverine",
+   "id": "SLUS-21880_4B1A0FFA",
+   "status": "unknown",
+   "note": "No SD865/Adreno 650 community report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Ace Combat 2",
+   "id": "SLUS-00404",
+   "status": "full",
+   "note": "gamedb: US SLUS-00404 rated NoIssues (tested 0.1-1302-gf28ef01); upscalingIssues: Bottom left radar (small and large, large appears when holding Square) has slight texture alignment issues",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Alien Trilogy",
+   "id": "SLUS-00007",
+   "status": "full",
+   "note": "gamedb: US SLUS-00007 rated NoIssues (tested 0.1-1313-g10cd00c); EU SLES-00101 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Ape Escape",
+   "id": "SCUS-94423",
+   "status": "full",
+   "note": "gamedb: US SCUS-94423 rated NoIssues (tested 0.1-986-gfc911de1); EU SCES-01564 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Armored Core",
+   "id": "SCUS-94182",
+   "status": "full",
+   "note": "gamedb: US SCUS-94182 rated NoIssues (tested 0.1-1490-g76978986); EU SCES-00842 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Army Men 3D",
+   "id": "SLUS-00491",
+   "status": "full",
+   "note": "gamedb: US SLUS-00491 rated NoIssues (tested 0.1-908-g9f22684); EU SLES-02378 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Batman & Robin",
+   "id": "SLUS-00393",
+   "status": "full",
+   "note": "gamedb: US SLUS-00393 rated NoIssues (tested 0.1-1400-gb527118c); EU SLES-00102 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Blade",
+   "id": "SLUS-01215",
+   "status": "unknown",
+   "note": "gamedb: US SLUS-01215 rated NoIssues (tested 0.1-1409-ge198e315); comments: Performance issues (Issue #696).; EU SLES-03213 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Crash Bandicoot",
+   "id": "SCUS-94900",
+   "status": "full",
+   "note": "gamedb: US SCUS-94900 rated NoIssues; EU SCES-00344 rated NoIssues",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://github.com/stenzek/duckstation/pull/2946"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Crash Bandicoot 2 : Cortex Strikes Back",
+   "id": "SCUS-94154",
+   "status": "full",
+   "note": "gamedb: US SCUS-94154 rated NoIssues; EU SCES-00967 rated NoIssues",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://github.com/stenzek/duckstation/pull/2946"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Crash Bandicoot : Warped",
+   "id": "SCUS-94244",
+   "status": "full",
+   "note": "gamedb: US SCUS-94244 rated NoIssues (tested 0.1-2499-g770dd5a6); EU SCES-01420 rated NoIssues",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://github.com/stenzek/duckstation/pull/2946"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Dino Crisis 2",
+   "id": "SLUS-01279",
+   "status": "full",
+   "note": "gamedb: US SLUS-01279 rated NoIssues (tested 0.1-908-g9f22684); EU SLES-03221 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Disney-Pixar Toy Story 2 : Buzz Lightyear to the Rescue!",
+   "id": "SLUS-00893",
+   "status": "full",
+   "note": "gamedb: US SLUS-00893 rated NoIssues (tested 0.1-4739-g1cc6ee48); EU SLES-02067 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Driver : You Are the Wheelman",
+   "id": "SLUS-00842",
+   "status": "full",
+   "note": "gamedb: US SLUS-00842 rated NoIssues (tested 0.1-1409-ge198e315); EU SLES-01816 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://www.resetera.com/threads/cpu-overclocking-for-ps1-emulation-is-underrated.617916/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Fighting Force",
+   "id": "SLUS-00433",
+   "status": "full",
+   "note": "gamedb: US SLUS-00433 rated NoIssues (tested 0.1-1608-g79aaf908); EU SLES-00731 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Gran Turismo",
+   "id": "SCUS-94194",
+   "status": "full",
+   "note": "gamedb: US SCUS-94194 rated NoIssues (tested 0.1-1336-gd711baa); EU SCES-00984 rated NoIssues (tested 0.1-986-gfc911de1)",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://projectcerbera.com/gt/1/duckstation/"
+   ],
+   "settings": [
+    {
+     "key": "duckstation.widescreen",
+     "value": "true",
+     "why": "Project Cerbera's GT1 DuckStation guide: Widescreen Rendering 'Works great in Gran Turismo!'. Optional; fills the 16:9 screen.",
+     "source": "https://projectcerbera.com/gt/1/duckstation/",
+     "auto": false
+    },
+    {
+     "key": "duckstation.aspect",
+     "value": "16:9",
+     "why": "Paired with Widescreen Rendering in the same guide (Aspect Ratio 16:9 'Works brilliantly!'). Needed so the widescreen render is not squashed.",
+     "source": "https://projectcerbera.com/gt/1/duckstation/",
+     "auto": false
+    },
+    {
+     "key": "duckstation.pgxp",
+     "value": "true",
+     "why": "Same guide: PGXP Geometry Correction is 'Very important! Solves much of the wobbly geometry'. Only needed if PGXP is not already on globally.",
+     "source": "https://projectcerbera.com/gt/1/duckstation/",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "psx",
+   "name": "Gran Turismo 2 (Arcade Mode)",
+   "id": "SCUS-94455",
+   "status": "full",
+   "note": "gamedb: US SCUS-94455 rated NoIssues (tested 0.1-986-gfc911de1); EU SCES-02380 rated NoIssues (tested 0.1-1448-g472f1c1c)",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://projectcerbera.com/gt/2/duckstation/"
+   ],
+   "settings": [
+    {
+     "key": "duckstation.pgxp",
+     "value": "true",
+     "why": "Project Cerbera's GT2 DuckStation guide: PGXP Geometry Correction is 'Very important! Solves much of the wobbly geometry'. Only needed if PGXP is not already on globally.",
+     "source": "https://projectcerbera.com/gt/2/duckstation/",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "psx",
+   "name": "Grand Theft Auto",
+   "id": "SLUS-00106",
+   "status": "full",
+   "note": "gamedb: US SLUS-00106 rated NoIssues (tested 0.1-1308-g622e50fa); EU SLES-00032 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Grand Theft Auto 2",
+   "id": "SLUS-00789",
+   "status": "full",
+   "note": "gamedb: US SLUS-00789 rated NoIssues (tested 0.1-1308-g622e50fa); EU SLES-01404 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Jackie Chan Stuntmaster",
+   "id": "SLUS-00684",
+   "status": "full",
+   "note": "gamedb: US SLUS-00684 rated NoIssues; EU SCES-01444 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Marvel vs. Capcom : Clash of Super Heroes",
+   "id": "SLUS-01059",
+   "status": "full",
+   "note": "gamedb: US SLUS-01059 rated NoIssues (tested 0.1-1308-g622e50fa); EU SLES-02305 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Medal of Honor",
+   "id": "SLUS-00974",
+   "status": "full",
+   "note": "gamedb: US SLUS-00974 rated NoIssues (tested 0.1-941-g2e64f77); EU SLES-02470 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Mortal Kombat 4",
+   "id": "SLUS-00605",
+   "status": "full",
+   "note": "gamedb: US SLUS-00605 rated NoIssues (tested 0.1-1304-gc8b6712); EU SLES-01349 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Mortal Kombat Trilogy",
+   "id": "SLUS-00330",
+   "status": "full",
+   "note": "gamedb: US SLUS-00330 rated NoIssues (tested 0.1-1400-gb527118c); EU SLES-00528 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "NHL 98",
+   "id": "SLUS-00519",
+   "status": "unknown",
+   "note": "gamedb: US SLUS-00519 no compatibility rating; EU SLES-00512 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Need for Speed : High Stakes",
+   "id": "SLUS-00826",
+   "status": "full",
+   "note": "gamedb: US SLUS-00826 rated NoIssues (tested 0.1-986-gfc911de1); EU SLES-01876 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://github.com/duckstation/chtdb/tree/master/patches/SLUS-00826.cht"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Need for Speed : Porsche Unleashed",
+   "id": "SLUS-01104",
+   "status": "full",
+   "note": "gamedb: US SLUS-01104 rated NoIssues (tested 0.1-908-g9f22684); EU SLES-02689 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Ninja : Shadow of Darkness",
+   "id": "SLUS-00435",
+   "status": "full",
+   "note": "gamedb: US SLUS-00435 rated NoIssues (tested 0.1-2499-g770dd5a6); EU SLES-00756 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Nuclear Strike",
+   "id": "SLUS-00518",
+   "status": "unknown",
+   "note": "gamedb: US SLUS-00518 no compatibility rating; EU SLES-00919 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "R4 : Ridge Racer Type 4",
+   "id": "SLUS-00797",
+   "status": "full",
+   "note": "gamedb: US SLUS-00797 rated NoIssues; EU SCES-01706 rated NoIssues (tested 0.1-3968-gd9151ceb)",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Rayman 2 : The Great Escape",
+   "id": "SLUS-01235",
+   "status": "full",
+   "note": "gamedb: US SLUS-01235 rated NoIssues (tested 0.1-986-gfc911de1); EU SLES-02905 rated NoIssues (tested 0.1-1641-gb2057ac6)",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Ridge Racer",
+   "id": "SCUS-94300",
+   "status": "full",
+   "note": "gamedb: US SCUS-94300 rated NoIssues (tested 0.1-986-gfc911de1); EU SCES-00001 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Ridge Racer Revolution",
+   "id": "SLUS-00214",
+   "status": "full",
+   "note": "gamedb: US SLUS-00214 rated NoIssues (tested 0.1-986-gfc911de1); EU SCES-00242 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Road Rash",
+   "id": "SLUS-00035",
+   "status": "full",
+   "note": "gamedb: US SLUS-00035 rated NoIssues (tested 0.1-2433-g9089c973); EU SLES-00158 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Road Rash : Jailbreak",
+   "id": "SLUS-01053",
+   "status": "full",
+   "note": "gamedb: US SLUS-01053 rated NoIssues (tested 0.1-1608-g79aaf908); EU SLES-02552 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Soviet Strike",
+   "id": "SLUS-00061",
+   "status": "unknown",
+   "note": "gamedb: US SLUS-00061 no compatibility rating; EU SLES-00507 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Spider-Man 2 - Enter: Electro",
+   "id": "SLUS-01378",
+   "status": "full",
+   "note": "gamedb: US SLUS-01378 rated NoIssues (tested 0.1-908-g9f22684); EU SLES-03623 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/duckstation-qt/graphicssettingswidget.cpp",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Spyro the Dragon",
+   "id": "SCUS-94228",
+   "status": "full",
+   "note": "gamedb: US SCUS-94228 rated NoIssues (tested 0.1-986-gfc911de1); EU SCES-01438 rated NoIssues",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/duckstation-qt/graphicssettingswidget.cpp",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Star Wars : Episode I, Jedi Power Battles",
+   "id": "SLUS-01046",
+   "status": "full",
+   "note": "gamedb: US SLUS-01046 no compatibility rating; EU SLES-02607 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Syphon Filter",
+   "id": "SCUS-94240",
+   "status": "full",
+   "note": "gamedb: US SCUS-94240 rated NoIssues (tested 0.1-986-gfc911de1); EU SCES-01910 rated NoIssues (tested 0.1-1308-g622e50fa)",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://github.com/duckstation/chtdb/tree/master/patches/SCUS-94240.cht"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tekken",
+   "id": "SLUS-00006",
+   "status": "full",
+   "note": "gamedb: US SLUS-00006 rated NoIssues (tested 0.1-986-gfc911de1); EU SCES-00005 rated NoIssues (tested 0.1-2148-g7078f73e)",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tenchu : Stealth Assassins",
+   "id": "SLUS-00706",
+   "status": "full",
+   "note": "gamedb: US SLUS-00706 rated NoIssues (tested 0.1-1400-gb527118c); EU SLES-01374 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tetris Plus",
+   "id": "SLUS-00338",
+   "status": "full",
+   "note": "gamedb: US SLUS-00338 rated NoIssues (tested 0.1-1064-g73cdd676); EU SLES-00442 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "The Italian Job",
+   "id": "SLUS-01457",
+   "status": "unknown",
+   "note": "gamedb: US SLUS-01457 no compatibility rating; EU SLES-03489 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Time Crisis",
+   "id": "SLUS-00405",
+   "status": "full",
+   "note": "gamedb: US SLUS-00405 rated NoIssues (tested 0.1-1334-g10f23667); EU SCES-00657 rated NoIssues (tested 0.1-2202-ga17e15f1)",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/guncon.cpp"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Time Crisis : Project Titan",
+   "id": "SLUS-01336",
+   "status": "full",
+   "note": "gamedb: US SLUS-01336 rated NoIssues (tested 0.1-1425-g05f0ce6d); EU SCES-02776 rated NoIssues (tested 0.1-2202-ga17e15f1)",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/guncon.cpp"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tiny Tank",
+   "id": "SCUS-94427",
+   "status": "full",
+   "note": "gamedb: US SCUS-94427 rated NoIssues (tested 0.1-1448-g472f1c1c); EU SCES-01338 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tomb Raider",
+   "id": "SLUS-00152",
+   "status": "full",
+   "note": "gamedb: US SLUS-00152 rated NoIssues (tested 0.1-986-gfc911de1); EU SLES-00024 rated NoIssues (tested 0.1-2790-gd588c26c)",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tomb Raider : The Last Revelation",
+   "id": "SLUS-00885",
+   "status": "full",
+   "note": "gamedb: US SLUS-00885 rated NoIssues (tested 0.1-1415-gdd9705ef); EU SLES-02238 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tomb Raider II : Starring Lara Croft",
+   "id": "SLUS-00437",
+   "status": "full",
+   "note": "gamedb: US SLUS-00437 rated NoIssues (tested 0.1-986-gfc911de1); EU SLES-00718 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tomb Raider III : Adventures of Lara Croft",
+   "id": "SLUS-00691",
+   "status": "full",
+   "note": "gamedb: US SLUS-00691 rated NoIssues (tested 0.1-1580-g136a9d60); EU SLES-01649 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tony Hawk's Pro Skater 2",
+   "id": "SLUS-01066",
+   "status": "full",
+   "note": "gamedb: US SLUS-01066 rated NoIssues (tested 0.1-986-gfc911de1); EU SLES-02908 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/duckstation-qt/graphicssettingswidget.cpp",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tony Hawk's Pro Skater 3",
+   "id": "SLUS-01419",
+   "status": "full",
+   "note": "gamedb: US SLUS-01419 rated NoIssues (tested 0.1-986-gfc911de1); EU SLES-03645 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/duckstation-qt/graphicssettingswidget.cpp",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Tony Hawk's Pro Skater 4",
+   "id": "SLUS-01485",
+   "status": "full",
+   "note": "gamedb: US SLUS-01485 rated NoIssues (tested 0.1-986-gfc911de1); EU SLES-03954 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/duckstation-qt/graphicssettingswidget.cpp",
+    "https://github.com/duckstation/chtdb/tree/master/patches",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "Vigilante 8",
+   "id": "SLUS-00510",
+   "status": "full",
+   "note": "gamedb: US SLUS-00510 rated NoIssues (tested 0.1-3187-gf580dbc6); EU SLES-01212 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "psx",
+   "name": "World's Scariest Police Chases",
+   "id": "SLUS-01165",
+   "status": "full",
+   "note": "gamedb: US SLUS-01165 rated NoIssues (tested 0.1-1115-g0b261e8); EU SLES-03425 no compatibility rating",
+   "sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/core/game_database.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/master/src/duckstation-qt/graphicssettingswidget.cpp",
+    "https://junubgames.com/retroid-pocket-5-setup-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Advance Wars 1+2 : Re-Boot Camp",
+   "id": "0100300012F2A000",
+   "status": "full",
+   "note": "The RP5 spreadsheet rates it Perfect and says it runs like it does on a real Switch.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Animal Crossing : New Horizons",
+   "id": "01006F8002326000",
+   "status": "full",
+   "note": "RP5 reports say it holds a locked 30fps, even in docked mode.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": [
+    {
+     "key": "eden.force_max_clock",
+     "value": "true",
+     "why": "used in the RP5 Citron report that got a locked 30fps.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Assassin's Creed: The Ezio Collection",
+   "id": "0100670014482000",
+   "status": "struggles",
+   "note": "An RP5 report (Suyu) got 20-30fps with frequent freezes at 0fps and heavy visual glitches, and the DLC would not boot.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=BF5VC8ienio"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Assassin's Creed: The Rebel Collection",
+   "id": "010044700DEB0000",
+   "status": "struggles",
+   "note": "An RP5 report (Suyu) got 20-30fps with frequent stalls at 0fps and heavy visual bugs, and says it will not boot unless the settings are right.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "2",
+     "why": "the RP5 reporter ran it at 0.75x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.disk_shader_cache",
+     "value": "true",
+     "why": "part of the only setup the RP5 reporter got to boot.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.force_max_clock",
+     "value": "true",
+     "why": "part of the only setup the RP5 reporter got to boot.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Balatro",
+   "id": "0100CD801CE5E000",
+   "status": "full",
+   "note": "RP5 reports rate it Perfect at 60fps. It sometimes hangs on the loading screen; relaunch it if that happens.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Celeste",
+   "id": "01002B30028F6000",
+   "status": "full",
+   "note": "RP5 reports rate it Perfect at 60fps on default settings.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Cult of the Lamb",
+   "id": "01002E7016C46000",
+   "status": "full",
+   "note": "RP5 reports say it runs at about 60fps, with short dips when you enter rooms.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": [
+    {
+     "key": "eden.force_max_clock",
+     "value": "true",
+     "why": "used in the RP5 Citron report that got 60fps.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Cuphead",
+   "id": "0100A5C00D162000",
+   "status": "full",
+   "note": "RP5 reports rate it Perfect at 60fps, and a Flip 2 video also shows 60fps.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=SCSMWpjTaCU"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Hades II",
+   "id": "0100A00019DE0000",
+   "status": "unknown",
+   "note": "No SD865 report found for the Switch version. Only the first Hades is rated Perfect on RP5.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Hollow Knight",
+   "id": "0100633007D48000",
+   "status": "full",
+   "note": "RP5 reports rate it Perfect with both the Qualcomm and Turnip drivers.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Hollow Knight : Silksong",
+   "id": "010013C00E930000",
+   "status": "full",
+   "note": "Eden videos show it at 60fps on RP5 and running well on Flip 2 in handheld 720p with async shaders.",
+   "sources": [
+    "https://www.youtube.com/watch?v=TR42AC-eTSk",
+    "https://www.youtube.com/watch?v=rRPsGpqdsDw"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "the Flip 2 Eden test ran handheld 720p (1x); only drop to this if 1.5x loses frames.",
+     "source": "https://www.youtube.com/watch?v=rRPsGpqdsDw",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Lego Marvel Super Heroes 2",
+   "id": "0100D3A00409E000",
+   "status": "full",
+   "note": "An RP5 report says it runs well on the stock Qualcomm driver but crashed on Turnip drivers.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=KcI6yJfDlVY"
+   ],
+   "settings": [
+    {
+     "key": "eden.driver",
+     "value": "",
+     "why": "the RP5 reporter says Turnip drivers crashed it and the system driver works well.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": true
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Luigi's Mansion 2 HD",
+   "id": "010048701995E000",
+   "status": "full",
+   "note": "It used to show a black screen on RP5. Recent Eden builds fix that, and Flip 2/RP5 Eden videos show it running well; 60fps needs a mod.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.reddit.com/r/retroid/comments/1ks2y4q/",
+    "https://www.reddit.com/r/retroid/comments/1nb36q9/",
+    "https://www.youtube.com/watch?v=pTII-Q2RSpc",
+    "https://www.youtube.com/watch?v=Q6UzJS0KB74"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Luigi's Mansion 3",
+   "id": "0100DCA0064A6000",
+   "status": "playable",
+   "note": "RP5 reports say it is playable to the end at 0.75x, but graphics glitches (mirrors, strobing) are common.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=O8KRPgF681E"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "2",
+     "why": "several RP5 reports run it at 0.75x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.disk_shader_cache",
+     "value": "true",
+     "why": "the RP5 report that finished the game had shader cache on.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.async_shaders",
+     "value": "false",
+     "why": "the RP5 report that finished the game had async shaders off.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Mario Kart 8 Deluxe",
+   "id": "0100152000022000",
+   "status": "full",
+   "note": "RP5 on Eden with the T19 driver holds a locked 60fps. Install update 3.0.4 or later (the 64-bit build). If it crashes on SD865, switch to the Qualcomm 819.2 driver.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.reddit.com/r/EmulationOnAndroid/comments/1tw9sew/_/opohl08/",
+    "https://www.reddit.com/r/EmulationOnAndroid/comments/1wl6g8e/",
+    "https://www.reddit.com/r/SBCGaming/comments/1tlp92v/",
+    "https://www.reddit.com/r/EmulationOnAndroid/comments/1wl6g8e/_/pawma7q/"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "the RP5 report on update 3.0.4 got a solid 60fps in handheld at 1x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Mario Strikers : Battle League",
+   "id": "010019401051C000",
+   "status": "playable",
+   "note": "RP5 reports 40-50fps on default settings with no crashes. The game targets 60fps.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=ATcmaYqabFM"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Mario Tennis Aces",
+   "id": "0100BDE00862A000",
+   "status": "full",
+   "note": "An RP5 report says it runs nice and smooth at 0.75x.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=ehpKhjpu3M8"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "2",
+     "why": "the RP5 report of smooth play used 0.75x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Metroid Dread",
+   "id": "010093801237C000",
+   "status": "full",
+   "note": "It was finished on RP5 with Eden at 1x and runs 60fps docked. One RP5 user on Eden with Turnip saw a black background.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.reddit.com/r/retroid/comments/1nxkb0l/",
+    "https://www.reddit.com/r/retroid/comments/1ttzjxp/",
+    "https://www.reddit.com/r/retroid/comments/1ryz4od/",
+    "https://www.youtube.com/watch?v=1KAvFIWsVOk"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "an RP5 Eden user finished the game at 1x with no issues.",
+     "source": "https://www.reddit.com/r/retroid/comments/1nxkb0l/",
+     "auto": false
+    },
+    {
+     "key": "eden.force_max_clock",
+     "value": "true",
+     "why": "used in both RP5 Citron reports that got 60fps.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Metroid Prime Remastered",
+   "id": "010012101468C000",
+   "status": "full",
+   "note": "Flip 2 on Eden with Mr. Purple T19 runs a solid 60fps with no crashes at 1x with these settings.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.reddit.com/r/retroid/comments/1jxatls/",
+    "https://whatstevedid.com/metroid-prime-remastered-on-the-retroid-pocket-flip-2-eden-settings/"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "the Flip 2 Eden T19 guide uses 1x for a solid 60fps.",
+     "source": "https://whatstevedid.com/metroid-prime-remastered-on-the-retroid-pocket-flip-2-eden-settings/",
+     "auto": false
+    },
+    {
+     "key": "eden.vram",
+     "value": "1",
+     "why": "the same guide sets VRAM usage to Aggressive.",
+     "source": "https://whatstevedid.com/metroid-prime-remastered-on-the-retroid-pocket-flip-2-eden-settings/",
+     "auto": false
+    },
+    {
+     "key": "eden.astc_recompression",
+     "value": "1",
+     "why": "the same guide sets ASTC recompression to BC1.",
+     "source": "https://whatstevedid.com/metroid-prime-remastered-on-the-retroid-pocket-flip-2-eden-settings/",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Monopoly for Nintendo Switch",
+   "id": "01007430037F6000",
+   "status": "unknown",
+   "note": "No SD865 report found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Need for Speed Hot Pursuit Remastered",
+   "id": "010029B0118E8000",
+   "status": "full",
+   "note": "RP5 reports rate it Perfect (Suyu/Citron, Qualcomm driver) and Great (Sudachi, Turnip).",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=Nke5QV4UKcw"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "New Super Mario Bros. U Deluxe",
+   "id": "0100EA80032EA000",
+   "status": "full",
+   "note": "RP5 reports rate it Perfect on the stock Qualcomm driver.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=uDFFrtoqzX4"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Octopath Traveler",
+   "id": "010057D006492000",
+   "status": "full",
+   "note": "An RP5 report holds a locked 30fps with no crashes after 13 hours (docked 1x, Turnip T18).",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.reddit.com/r/retroid/comments/1i0lfaa/"
+   ],
+   "settings": [
+    {
+     "key": "eden.docked",
+     "value": "1",
+     "why": "the RP5 locked-30fps report ran docked at 1x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "the RP5 locked-30fps report ran docked at 1x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Octopath Traveler II",
+   "id": "0100A3501946E000",
+   "status": "playable",
+   "note": "SD865 reports give 30fps in battles and towns and mid-20s on the world map. Setting GPU accuracy to High fixes the lighting glitches.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=xXcdmCkXlXw"
+   ],
+   "settings": [
+    {
+     "key": "eden.accuracy",
+     "value": "1",
+     "why": "RP5 reports say accuracy High fixes the lighting glitches.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": true
+    },
+    {
+     "key": "eden.reactive_flushing",
+     "value": "true",
+     "why": "used in the RP5 report with no lighting glitches.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "the RP5 Eden test ran handheld 720p (1x).",
+     "source": "https://www.youtube.com/watch?v=xXcdmCkXlXw",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Pokemon Brilliant Diamond",
+   "id": "0100000011D90000",
+   "status": "full",
+   "note": "RP5 reports 30fps. If it hangs, minimizing the app and reopening it fixes it.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=uuU-tz54WTQ"
+   ],
+   "settings": [
+    {
+     "key": "eden.accuracy",
+     "value": "1",
+     "why": "an RP5 report says accuracy High plus handheld stops freezes with the Luminescent Platinum mod.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Pokkén Tournament DX",
+   "id": "0100B3F000BE2000",
+   "status": "full",
+   "note": "RP5/Flip 2 reports say it runs at a steady 60fps.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=rdyXB8KcZ2I"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Pokémon Legends : Arceus",
+   "id": "01001F5010DFA000",
+   "status": "playable",
+   "note": "RP5 and Flip 2 get about 28-30fps at 1x, with slow spots. The graphics fix mod is recommended.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.reddit.com/r/retroid/comments/1h8mu4q/",
+    "https://www.reddit.com/r/retroid/comments/1kixjxp/",
+    "https://www.reddit.com/r/retroid/comments/1mtqdf1/_/n9e0eka/",
+    "https://www.youtube.com/watch?v=-qCGU0hCCGM"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "an RP5 report gets a consistent 30fps in handheld at 1x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Pokémon Shining Pearl",
+   "id": "010018E011D92000",
+   "status": "full",
+   "note": "RP5 reports a stable 30fps. The reporter blamed crashes on apps running in the background.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=uuU-tz54WTQ"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "the RP5 30fps report ran handheld at 1x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.force_max_clock",
+     "value": "true",
+     "why": "used in the RP5 30fps report.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Pokémon Sword",
+   "id": "0100ABF008968000",
+   "status": "playable",
+   "note": "RP5 runs 30fps at 1x. Older reports mention crashes at character naming (import a save to get past it) and when using the Y-Comm.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=uuU-tz54WTQ"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "the RP5 30fps report ran at 1x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.force_max_clock",
+     "value": "true",
+     "why": "used in the RP5 30fps report.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Pokémon:Let's Go, Pikachu!",
+   "id": "010003F003A34000",
+   "status": "full",
+   "note": "RP5 reports a stable 30fps.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=2rZo2NoX43E"
+   ],
+   "settings": [
+    {
+     "key": "eden.force_max_clock",
+     "value": "true",
+     "why": "the RP5 stable-30fps report turned on Force Maximum Clocks.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Sea of Stars [Early Backer Limited Edition]",
+   "id": "01008C0016544000",
+   "status": "unplayable",
+   "note": "It crashes at the time-of-day puzzles on every emulator, Eden included (RP5/Flip 2, 2025). A Flip 2 user still reported freezes in Sept 2026.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.reddit.com/r/retroid/comments/1wk6d9y/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "switch",
+   "name": "Super Mario 3D World + Bowser's Fury",
+   "id": "010028600EBDA000",
+   "status": "full",
+   "note": "RP5 reports 60fps in handheld at 1x but only 45-50fps docked.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=VSErB--147k"
+   ],
+   "settings": [
+    {
+     "key": "eden.docked",
+     "value": "0",
+     "why": "the RP5 report gets 60fps in handheld but only 45-50fps docked.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.resolution",
+     "value": "3",
+     "why": "the RP5 60fps report used handheld at 1x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Super Mario RPG",
+   "id": "0100BC0018138000",
+   "status": "full",
+   "note": "RP5 reports a locked 60fps at 0.75x and 45-60fps at 1x. Older Turnip drivers crashed after the menu, while the stock Qualcomm driver works.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "2",
+     "why": "an RP5 report gets a perfect 60fps at 0.75x.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    },
+    {
+     "key": "eden.driver",
+     "value": "",
+     "why": "RP5 reports say Turnip 9v2/25.0.0 crashed after the main menu; use this if T19 crashes.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Super Smash Bros. Ultimate",
+   "id": "01006A800016E000",
+   "status": "playable",
+   "note": "RP5 on Eden runs 60fps with light stutters but crashes now and then.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+    "https://www.youtube.com/watch?v=DorgJs_IC_A",
+    "https://www.reddit.com/r/retroid/comments/1pajp87/"
+   ],
+   "settings": [
+    {
+     "key": "eden.resolution",
+     "value": "2",
+     "why": "an RP5 video used 0.75x.",
+     "source": "https://www.youtube.com/watch?v=DorgJs_IC_A",
+     "auto": false
+    },
+    {
+     "key": "eden.force_max_clock",
+     "value": "true",
+     "why": "used by the RP5 reports that got 60fps.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "switch",
+   "name": "Yoshi's Crafted World",
+   "id": "01006000040C2000",
+   "status": "full",
+   "note": "An RP5 report rates it Perfect but says GPU accuracy must be set to the highest level.",
+   "sources": [
+    "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813"
+   ],
+   "settings": [
+    {
+     "key": "eden.accuracy",
+     "value": "2",
+     "why": "the RP5 report says the game needs accuracy Extreme.",
+     "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
+     "auto": true
+    }
+   ]
+  },
+  {
+   "system": "wii",
+   "name": "Ben 10 Omniverse",
+   "id": "S5TEG9",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Ben 10 Omniverse 2",
+   "id": "SVYEG9",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Ben 10 Ultimate Alien : Cosmic Destruction",
+   "id": "SBJEG9",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Ben 10: Protector of Earth",
+   "id": "RBNEG9",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Cars 2",
+   "id": "SCYE4Q",
+   "status": "unknown",
+   "note": "Wiki: one of the 'Disney Trio of Destruction', historically slow; a later Dolphin revision greatly improved performance. Bundled INI sets LowDCBZHack.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Cars_2",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Dead Space Extraction",
+   "id": "RZJE69",
+   "status": "unknown",
+   "note": "No SD865 report found.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Dead_Space:_Extraction",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.texture_cache",
+     "value": "0",
+     "why": "Avoids odd glitchy lines.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Dead_Space:_Extraction",
+     "auto": true
+    },
+    {
+     "key": "dolphin.defer_efb",
+     "value": "False",
+     "why": "Fixes flash effect and Chapter 8 shadows.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Dead_Space:_Extraction",
+     "auto": true
+    },
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Fixes flash effect and Chapter 8 shadows.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Dead_Space:_Extraction",
+     "auto": true
+    }
+   ]
+  },
+  {
+   "system": "wii",
+   "name": "Donkey Kong Country Returns",
+   "id": "SF8E01",
+   "status": "unknown",
+   "note": "Wiki: bloom offset at higher IR.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Donkey_Kong_Country_Returns",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Harry Potter and the Order of the Phoenix",
+   "id": "R5PE69",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Kirby's Return to Dream Land",
+   "id": "SUKE01",
+   "status": "unknown",
+   "note": "wiki lists no problems.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Kirby's_Return_to_Dream_Land"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "LEGO Batman 2 : DC Super Heroes",
+   "id": "S7AEWR",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "LEGO Pirates of the Caribbean: The Video Game",
+   "id": "SCJE4Q",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "LEGO Star Wars: The Complete Saga",
+   "id": "RLGE64",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Mario Kart Wii",
+   "id": "RMCE01",
+   "status": "unknown",
+   "note": "No SD865 report found; bundled INI enables EFB format changes and disables MSAA.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Mario_Kart_Wii",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Shows lens flares.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Mario_Kart_Wii",
+     "auto": false
+    },
+    {
+     "key": "dolphin.texture_cache",
+     "value": "0",
+     "why": "Fixes map in Coin Runners mode.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Mario_Kart_Wii",
+     "auto": false
+    },
+    {
+     "key": "dolphin.xfb_to_texture",
+     "value": "False",
+     "why": "Supports Wii Pinboard pictures.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Mario_Kart_Wii",
+     "auto": false
+    },
+    {
+     "key": "dolphin.anisotropy",
+     "value": "0",
+     "why": "Anisotropic filtering breaks various effects.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Mario_Kart_Wii",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "wii",
+   "name": "Mario Party 9",
+   "id": "SSQE01",
+   "status": "unknown",
+   "note": "No SD865 report found.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Mario_Party_9",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.texture_cache",
+     "value": "512",
+     "why": "Medium cache fixes wrong shadow in Hole Hogs minigame.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Mario_Party_9",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "wii",
+   "name": "Mario Sports Mix",
+   "id": "RMKE01",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Mario Strikers Charged",
+   "id": "R4QE01",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Metroid Prime: Trilogy",
+   "id": "R3ME01",
+   "status": "unknown",
+   "note": "Wiki lists no required settings; bundled INI already disables EFB/XFB-to-texture and deferred EFB copies.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Metroid_Prime:_Trilogy",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Mini Ninjas",
+   "id": "RNJE4F",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Monster Hunter 3",
+   "id": "RMHE08",
+   "status": "unknown",
+   "note": "Wiki: bloom offset at higher IR. No SD865 report found.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Monster_Hunter_Tri",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Renders the post-quest screenshot instead of black.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Monster_Hunter_Tri",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "wii",
+   "name": "New Super Mario Bros. Wii",
+   "id": "SMNE01",
+   "status": "unknown",
+   "note": "Wiki recommends Force Linear filtering for shading above 1x (not an allowed key); bundled INI disables vertex rounding.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=New_Super_Mario_Bros._Wii",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Pokémon Battle Revolution",
+   "id": "RPBE01",
+   "status": "unknown",
+   "note": "Wiki: edge black-screen effects also occur on real hardware.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Pok%C3%A9mon_Battle_Revolution",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Fixes broken rental pass trainer images.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Pok%C3%A9mon_Battle_Revolution",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "wii",
+   "name": "Power Rangers Samurai",
+   "id": "SM5EAF",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Prince of Persia: The Forgotten Sands",
+   "id": "RPWX41",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Punch-Out!!",
+   "id": "R7PE01",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Rayman Origins",
+   "id": "SOJE41",
+   "status": "unknown",
+   "note": "Wiki: texture filtering/IR settings cause display problems on opening logos and intro screens.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Rayman_Origins",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Sonic Unleashed",
+   "id": "RSVE8P",
+   "status": "unknown",
+   "note": "Wiki: bloom offset at higher IR; 60 FPS patch breaks gameplay.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Sonic_Unleashed"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Sonic and the Black Knight",
+   "id": "RENE8P",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Spider-Man: Shattered Dimensions",
+   "id": "SPDE52",
+   "status": "unknown",
+   "note": "Wiki lists no problems; bundled INI disables EFB-to-texture.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Spider-Man:_Shattered_Dimensions",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Spider-Man: Web of Shadows",
+   "id": "R3SE52",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Spider-Man: Edge of Time",
+   "id": "SQME52",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Star Wars: The Force Unleashed",
+   "id": "RSTE64",
+   "status": "unknown",
+   "note": "Wiki lists no required settings; bundled INI enables vertex rounding.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Star_Wars:_The_Force_Unleashed",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Star Wars: The Force Unleashed II",
+   "id": "SFUE64",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Super Mario Galaxy",
+   "id": "RMGE01",
+   "status": "full",
+   "note": "pixel-swish: ran 'like a champ' on Flip 2 without the High Performance toggle (resolution not stated).",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Galaxy",
+    "https://pixel-swish.com/2026/08/14/yup-im-in-love-retroid-pocket-pocket-flip-2-a-2026-review/",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Fixes Cosmic Mario/Luigi shell textures, Mii face icons and Message Board images.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Galaxy",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "wii",
+   "name": "Super Mario Galaxy 2",
+   "id": "SB4E01",
+   "status": "unknown",
+   "note": "Wiki: avoid MSAA (skybox issues); bloom offset at higher IR. No SD865 report found.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Galaxy_2",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.xfb_to_texture",
+     "value": "False",
+     "why": "Fixes Wii Message Board images only.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Galaxy_2",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "wii",
+   "name": "Super Paper Mario",
+   "id": "R8PE01",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Super Smash Bros. Brawl",
+   "id": "RSBE01",
+   "status": "unknown",
+   "note": "No SD865 report found.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Super_Smash_Bros._Brawl"
+   ],
+   "settings": [
+    {
+     "key": "dolphin.efb_to_texture",
+     "value": "False",
+     "why": "Fixes black off-screen bubbles and garbled screenshots; needed for NES Masterpieces graphics.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Smash_Bros._Brawl",
+     "auto": false
+    },
+    {
+     "key": "dolphin.texture_cache",
+     "value": "0",
+     "why": "Fixes NES/SNES Masterpieces graphics not updating.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Smash_Bros._Brawl",
+     "auto": false
+    },
+    {
+     "key": "dolphin.xfb_to_texture",
+     "value": "False",
+     "why": "Fixes purple rectangle after clearing Classic Mode.",
+     "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Smash_Bros._Brawl",
+     "auto": false
+    }
+   ]
+  },
+  {
+   "system": "wii",
+   "name": "The Incredible Hulk",
+   "id": "RIHE8P",
+   "status": "unknown",
+   "note": "Not researched individually in this pass (no SD865 report found); rely on device globals and the bundled INI.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "The Legend of Zelda : Skyward Sword",
+   "id": "SOUE01",
+   "status": "unknown",
+   "note": "Wiki recommends Force Linear texture filtering to stop shading banding above 1x (not an allowed key); bundled INI enables EFB format changes.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=The_Legend_of_Zelda:_Skyward_Sword",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "The Legend of Zelda : Twilight Princess",
+   "id": "RZDE01",
+   "status": "full",
+   "note": "pixel-swish: ran 'like a champ' on Flip 2 without High Performance toggle. Wiki: Hyrule Field slows progressively; minimap glitches with AA/forced filtering.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=The_Legend_of_Zelda:_Twilight_Princess_(Wii)",
+    "https://pixel-swish.com/2026/08/14/yup-im-in-love-retroid-pocket-pocket-flip-2-a-2026-review/",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  },
+  {
+   "system": "wii",
+   "name": "Tomb Raider Underworld",
+   "id": "RH8E4F",
+   "status": "unknown",
+   "note": "Wiki lists no problems.",
+   "sources": [
+    "https://wiki.dolphin-emu.org/index.php?title=Tomb_Raider:_Underworld",
+    "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
+   ],
+   "settings": []
+  }
+ ]
+}

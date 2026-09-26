@@ -12,3 +12,4 @@ keystore.properties
 *.apk
 *.aab
 CLAUDE.local.md
+.claude/

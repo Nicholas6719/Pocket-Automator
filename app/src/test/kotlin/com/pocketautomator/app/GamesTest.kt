@@ -122,7 +122,7 @@ class HooksTest {
             GameProfile("n3ds", "Mario Kart 7 ", "Mario Kart 7", "./Mario Kart 7 .cci", emu = mapOf("azahar.resolution" to "3")),
             GameProfile("gc", "F-Zero GX ", "F-Zero GX", "./F-Zero GX .rvz", emu = mapOf("dolphin.resolution" to "2")),
         )
-        assertEquals("Mario Kart 7 .cci\t3\n", Hooks.azaharList(games))
+        assertEquals("Mario Kart 7 .cci\tresolution_factor|3\n", Hooks.azaharList(games.associateWith { it.emu }))
         val folder = File("/storage/SD/Pocket Automator")
         assertTrue(Hooks.stub(folder, "start").replace(File.separatorChar, '/').contains("f='/storage/SD/Pocket Automator/on-game.sh'\n[ -f \"\$f\" ] && sh \"\$f\" start \"\$@\""))
         val hook = Hooks.onGame(folder, "/storage/SD/Games/Azahar/config/config.ini")
@@ -172,5 +172,107 @@ class SessionsTest {
         assertNull(GameIds.fromSessions("A", mapOf("A" to 1788448504L), launches, setOf("010018E011D92000")))
         // Too long ago to be the same session.
         assertNull(GameIds.fromSessions("A", mapOf("A" to 1788448208L + 9 * 3600), launches, emptySet()))
+    }
+}
+
+class AzaharSwapTest {
+
+    private val config = "[Core]\ncpu_clock_percentage = \n[Renderer]\nresolution_factor = 5\nshaders_accurate_mul = \n"
+
+    @Test
+    fun `swapped values go back, blank ones too`() {
+        val swapped = "[Core]\ncpu_clock_percentage = 150\n[Renderer]\nresolution_factor = 3\nshaders_accurate_mul = \n"
+        val marker = "cpu_clock_percentage||150\nresolution_factor|5|3\n"
+        assertEquals(config, GameSettings.restoreSwaps(swapped, marker))
+    }
+
+    @Test
+    fun `a value changed in Azahar meanwhile stays`() {
+        val changed = "[Core]\ncpu_clock_percentage = 150\n[Renderer]\nresolution_factor = 4\nshaders_accurate_mul = \n"
+        val restored = GameSettings.restoreSwaps(changed, "cpu_clock_percentage||150\nresolution_factor|5|3\n")
+        assertEquals("[Core]\ncpu_clock_percentage = \n[Renderer]\nresolution_factor = 4\nshaders_accurate_mul = \n", restored)
+        assertNull(GameSettings.restoreSwaps(config, "resolution_factor|5|3\n"))
+    }
+}
+
+class SuggestionsTest {
+
+    private val json = """{"version":1,"hardware":"Snapdragon 865","games":[
+        {"system":"switch","name":"Mario Kart 8 Deluxe","id":"0100152000022000","status":"full","note":"n",
+         "sources":["https://example.org/a"],
+         "settings":[{"key":"eden.accuracy","value":"0","why":"w","source":"s","auto":true},
+                     {"key":"eden.resolution","value":"3","why":"w","source":"s","auto":false},
+                     {"key":"eden.bogus","value":"1","auto":true}]}]}"""
+
+    @Test
+    fun `suggestions parse, and unknown settings drop out`() {
+        val s = Suggestions.parse(json).single()
+        assertEquals("switch/mariokart8deluxe", s.key)
+        // The same game matches however it's written.
+        assertEquals(s.key, Suggestions.key("switch", "Mario Kart 8: Deluxe"))
+        assertEquals("n3ds/pokemonomegaruby", Suggestions.key("n3ds", "Pokémon Omega Ruby"))
+        assertEquals(Suggestion.Status.FULL, s.status)
+        assertEquals(listOf("eden.accuracy", "eden.resolution"), s.settings.map { it.key })
+    }
+
+    @Test
+    fun `yours win, and only automatic suggestions are used`() {
+        val s = Suggestions.parse(json).single()
+        assertEquals(mapOf("eden.accuracy" to "0"), Suggestions.effective(null, s, auto = true))
+        assertEquals(emptyMap<String, String>(), Suggestions.effective(null, s, auto = false))
+        assertEquals(mapOf("eden.accuracy" to "1"), Suggestions.effective(mapOf("eden.accuracy" to "1"), s, auto = true))
+        assertEquals(emptyMap<String, String>(), Suggestions.effective(mapOf("eden.accuracy" to Suggestions.GLOBAL), s, auto = true))
+        assertEquals(mapOf("eden.accuracy" to "0", "eden.resolution" to "3"), Suggestions.effective(mapOf("eden.resolution" to "3"), s, auto = true))
+    }
+}
+
+class BundledSuggestionsTest {
+
+    private val file = listOf("src/main/assets/suggestions.json", "app/src/main/assets/suggestions.json").map(::File).first { it.isFile }
+    private val all = Suggestions.parse(file.readText())
+
+    @Test
+    fun `every suggested value is one the setting offers`() {
+        assertTrue(all.size > 100)
+        val bad = all.flatMap { s ->
+            s.settings.filter { r ->
+                val knob = EmuKnobs.byKey(r.key)!!
+                // The driver's options are the drivers installed; "" is the system's own.
+                if (knob.key == EmuKnobs.EDEN_DRIVER.key) r.value != "" else knob.options.none { it.value == r.value }
+            }.map { "${s.name}: ${it.key}=${it.value}" }
+        }
+        assertEquals(emptyList<String>(), bad)
+    }
+
+    @Test
+    fun `resolution drops are never applied by themselves`() {
+        val resolutions = setOf("eden.resolution", "dolphin.resolution", "azahar.resolution", "armsx2.upscale", "duckstation.resolution")
+        assertEquals(emptyList<String>(), all.flatMap { s -> s.settings.filter { it.auto && it.key in resolutions }.map { s.name } })
+    }
+
+    @Test
+    fun `IDs look right for the emulators that need them`() {
+        all.filter { it.system == "ps2" && it.gameId != null }.forEach { assertTrue(it.gameId!!, it.gameId.matches(Regex("[A-Z]{4}-\\d{5}_[0-9A-F]{8}"))) }
+        all.filter { it.system == "psx" && it.gameId != null }.forEach { assertTrue(it.gameId!!, it.gameId.matches(Regex("[A-Z]{4}-\\d{5}"))) }
+        all.forEach { s -> s.settings.forEach { assertTrue("${s.name} ${it.key}", it.why.isNotBlank() && it.source.startsWith("http")) } }
+    }
+}
+
+class Ps2IdTest {
+
+    @Test
+    fun `serials come from ARMSX2's recent games by ROM name`() {
+        val json = """[{"uri":"file:\/\/\/storage\/75D7-DC5F\/ROMs\/ps2\/Ben%2010%20-%20Alien%20Force%20-%20Vilgax%20Attacks%20.chd","title":"Ben 10","serial":"SLUS-21921","ext":"CHD","platform":"ps2"}]"""
+        assertEquals("SLUS-21921", GameIds.ps2SerialFromRecent(json, "Ben 10 - Alien Force - Vilgax Attacks .chd"))
+        assertNull(GameIds.ps2SerialFromRecent(json, "Black .chd"))
+        assertNull(GameIds.ps2SerialFromRecent("nope", "Black .chd"))
+    }
+
+    @Test
+    fun `the NCA header key comes from prod keys`() {
+        val key = GameIds.headerKey("aes_kek_generation_source = 00\nheader_key = " + "ab".repeat(32) + "\n")!!
+        assertEquals(32, key.size)
+        assertEquals(0xAB.toByte(), key[0])
+        assertNull(GameIds.headerKey("nothing here"))
     }
 }
