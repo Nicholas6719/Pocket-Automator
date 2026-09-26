@@ -146,6 +146,34 @@ class Store private constructor(context: Context) {
         _autoCloseApps.value = apps
     }
 
+    private val _keepAliveOn = MutableStateFlow(prefs.getBoolean(KEEP_ALIVE_ON, true))
+
+    /**
+     * Whether the root watchdog keeps Shizuku, Pocket Automator and [keepAlive]
+     * running, and starts Shizuku after a restart (see [Background]).
+     */
+    val keepAliveOn: StateFlow<Boolean> = _keepAliveOn.asStateFlow()
+
+    fun setKeepAliveOn(on: Boolean) {
+        prefs.edit { putBoolean(KEEP_ALIVE_ON, on) }
+        _keepAliveOn.value = on
+    }
+
+    private val _keepAlive = MutableStateFlow(prefs.getStringSet(KEEP_ALIVE, null)?.toSet() ?: emptySet())
+
+    /** Apps kept running 24/7 (Syncthing Fork, say). */
+    val keepAlive: StateFlow<Set<String>> = _keepAlive.asStateFlow()
+
+    fun setKeepAlive(apps: Set<String>) {
+        prefs.edit { putStringSet(KEEP_ALIVE, apps) }
+        _keepAlive.value = apps
+    }
+
+    /** Whether the keep-alive list has been given its starting apps, so it happens once. */
+    var keepAliveSeeded: Boolean
+        get() = prefs.getBoolean(KEEP_ALIVE_SEEDED, false)
+        set(value) = prefs.edit { putBoolean(KEEP_ALIVE_SEEDED, value) }
+
     /** Whether each switch shows a short message. */
     var messages: Boolean
         get() = prefs.getBoolean(MESSAGES, true)
@@ -153,6 +181,7 @@ class Store private constructor(context: Context) {
 
     /** Adds a timestamped line to the log the Diagnostics page shows (the newest [LOG_SIZE] are kept). */
     fun log(line: String) {
+        android.util.Log.i("PocketAutomator", line)
         val stamp = SimpleDateFormat("MM-dd HH:mm:ss", Locale.US).format(Date())
         val lines = (listOf("$stamp  $line") + _log.value).take(LOG_SIZE)
         prefs.edit { putString(LOG, JSONArray(lines).toString()) }
@@ -175,6 +204,9 @@ class Store private constructor(context: Context) {
         private const val AUTO_CLOSE = "autoClose"
         private const val AUTO_CLOSE_DELAY = "autoCloseDelay"
         private const val AUTO_CLOSE_APPS = "autoCloseApps"
+        private const val KEEP_ALIVE_ON = "keepAliveOn"
+        private const val KEEP_ALIVE = "keepAlive"
+        private const val KEEP_ALIVE_SEEDED = "keepAliveSeeded"
         private const val LOG_SIZE = 60
 
         @Volatile private var instance: Store? = null

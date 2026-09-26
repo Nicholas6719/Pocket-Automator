@@ -34,23 +34,30 @@ object RetroidLists {
         return if (pkg in list) null else (list + pkg).joinToString(",")
     }
 
-    /** Takes this app off the no-auto-run list and onto the cleaner's ignore list. Blocking; needs Shizuku. */
+    /** Takes this app off the no-auto-run list and onto the cleaner's ignore list. Blocking. */
     fun protect(context: Context) {
-        if (!Shell.ready) return
-        val pkg = context.packageName
-        val store = Store.get(context)
-        fun get(key: String) = Shell.run("settings", "get", "system", key).out.trim()
-        fun put(key: String, value: String) {
-            if (value.isEmpty()) Shell.run("settings", "delete", "system", key)
-            else Shell.run("settings", "put", "system", key, value)
+        if (protectAll(listOf(context.packageName))) Store.get(context).log("protected from Retroid's cleaner and no-auto-run list")
+    }
+
+    /**
+     * Takes [packages] off the no-auto-run list and puts them on the standby
+     * cleaner's ignore list. Returns whether anything changed. Blocking; needs root or Shizuku.
+     */
+    fun protectAll(packages: Collection<String>): Boolean {
+        fun get(key: String) = Privileged.sh("settings get system $key")?.trim()
+        val runBefore = get(AUTO_RUN_DISABLED)
+        val cleanBefore = get(CLEAN_IGNORED)
+        val runAfter = packages.fold(runBefore) { stored, pkg -> without(stored, pkg) ?: stored }
+        val cleanAfter = packages.fold(cleanBefore) { stored, pkg -> with(stored, pkg) ?: stored }
+        var changed = false
+        if (runAfter != runBefore) {
+            Privileged.sh(if (runAfter.isNullOrEmpty()) "settings delete system $AUTO_RUN_DISABLED" else "settings put system $AUTO_RUN_DISABLED '$runAfter'")
+            changed = true
         }
-        without(get(AUTO_RUN_DISABLED), pkg)?.let {
-            put(AUTO_RUN_DISABLED, it)
-            store.log("taken off Retroid's no-auto-run list")
+        if (cleanAfter != cleanBefore && !cleanAfter.isNullOrEmpty()) {
+            Privileged.sh("settings put system $CLEAN_IGNORED '$cleanAfter'")
+            changed = true
         }
-        with(get(CLEAN_IGNORED), pkg)?.let {
-            put(CLEAN_IGNORED, it)
-            store.log("added to Retroid's standby-cleaner ignore list")
-        }
+        return changed
     }
 }

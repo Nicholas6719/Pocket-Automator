@@ -193,3 +193,37 @@ class ProfilesJsonTest {
         assertEquals(setOf("z"), p[2].apps)
     }
 }
+
+class BackgroundTest {
+
+    @Test
+    fun `the watchdog's list names Syncthing's service and wakes other apps`() {
+        assertEquals(
+            "com.github.catfriend1.syncthingfork com.github.catfriend1.syncthingfork/com.nutomic.syncthingandroid.service.SyncthingService\n" +
+                "org.example.app\n",
+            Background.keepAliveFile(listOf("org.example.app", "com.github.catfriend1.syncthingfork")),
+        )
+        assertEquals("\n", Background.keepAliveFile(emptyList()))
+    }
+
+    @Test
+    fun `protection lifts Android's background limits for one app`() {
+        assertEquals(
+            listOf(
+                "dumpsys deviceidle whitelist +org.example.app",
+                "cmd appops set org.example.app RUN_ANY_IN_BACKGROUND allow",
+                "cmd appops set org.example.app RUN_IN_BACKGROUND allow",
+                "am set-standby-bucket org.example.app active",
+            ),
+            Background.protectCommands("org.example.app"),
+        )
+    }
+
+    @Test
+    fun `Shizuku is started from its own library`() {
+        assertEquals(
+            "lib=\$(pm path moe.shizuku.privileged.api | head -n 1 | sed 's/^package://; s/base\\.apk\$//')lib/arm64/libshizuku.so; [ -f \"\$lib\" ] && \"\$lib\"",
+            Background.START_SHIZUKU,
+        )
+    }
+}

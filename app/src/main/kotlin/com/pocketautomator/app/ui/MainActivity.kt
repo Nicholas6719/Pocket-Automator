@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AutomatorTheme {
-                // 0 home, 1 edit, 2 apps, 3 diagnostics, 4 auto-close, 5 auto-close apps
+                // 0 home, 1 edit, 2 apps, 3 diagnostics, 4 auto-close, 5 auto-close apps, 6 keep alive, 7 keep-alive apps
                 var screen by rememberSaveable { mutableStateOf(0) }
                 var profileId by rememberSaveable { mutableStateOf(0) }
                 when (screen) {
@@ -65,6 +65,8 @@ class MainActivity : ComponentActivity() {
                     3 -> DiagnosticsScreen(library, onBack = { screen = 0 })
                     4 -> BackgroundScreen(apps, onAddApps = { screen = 5 }, onBack = { screen = 0 })
                     5 -> AutoCloseAppsScreen(apps, onBack = { screen = 4 })
+                    6 -> KeepAliveScreen(apps, onAddApps = { screen = 7 }, onBack = { screen = 0 })
+                    7 -> KeepAliveAppsScreen(apps, onBack = { screen = 6 })
                     else -> HomeScreen(
                         shizuku = shizuku,
                         odinTools = odinTools,
@@ -72,6 +74,7 @@ class MainActivity : ComponentActivity() {
                         library = library,
                         onShizuku = ::fixShizuku,
                         onBackground = { screen = 4 },
+                        onKeepAlive = { screen = 6 },
                         onEdit = { profileId = it; screen = 1 },
                         onNew = {
                             profileId = Store.get(this).create("New profile").id

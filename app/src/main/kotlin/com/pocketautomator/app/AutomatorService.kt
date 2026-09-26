@@ -14,10 +14,12 @@ import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import com.pocketautomator.app.ui.MainActivity
+import rikka.shizuku.Shizuku
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
@@ -54,7 +56,50 @@ class AutomatorService : Service() {
                 if (!on) automator.applyNow(store.default())
             }
         }
+        // Keep-alive: start Shizuku if it's down, and the watchdog, now and whenever the settings change.
+        scope.launch {
+            combine(store.keepAliveOn, store.keepAlive) { on, apps -> on to apps }.collect { (on, apps) ->
+                grants.execute {
+                    runCatching { keepAlive(on, apps) }
+                        .onFailure { store.log("keep-alive setup failed: ${it.javaClass.simpleName}: ${it.message}") }
+                }
+            }
+        }
+        Shizuku.addBinderDeadListener(shizukuGone)
         store.log("service started")
+    }
+
+    /** Shizuku stopped: with keep-alive on, start it again rather than wait for the watchdog's next look. */
+    private val shizukuGone = Shizuku.OnBinderDeadListener {
+        grants.execute {
+            Thread.sleep(3_000)
+            val store = Store.get(this)
+            if (store.keepAliveOn.value && !Shell.ready && Background.startShizuku()) store.log("Shizuku stopped; started it again")
+        }
+    }
+
+    /** Blocking: runs on [grants]. */
+    private fun keepAlive(on: Boolean, apps: Set<String>) {
+        val store = Store.get(this)
+        if (!Root.works()) {
+            store.log("keep-alive needs Retroid's root service, which isn't available")
+            return
+        }
+        if (!store.keepAliveSeeded) {
+            store.keepAliveSeeded = true
+            val defaults = Background.KNOWN_SERVICES.keys.filter { pkg ->
+                runCatching { packageManager.getPackageInfo(pkg, 0) }.isSuccess
+            }
+            if (defaults.isNotEmpty()) {
+                // Setting the list runs this again with it.
+                store.setKeepAlive(apps + defaults)
+                return
+            }
+        }
+        if (on && !Shell.ready) {
+            store.log(if (Background.startShizuku()) "started Shizuku as root" else "couldn't start Shizuku")
+        }
+        Background.apply(this, on, apps)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
@@ -65,6 +110,7 @@ class AutomatorService : Service() {
         running = false
         current = null
         scope.cancel()
+        Shizuku.removeBinderDeadListener(shizukuGone)
         runCatching { unregisterReceiver(screen) }
         watcher.stop()
         automator.release()

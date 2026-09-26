@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AutoDelete
 import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.VideogameAsset
@@ -71,6 +72,7 @@ fun HomeScreen(
     onEdit: (Int) -> Unit,
     onNew: () -> Unit,
     onBackground: () -> Unit,
+    onKeepAlive: () -> Unit,
     onDiagnostics: () -> Unit,
     onBackup: () -> Unit,
     onRestore: () -> Unit,
@@ -84,6 +86,8 @@ fun HomeScreen(
     val autoClose by store.autoClose.collectAsStateWithLifecycle()
     val delay by store.autoCloseDelay.collectAsStateWithLifecycle()
     val extras by store.autoCloseApps.collectAsStateWithLifecycle()
+    val keepAliveOn by store.keepAliveOn.collectAsStateWithLifecycle()
+    val kept by store.keepAlive.collectAsStateWithLifecycle()
     val ready = shizuku == Shell.Status.READY
     // Keeps the banner's modes and fan speed current while the home screen is showing.
     LaunchedEffect(ready) {
@@ -161,6 +165,21 @@ fun HomeScreen(
                         "Off · emulators stay open until you close them"
                     },
                     onClick = onBackground,
+                )
+            }
+            item {
+                ActionCard(
+                    icon = Icons.Rounded.Favorite,
+                    color = Color(0xFF52D48A),
+                    title = "Keep alive",
+                    text = if (keepAliveOn) {
+                        val names = kept.mapNotNull { pkg -> apps.firstOrNull { it.pkg == pkg }?.label }.sorted()
+                        "On · Shizuku starts itself after a restart; Pocket Automator" +
+                            (if (names.isEmpty()) "" else ", " + names.joinToString()) + " and Shizuku stay running 24/7"
+                    } else {
+                        "Off · Shizuku has to be started by hand after a restart"
+                    },
+                    onClick = onKeepAlive,
                 )
             }
             item {
@@ -458,7 +477,7 @@ private fun ShizukuCard(status: Shell.Status, onShizuku: () -> Unit) {
                 Shell.Status.NOT_INSTALLED ->
                     "Shizuku lets Pocket Automator change the performance and fan modes without root. Install it from Google Play or its GitHub releases."
                 Shell.Status.NOT_RUNNING ->
-                    "Open Shizuku and start it (with Wireless debugging). It needs starting again after each restart."
+                    "With Keep alive on, Pocket Automator starts it by itself within a few seconds. Otherwise open Shizuku and start it."
                 else -> "Pocket Automator asks Shizuku for access once."
             },
         )
