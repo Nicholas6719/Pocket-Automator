@@ -36,6 +36,7 @@ object RetroidLists {
 
     /** Takes this app off the no-auto-run list and onto the cleaner's ignore list. Blocking. */
     fun protect(context: Context) {
+        if (!Device.isRetroid) return
         if (protectAll(listOf(context.packageName))) Store.get(context).log("protected from Retroid's cleaner and no-auto-run list")
     }
 

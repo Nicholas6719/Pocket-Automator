@@ -95,21 +95,21 @@ object GameSettings {
         val suggested = Suggestions.byKey(context)
         val out = linkedMapOf<GameProfile, Map<String, String>>()
         for (game in mine) {
-            val emu = Suggestions.effective(game.emu, suggested[Suggestions.key(game.system, game.name)], auto)
+            val emu = Suggestions.effective(game.emu, suggested[Suggestions.key(game.system, game.name)], auto, Suggestions.sameChip)
             if (emu.isNotEmpty()) out[game] = emu
         }
         // Games of yours the community has settings for, found in ES-DE's lists by name.
         if (auto && home != null) {
             val taken = mine.map { it.id }.toSet()
-            val systems = suggested.values.filter { s -> s.settings.any { it.auto } }.map { it.system }.toSet()
+            val systems = suggested.values.filter { s -> s.settings.any { Suggestions.used(it) } }.map { it.system }.toSet()
             val romDir = EsDe.romDir(home)
             for (system in systems) {
                 val list = runCatching { EsDe.parse(system, File(home, "gamelists/$system/gamelist.xml").readText()) }.getOrNull() ?: continue
                 for (g in list) {
                     val s = suggested[Suggestions.key(system, g.name)] ?: continue
-                    if (g.id in taken || s.settings.none { it.auto }) continue
+                    if (g.id in taken || s.settings.none { Suggestions.used(it) }) continue
                     if (!File(romDir, system + "/" + g.path.removePrefix("./")).isFile) continue
-                    out[GameProfile.of(g)] = Suggestions.effective(null, s, true)
+                    out[GameProfile.of(g)] = Suggestions.effective(null, s, true, Suggestions.sameChip)
                 }
             }
         }
@@ -441,7 +441,7 @@ object GameSettings {
             """
             |#!/bin/sh
             |# Takes back every emulator setting Pocket Automator changed, and ES-DE's
-            |# game hook, without needing the app. Run it from Retroid's settings
+            |# game hook, without needing the app. Run it from the handheld's settings
             |# ("Run script as Root"), or over adb:  sh ${q(File(folder, Hooks.UNDO).path)}
             |# Pocket Automator rewrites this file whenever its settings change.
             |
@@ -495,7 +495,7 @@ object GameSettings {
         |  backups/              emulator files as they were before the first change
         |  $UNDO_NAME  takes everything back
         |
-        |To undo it all without the app: run "$UNDO_NAME" from Retroid's settings
+        |To undo it all without the app: run "$UNDO_NAME" from the handheld's settings
         |("Run script as Root"). To stop just the ES-DE hook: delete this folder, or
         |the pocket-automator.sh files in ES-DE/scripts/game-start and game-end.
         |In the app, a game's page has "Reset this game", and the Games page

@@ -75,7 +75,7 @@ class Automator(private val context: Context) {
         if (pkg == app) return
         val previous = app
         app = pkg
-        closer.onFront(pkg, SystemClock.elapsedRealtime(), home = task.type == TaskList.TYPE_HOME)
+        closer.onFront(pkg, SystemClock.elapsedRealtime(), home = task.type == TaskList.TYPE_HOME || pkg in FRONTENDS)
         previous?.let(::watchForQuit)
         scheduleClose()
         if (task.type != TaskList.TYPE_HOME && pkg != context.packageName) detectGame(pkg)
@@ -265,6 +265,9 @@ class Automator(private val context: Context) {
     }
 
     companion object {
+        /** Frontends that count as home even when they aren't the launcher (ES-DE on the Odin 2 Portal). */
+        val FRONTENDS = setOf(Hooks.ESDE_PACKAGE)
+
         /** What the status card shows as in use while a game's own settings apply under Default. */
         const val GAME_ID = -1
 

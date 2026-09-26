@@ -66,7 +66,7 @@ fun KeepAliveScreen(apps: List<InstalledApp>, onAddApps: () -> Unit, onBack: () 
             item {
                 ToggleCard(
                     title = "Keep apps running",
-                    text = "Starts Shizuku after every restart, and checks every 20 seconds that Shizuku, Pocket Automator and the apps below are running, starting any that have stopped (a swipe in Recents, say). Uses Retroid's built-in root service; nothing is rooted or unlocked.",
+                    text = "Starts Shizuku after every restart, and checks every 20 seconds that Shizuku, Pocket Automator and the apps below are running, starting any that have stopped (a swipe in Recents, say). Uses the handheld's built-in root service (Retroid and AYN firmware); nothing is rooted or unlocked.",
                     checked = on,
                     onChange = store::setKeepAliveOn,
                 )
@@ -78,7 +78,7 @@ fun KeepAliveScreen(apps: List<InstalledApp>, onAddApps: () -> Unit, onBack: () 
                     if (s == null) {
                         Muted("Checking…")
                     } else {
-                        StatusLine("Retroid root service", s.root, if (s.root) "available" else "not available on this firmware")
+                        StatusLine("Built-in root service", s.root, if (s.root) "available" else "not available on this firmware")
                         StatusLine("Watchdog", s.watchdog, if (s.watchdog) "running" else if (on) "not running" else "off")
                         StatusLine("Shizuku", s.shizuku, if (s.shizuku) "running" else "stopped")
                     }

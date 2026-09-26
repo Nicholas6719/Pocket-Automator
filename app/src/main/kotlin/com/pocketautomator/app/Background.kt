@@ -77,7 +77,11 @@ object Background {
         val list = java.io.File(context.filesDir, "keepalive").apply { writeText(keepAliveFile(keepAlive)) }
 
         val everyone = keepAlive + context.packageName + SHIZUKU
-        Root.run(everyone.flatMap(::protectCommands).joinToString("; "))
+        // One app per command keeps each under the root service's length limit; Shizuku's shell needs no root for these.
+        for (pkg in everyone) {
+            val script = protectCommands(pkg).joinToString("; ")
+            if (Shell.ready) runCatching { Shell.sh(script) } else Root.run(script)
+        }
         RetroidLists.protectAll(everyone)
 
         // A running sh reads its script as it goes, so a new version is moved

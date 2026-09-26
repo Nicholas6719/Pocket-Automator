@@ -37,7 +37,12 @@ data class Suggestion(
         }
     }
 
-    data class Rec(val key: String, val value: String, val why: String, val source: String, val auto: Boolean)
+    /**
+     * [auto]: used unless you choose otherwise. [anyChip]: a fix for how the
+     * game draws or behaves, so it's used on any handheld; the rest are for
+     * speed on the chip the reports come from.
+     */
+    data class Rec(val key: String, val value: String, val why: String, val source: String, val auto: Boolean, val anyChip: Boolean = false)
 }
 
 object Suggestions {
@@ -49,6 +54,13 @@ object Suggestions {
     var hardware: String = ""
         private set
 
+    /** The chips the reports are from (Build.SOC_MODEL values). */
+    var socs: Set<String> = emptySet()
+        private set
+
+    /** Whether this handheld has the chip the reports come from; if not, only fixes for any chip apply. */
+    val sameChip: Boolean get() = socs.isEmpty() || Device.soc in socs
+
     @Volatile private var cache: List<Suggestion>? = null
 
     fun all(context: Context): List<Suggestion> = cache ?: synchronized(this) {
@@ -58,6 +70,9 @@ object Suggestions {
     }
 
     /** The report for a game, by its system and name. */
+    /** Whether [rec] is used by itself here. */
+    fun used(rec: Suggestion.Rec, sameChip: Boolean = Suggestions.sameChip): Boolean = rec.auto && (sameChip || rec.anyChip)
+
     fun find(context: Context, system: String, name: String): Suggestion? = byKey(context)[key(system, name)]
 
     @Volatile private var index: Map<String, Suggestion>? = null
@@ -76,6 +91,7 @@ object Suggestions {
     fun parse(text: String): List<Suggestion> {
         val root = JSONObject(text)
         hardware = root.optString("hardware")
+        socs = root.optJSONArray("socs")?.let { a -> (0 until a.length()).map { a.optString(it) }.toSet() }.orEmpty()
         val games = root.optJSONArray("games") ?: return emptyList()
         return (0 until games.length()).mapNotNull { i ->
             val o = games.optJSONObject(i) ?: return@mapNotNull null
@@ -84,7 +100,7 @@ object Suggestions {
                     val r = a.optJSONObject(j) ?: return@mapNotNull null
                     val key = r.optString("key")
                     if (EmuKnobs.byKey(key) == null) return@mapNotNull null
-                    Suggestion.Rec(key, r.optString("value"), r.optString("why"), r.optString("source"), r.optBoolean("auto", false))
+                    Suggestion.Rec(key, r.optString("value"), r.optString("why"), r.optString("source"), r.optBoolean("auto", false), r.optBoolean("anyChip", false))
                 }
             }.orEmpty()
             val sources = o.optJSONArray("sources")?.let { a -> (0 until a.length()).map { a.optString(it) } }.orEmpty()
@@ -104,9 +120,9 @@ object Suggestions {
      * The emulator settings a game ends up with: the suggestions used
      * automatically, then yours on top ([GLOBAL] meaning the emulator's own).
      */
-    fun effective(mine: Map<String, String>?, suggestion: Suggestion?, auto: Boolean): Map<String, String> {
+    fun effective(mine: Map<String, String>?, suggestion: Suggestion?, auto: Boolean, sameChip: Boolean = true): Map<String, String> {
         val out = linkedMapOf<String, String>()
-        if (auto && suggestion != null) suggestion.settings.filter { it.auto }.forEach { out[it.key] = it.value }
+        if (auto && suggestion != null) suggestion.settings.filter { used(it, sameChip) }.forEach { out[it.key] = it.value }
         mine?.forEach { (key, value) -> if (value == GLOBAL) out.remove(key) else out[key] = value }
         return out
     }

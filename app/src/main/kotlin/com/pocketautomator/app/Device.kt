@@ -17,12 +17,21 @@ object Device {
         FLIP2("Retroid Pocket Flip 2", verified = true),
         DUO("Retroid Pocket Duo", verified = false),
         OTHER_RETROID("Retroid handheld", verified = false),
-        UNSUPPORTED("Not a Retroid", verified = false),
+        // AYN's Odin 2 line runs the same firmware base (com.ro.settings, PServerBinder, the same
+        // performance_mode and fan_mode values, the same fan node), checked on a Portal.
+        ODIN2_PORTAL("AYN Odin 2 Portal", verified = true),
+        OTHER_ODIN2("AYN Odin 2", verified = false),
+        UNSUPPORTED("Not a supported handheld", verified = false),
     }
 
     data class Option(val value: Int, val label: String)
 
     val current: Model by lazy { model(Build.MANUFACTURER, Build.MODEL) }
+
+    /** The chip ("SM8250" is the Snapdragon 865; the Odin 2 Portal reports "QCS8550"). */
+    val soc: String by lazy { if (Build.VERSION.SDK_INT >= 31) Build.SOC_MODEL.orEmpty() else "" }
+
+    val isRetroid: Boolean get() = current == Model.FLIP2 || current == Model.DUO || current == Model.OTHER_RETROID
 
     /**
      * Retroid's builds report the manufacturer as "Moorechip" and the model
@@ -31,7 +40,10 @@ object Device {
     fun model(manufacturer: String, model: String): Model {
         val name = model.lowercase().replace(" ", "")
         val retroid = name.startsWith("retroidpocket") || manufacturer.equals("Retroid", ignoreCase = true)
+        val ayn = manufacturer.equals("AYN", ignoreCase = true)
         return when {
+            ayn && name.startsWith("odin2portal") -> Model.ODIN2_PORTAL
+            ayn && name.startsWith("odin2") -> Model.OTHER_ODIN2
             !retroid -> Model.UNSUPPORTED
             name.startsWith("retroidpocketflip2") -> Model.FLIP2
             // The Duo Lite has a different chip, and nobody asked for it yet.

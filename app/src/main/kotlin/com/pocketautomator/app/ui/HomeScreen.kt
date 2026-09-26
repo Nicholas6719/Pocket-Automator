@@ -116,7 +116,7 @@ fun HomeScreen(
             }
             if (Device.current == Device.Model.UNSUPPORTED) {
                 item {
-                    Notice("This isn't a Retroid handheld", "Performance, fan and L2/R2 modes are Retroid settings, so they won't do anything here.")
+                    Notice("This handheld isn't supported", "Performance, fan and L2/R2 modes are Retroid and AYN settings, so they won't do anything here.")
                 }
             }
             if (odinTools) {

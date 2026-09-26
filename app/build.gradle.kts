@@ -26,8 +26,8 @@ android {
         // The Flip 2 ships Android 13; the Duo, Android 16.
         minSdk = 33
         targetSdk = 35
-        versionCode = 7
-        versionName = "0.4.3"
+        versionCode = 8
+        versionName = "0.5.0"
     }
 
     signingConfigs {

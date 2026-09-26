@@ -109,7 +109,7 @@ class HooksTest {
 
     @Test
     fun `the game ES-DE started`() {
-        val e = Hooks.parseEvent("1790450035\nn3ds\n/storage/75D7-DC5F/ROMs/n3ds/Pokemon Omega Ruby .cci\nPokémon Omega Ruby\n")!!
+        val e = Hooks.parseEvent("1790450035\nn3ds\n/storage/1A2B-3C4D/ROMs/n3ds/Pokemon Omega Ruby .cci\nPokémon Omega Ruby\n")!!
         assertEquals("n3ds/Pokemon Omega Ruby ", e.id)
         assertEquals("Pokémon Omega Ruby", e.name)
         assertNull(Hooks.parseEvent("garbage"))
@@ -262,7 +262,7 @@ class Ps2IdTest {
 
     @Test
     fun `serials come from ARMSX2's recent games by ROM name`() {
-        val json = """[{"uri":"file:\/\/\/storage\/75D7-DC5F\/ROMs\/ps2\/Ben%2010%20-%20Alien%20Force%20-%20Vilgax%20Attacks%20.chd","title":"Ben 10","serial":"SLUS-21921","ext":"CHD","platform":"ps2"}]"""
+        val json = """[{"uri":"file:\/\/\/storage\/1A2B-3C4D\/ROMs\/ps2\/Ben%2010%20-%20Alien%20Force%20-%20Vilgax%20Attacks%20.chd","title":"Ben 10","serial":"SLUS-21921","ext":"CHD","platform":"ps2"}]"""
         assertEquals("SLUS-21921", GameIds.ps2SerialFromRecent(json, "Ben 10 - Alien Force - Vilgax Attacks .chd"))
         assertNull(GameIds.ps2SerialFromRecent(json, "Black .chd"))
         assertNull(GameIds.ps2SerialFromRecent("nope", "Black .chd"))
@@ -274,5 +274,24 @@ class Ps2IdTest {
         assertEquals(32, key.size)
         assertEquals(0xAB.toByte(), key[0])
         assertNull(GameIds.headerKey("nothing here"))
+    }
+}
+
+class ChipTest {
+
+    private val json = """{"version":2,"hardware":"Snapdragon 865","socs":["SM8250"],"games":[
+        {"system":"gc","name":"Metroid Prime","status":"full","settings":[
+          {"key":"dolphin.efb_to_texture","value":"False","why":"rain","source":"https://x","auto":true,"anyChip":true},
+          {"key":"dolphin.resolution","value":"2","why":"720p","source":"https://x","auto":false}]},
+        {"system":"ps2","name":"Gran Turismo 4","status":"playable","settings":[
+          {"key":"armsx2.hw_download","value":"1","why":"speed","source":"https://x","auto":true}]}]}"""
+
+    @Test
+    fun `on another chip only fixes for any chip are used`() {
+        val (prime, gt4) = Suggestions.parse(json)
+        assertEquals(setOf("SM8250"), Suggestions.socs)
+        assertEquals(mapOf("dolphin.efb_to_texture" to "False"), Suggestions.effective(null, prime, auto = true, sameChip = false))
+        assertEquals(emptyMap<String, String>(), Suggestions.effective(null, gt4, auto = true, sameChip = false))
+        assertEquals(mapOf("armsx2.hw_download" to "1"), Suggestions.effective(null, gt4, auto = true, sameChip = true))
     }
 }

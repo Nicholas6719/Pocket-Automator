@@ -1,14 +1,14 @@
 # Pocket Automator
 
-Per-game profiles for the **Retroid Pocket Flip 2** (and, once it ships, the
-**Retroid Pocket Duo**). Link an emulator to a profile, and while it's in front
+Per-game profiles for the **Retroid Pocket Flip 2** and the **AYN Odin 2
+Portal** (and, once it ships, the **Retroid Pocket Duo**). Link an emulator to a profile, and while it's in front
 the handheld switches to that profile's performance mode, fan mode and other
 settings. Leave it, and your **Default** profile comes back. Emulators you've
 finished with close themselves, and the apps you care about keep running 24/7.
 
 Built on the app-watching approach of
 [Thor Pathfinder](https://github.com/KaitonGxx/thor-pathfinder) (GPL-3.0), retargeted from button
-shortcuts on the AYN Thor to performance/fan profiles on Retroid handhelds.
+shortcuts on the AYN Thor to performance/fan profiles on Retroid and AYN handhelds.
 
 ## What a profile can set
 
@@ -30,7 +30,12 @@ the Quick Settings tiles, the settings they write, and the CPU limits and fan
 duty that follow. Retroid's settings app (`com.rp.settings`) and SystemUI act
 on those settings as soon as they change.
 
-**Firmware quirk:** the moment performance mode becomes Standard, Retroid's
+The Odin 2 Portal (Android 13, TKQ1.231222.001) turned out to use the same
+settings, values and fan node, so everything above applies there unchanged
+(checked by switching profiles on one). Retroid's cleaner lists only exist on
+Retroid firmware, so that step is skipped on AYN handhelds.
+
+**Firmware quirk (both):** the moment performance mode becomes Standard, Retroid's
 SystemUI sets the fan to Off. Pocket Automator writes the fan again 0.8 s
 after any performance change, so Standard + Smart stays Standard + Smart.
 
@@ -45,7 +50,8 @@ Quit a game and its leftover card is cleared from Recents within a few
 seconds. Leave one still running, and it is closed 10 seconds (adjustable)
 after any of:
 
-- you're back in ES-DE (the home screen), screen on or off ("Close games
+- you're back in ES-DE (the home screen; it counts as one even where it
+  isn't the launcher, as on the Odin 2 Portal), screen on or off ("Close games
   left in ES-DE" on the Auto-close page; on by default),
 - the screen turns off, or
 - a different emulator opens.
@@ -67,16 +73,18 @@ and the apps on the **Keep alive** list (Syncthing Fork by default) are
 running, starting any that have stopped, including after a swipe in Recents
 or a force stop. One switch on the Keep alive page turns it all off.
 
-This uses Retroid's built-in root service (`PServerBinder`, the one behind
-"Run script as Root" in Retroid's settings): nothing is rooted or unlocked.
-Two things to know about that service:
+This uses the handheld's built-in root service (`PServerBinder`, the one
+behind "Run script as Root" in Retroid's settings; AYN's firmware has it too):
+nothing is rooted or unlocked. Things to know about that service:
 
 - **Any app can use it**, not just Pocket Automator. That's how Retroid's
   firmware is built; be careful what you install from unknown sources.
 - It cuts commands off at about 255 characters and stops them at their
   second line of output. So for now the watchdog can't be updated in place,
-  the battery and standby-cleaner exemptions don't apply, and the Keep alive
-  page shows one line of the watchdog's log.
+  and the Keep alive page shows one line of the watchdog's log. The battery
+  and standby exemptions go through Shizuku instead, which has no such limit.
+- On the Odin 2 Portal the watchdog doesn't start yet (the same limit);
+  Shizuku still starts by itself, and the exemptions still apply.
 
 ## Your games
 
@@ -128,7 +136,7 @@ and seeing the setting take effect):
 
 `app/src/main/assets/suggestions.json` holds community reports for 225 games
 (matched by system and title as ES-DE shows it): how each runs on a Snapdragon
-865 (Retroid Pocket 5, Mini, Flip 2) and the settings its sources use, each
+865 (Retroid Pocket 5, Mini, Flip 2; the file lists the chip, `SM8250`) and the settings its sources use, each
 with the reason and a link. It was gathered from an RP5 compatibility
 spreadsheet, Flip 2 and RP5 guides and videos, the Dolphin wiki's game
 pages, ARMSX2's release notes and issues, and DuckStation's game database.
@@ -142,6 +150,10 @@ pages, ARMSX2's release notes and issues, and DuckStation's game database.
   Lower resolutions are only ever suggested. Anything you pick, "Same as" the
   emulator included, wins, and one switch on the Games page turns community
   settings off.
+- **Other chips:** on a handheld with a different chip (the Odin 2 Portal's
+  Snapdragon 8 Gen 2), only fixes for how a game draws or behaves (marked
+  `anyChip`) are applied by themselves; speed tweaks for the 865 are shown as
+  suggestions, and the report is labelled with the chip it's from.
 - Emulators also apply their own community databases (Dolphin's per-game
   INIs, PCSX2's GameIndex and ARMSX2's mobile overrides, Azahar's per-game
   fixes, PPSSPP's compatibility list); the bundled reports don't repeat those.
@@ -165,7 +177,9 @@ file back as it was.
 
 ## Requirements
 
-- A Retroid Pocket Flip 2 (tested) or Duo (untested until it ships).
+- A Retroid Pocket Flip 2 or AYN Odin 2 Portal (both tested), or a Retroid
+  Pocket Duo (untested until it ships). Other Odin 2 models are recognised
+  but untested.
 - [Shizuku](https://github.com/RikkaApps/Shizuku/releases), installed and
   allowed once. With Keep alive on, Pocket Automator starts it from then on.
 
@@ -174,7 +188,8 @@ file back as it was.
 1. Install the APK and open Pocket Automator.
 2. Start Shizuku once, then tap **Allow access**. Pocket Automator then grants
    itself "display over other apps" for its switch message and "all files
-   access" for ES-DE's art, and takes itself off Retroid's cleaner lists.
+   access" for ES-DE's art, and takes itself off Retroid's cleaner lists
+   (on Retroid handhelds).
 3. Edit **Default**, add profiles, and link apps under **Choose apps**.
 
 If OdinTools' App overrides are on, Pocket Automator shows a warning: both

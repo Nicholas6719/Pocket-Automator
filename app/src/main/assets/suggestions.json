@@ -1,6 +1,9 @@
 {
- "version": 1,
+ "version": 2,
  "hardware": "Snapdragon 865",
+ "socs": [
+  "SM8250"
+ ],
  "updated": "2026-09-26",
  "about": "Community reports for these games on Snapdragon 865 handhelds (Retroid Pocket 5, Mini, Flip 2), with the settings their sources use. Only fixes a source calls necessary are applied automatically.",
  "games": [
@@ -209,7 +212,8 @@
      "value": "False",
      "why": "Raindrops render with black-line corruption otherwise.",
      "source": "https://wiki.dolphin-emu.org/index.php?title=Metroid_Prime_(GC)",
-     "auto": true
+     "auto": true,
+     "anyChip": true
     },
     {
      "key": "dolphin.shader_mode",
@@ -394,7 +398,8 @@
      "value": "False",
      "why": "Needed for correct glow effects.",
      "source": "https://wiki.dolphin-emu.org/index.php?title=Star_Fox_Adventures",
-     "auto": true
+     "auto": true,
+     "anyChip": true
     }
    ]
   },
@@ -455,7 +460,8 @@
      "value": "True",
      "why": "Wiki config: avoids shaky props with dual core enabled.",
      "source": "https://wiki.dolphin-emu.org/index.php?title=Super_Mario_Sunshine",
-     "auto": true
+     "auto": true,
+     "anyChip": true
     },
     {
      "key": "dolphin.anisotropy",
@@ -2394,7 +2400,8 @@
      "value": "1",
      "why": "RP5 reports say accuracy High fixes the lighting glitches.",
      "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
-     "auto": true
+     "auto": true,
+     "anyChip": true
     },
     {
      "key": "eden.reactive_flushing",
@@ -2649,7 +2656,8 @@
      "value": "2",
      "why": "the RP5 report says the game needs accuracy Extreme.",
      "source": "https://docs.google.com/spreadsheets/d/1BiFqYhWWJRHcR_O_LDbv2OwZ1kTLkClMd0uGVjpaXWw/htmlview#gid=103116813",
-     "auto": true
+     "auto": true,
+     "anyChip": true
     }
    ]
   },
@@ -2717,21 +2725,24 @@
      "value": "0",
      "why": "Avoids odd glitchy lines.",
      "source": "https://wiki.dolphin-emu.org/index.php?title=Dead_Space:_Extraction",
-     "auto": true
+     "auto": true,
+     "anyChip": true
     },
     {
      "key": "dolphin.defer_efb",
      "value": "False",
      "why": "Fixes flash effect and Chapter 8 shadows.",
      "source": "https://wiki.dolphin-emu.org/index.php?title=Dead_Space:_Extraction",
-     "auto": true
+     "auto": true,
+     "anyChip": true
     },
     {
      "key": "dolphin.efb_to_texture",
      "value": "False",
      "why": "Fixes flash effect and Chapter 8 shadows.",
      "source": "https://wiki.dolphin-emu.org/index.php?title=Dead_Space:_Extraction",
-     "auto": true
+     "auto": true,
+     "anyChip": true
     }
    ]
   },

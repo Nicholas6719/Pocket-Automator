@@ -218,7 +218,11 @@ private fun CommunityCard(suggestion: Suggestion, auto: Boolean) {
     }
     SectionCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Community", fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+            Text(
+                if (Suggestions.sameChip) "Community" else "Community · on the ${Suggestions.hardware}",
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f),
+            )
             Text(
                 suggestion.status.label,
                 modifier = Modifier.background(color.copy(alpha = 0.2f), PillShape).padding(horizontal = 10.dp, vertical = 3.dp),
@@ -228,7 +232,7 @@ private fun CommunityCard(suggestion: Suggestion, auto: Boolean) {
             )
         }
         if (suggestion.note.isNotBlank()) Muted(suggestion.note)
-        val used = suggestion.settings.count { it.auto }
+        val used = suggestion.settings.count { Suggestions.used(it) }
         Muted(
             when {
                 suggestion.settings.isEmpty() -> "Nothing to change for it."
@@ -322,7 +326,7 @@ private fun EmuKnobCard(
     problem: String?,
     onPick: (String?) -> Unit,
 ) {
-    val used = rec != null && rec.auto && auto
+    val used = rec != null && Suggestions.used(rec) && auto
     val effective = when {
         mine == Suggestions.GLOBAL -> null
         mine != null -> mine
@@ -453,7 +457,11 @@ fun GamesScreen(apps: List<InstalledApp>, library: Library, onOpen: (String) -> 
             item {
                 ToggleCard(
                     title = "Use community settings",
-                    text = "Settings people use for your games on the ${Suggestions.hardware.ifBlank { "same chip" }} (Retroid Pocket 5, Mini and Flip 2), for settings you haven't chosen yourself. Yours always win, and lower resolutions are only suggested, never applied.",
+                    text = if (Suggestions.sameChip) {
+                        "Settings people use for your games on the ${Suggestions.hardware.ifBlank { "same chip" }} (Retroid Pocket 5, Mini and Flip 2), for settings you haven't chosen yourself. Yours always win, and lower resolutions are only suggested, never applied."
+                    } else {
+                        "Fixes people use for your games, from reports on ${Suggestions.hardware.ifBlank { "another chip" }} handhelds (Retroid Pocket 5, Mini and Flip 2). This handheld is faster, so only fixes for glitches are used by themselves; speed tweaks are shown as suggestions. Yours always win."
+                    },
                     checked = auto,
                     onChange = store::setSuggestAuto,
                 )
@@ -465,13 +473,13 @@ fun GamesScreen(apps: List<InstalledApp>, library: Library, onOpen: (String) -> 
                         val counts = reports.groupingBy { it.second.status }.eachCount()
                         Muted(
                             Suggestion.Status.entries.mapNotNull { st -> counts[st]?.let { "$it ${st.label.lowercase()}" } }.joinToString(" · ") +
-                                " · ${reports.count { r -> r.second.settings.any { it.auto } }} with community settings",
+                                " · ${reports.count { r -> r.second.settings.any { Suggestions.used(it) } }} with community settings",
                         )
                     }
                 }
                 val trouble = reports.filter { it.second.status == Suggestion.Status.STRUGGLES || it.second.status == Suggestion.Status.UNPLAYABLE }
                 if (trouble.isNotEmpty()) {
-                    item { Heading("Heavy on this chip") }
+                    item { Heading(if (Suggestions.sameChip) "Heavy on this chip" else "Heavy on the ${Suggestions.hardware}") }
                     items(trouble.sortedBy { it.first.game.name.lowercase() }, key = { "t" + it.first.game.id }) { (entry, s) ->
                         GameLine(entry.game.name, entry, apps, s.status.label + if (s.note.isNotBlank()) " · " + s.note else "") { onOpen(entry.game.id) }
                     }
@@ -527,7 +535,7 @@ fun GamesScreen(apps: List<InstalledApp>, library: Library, onOpen: (String) -> 
                 SectionCard {
                     Muted(
                         "\"Reset this game\" on a game's page takes back its settings. This takes back every emulator change at once; games keep their handheld settings." +
-                            (hook?.folder?.let { "\n\nWithout the app: run \"${Hooks.UNDO}\" in $it from Retroid's settings (Run script as Root). Copies of the emulators' files from before are in its backups folder." } ?: ""),
+                            (hook?.folder?.let { "\n\nWithout the app: run \"${Hooks.UNDO}\" in $it from the handheld's settings (Run script as Root). Copies of the emulators' files from before are in its backups folder." } ?: ""),
                     )
                     OutlinedButton(onClick = { undoing = true }, modifier = Modifier.focusOutline(PillShape)) { Text("Undo all emulator changes") }
                 }

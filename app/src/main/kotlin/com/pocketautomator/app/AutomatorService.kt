@@ -87,7 +87,7 @@ class AutomatorService : Service() {
     private fun keepAlive(on: Boolean, apps: Set<String>) {
         val store = Store.get(this)
         if (!Root.works()) {
-            store.log("keep-alive needs Retroid's root service, which isn't available")
+            store.log("keep-alive needs the handheld's root service, which isn't available")
             return
         }
         if (!store.keepAliveSeeded) {
