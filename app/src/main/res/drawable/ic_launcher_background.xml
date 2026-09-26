@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Midnight: the dark behind the Flip 2. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <gradient
-        android:angle="315"
-        android:endColor="#FF6A3DE8"
-        android:startColor="#FFE8364F"
-        android:type="linear" />
+    <solid android:color="#FF14141C" />
 </shape>
