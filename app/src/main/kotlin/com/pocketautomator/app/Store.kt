@@ -136,6 +136,16 @@ class Store private constructor(context: Context) {
         _autoCloseDelay.value = clean
     }
 
+    private val _autoCloseApps = MutableStateFlow(prefs.getStringSet(AUTO_CLOSE_APPS, null)?.toSet() ?: emptySet())
+
+    /** Apps without a profile that auto-close too (a browser, say). */
+    val autoCloseApps: StateFlow<Set<String>> = _autoCloseApps.asStateFlow()
+
+    fun setAutoCloseApps(apps: Set<String>) {
+        prefs.edit { putStringSet(AUTO_CLOSE_APPS, apps) }
+        _autoCloseApps.value = apps
+    }
+
     /** Whether each switch shows a short message. */
     var messages: Boolean
         get() = prefs.getBoolean(MESSAGES, true)
@@ -164,6 +174,7 @@ class Store private constructor(context: Context) {
         private const val LOG = "log"
         private const val AUTO_CLOSE = "autoClose"
         private const val AUTO_CLOSE_DELAY = "autoCloseDelay"
+        private const val AUTO_CLOSE_APPS = "autoCloseApps"
         private const val LOG_SIZE = 60
 
         @Volatile private var instance: Store? = null

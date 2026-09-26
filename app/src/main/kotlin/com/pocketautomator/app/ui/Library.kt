@@ -6,7 +6,7 @@ import com.pocketautomator.app.EsDe
 import java.io.File
 
 /**
- * Your ES-DE library as the screens use it: recent games, favorites, and each
+ * Your ES-DE library as the screens use it: recent games, and each
  * emulator's own recent games, with their art. Empty when ES-DE isn't found
  * or Pocket Automator can't read storage yet.
  */
@@ -21,7 +21,6 @@ class Library(val home: File?, games: List<EsDe.Game>, installed: Set<String>) {
 
     val size: Int get() = entries.size
     val recent: List<Entry> = EsDe.recent(games, 14).mapNotNull { byGame[it] }
-    val favorites: List<Entry> = EsDe.favorites(games).take(20).mapNotNull { byGame[it] }
 
     /** [pkg]'s games, most recently played first, then the rest with art. */
     fun forEmulator(pkg: String, count: Int): List<Entry> =
@@ -30,7 +29,7 @@ class Library(val home: File?, games: List<EsDe.Game>, installed: Set<String>) {
             .take(count)
 
     /** A wide picture for the banner: the most recent game that has one. */
-    val banner: File? get() = recent.firstNotNullOfOrNull { it.wide } ?: favorites.firstNotNullOfOrNull { it.wide }
+    val banner: File? get() = recent.firstNotNullOfOrNull { it.wide }
 
     /** The most recent game played on [pkg], if it's in ES-DE. */
     fun lastOn(pkg: String): Entry? = recent.firstOrNull { it.emulator == pkg }

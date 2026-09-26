@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 /**
- * Your games as ES-DE knows them: what you played last, your favorites, their
+ * Your games as ES-DE knows them: what you played last, their
  * cover art, and which emulator runs each one, so the screens can show your
  * own games. Read-only: ES-DE's files are never written.
  *
@@ -151,7 +151,4 @@ object EsDe {
 
     fun recent(games: List<Game>, count: Int): List<Game> =
         games.filter { it.lastPlayed > 0 && isGame(it) }.sortedByDescending { it.lastPlayed }.take(count)
-
-    fun favorites(games: List<Game>): List<Game> =
-        games.filter { it.favorite && isGame(it) }.sortedWith(compareByDescending<Game> { it.lastPlayed }.thenBy { it.name.lowercase() })
 }

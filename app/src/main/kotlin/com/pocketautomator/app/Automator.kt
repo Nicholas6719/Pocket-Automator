@@ -27,8 +27,12 @@ class Automator(private val context: Context) {
     private val closer = AutoClose(
         delayMs = { store.autoCloseDelay.value * 1000L },
         isEmulator = { pkg -> store.profiles.value.any { !it.isDefault && pkg in it.apps } },
+        tracked = { pkg -> pkg in store.autoCloseApps.value || store.profiles.value.any { !it.isDefault && pkg in it.apps } },
         closable = { pkg ->
-            store.autoClose.value && Plan.profileFor(store.profiles.value, pkg).let { !it.isDefault && it.autoClose }
+            store.autoClose.value && (
+                pkg in store.autoCloseApps.value ||
+                    Plan.profileFor(store.profiles.value, pkg).let { !it.isDefault && it.autoClose }
+                )
         },
     )
     private val closeDue = Runnable { closeDue() }

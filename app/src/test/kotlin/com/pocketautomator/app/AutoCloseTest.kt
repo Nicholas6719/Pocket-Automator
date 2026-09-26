@@ -104,6 +104,29 @@ class AutoCloseTest {
     }
 
     @Test
+    fun `extra apps close when left, but opening one isn't another game`() {
+        val browser = "com.brave.browser"
+        val c = AutoClose(
+            delayMs = { 10_000 },
+            isEmulator = { it in emulators },
+            tracked = { it in emulators || it == browser },
+            closable = { true },
+        )
+        c.onFront(browser, 0)
+        c.onFront(esde, 1_000)
+        assertEquals(setOf(browser), c.leftBehind)
+        // The browser opening again doesn't close Azahar-style emulators; only a sleep or an emulator does.
+        c.onFront(azahar, 2_000)
+        assertEquals(mapOf(browser to 12_000L), c.waiting)
+        c.onFront(esde, 3_000)
+        c.onFront(browser, 4_000)
+        // Back in the browser: its close is cancelled; Azahar (left at 3 s) waits for a trigger.
+        assertEquals(emptyMap<String, Long>(), c.waiting)
+        c.onScreenOff(5_000)
+        assertEquals(mapOf(azahar to 15_000L), c.waiting)
+    }
+
+    @Test
     fun `a second trigger doesn't push the close back`() {
         val c = closer()
         c.onFront(azahar, 0)
@@ -186,11 +209,11 @@ class EsDeTest {
     }
 
     @Test
-    fun `recent and favorites`() {
+    fun `recent games, newest first, without ES-DE's app lists`() {
         val a = EsDe.Game("gba", "A", "a", true, 100, 1, null)
         val b = EsDe.Game("gba", "B", "b", false, 300, 1, null)
         val c = EsDe.Game("gba", "C", "c", true, 0, 0, null)
-        assertEquals(listOf(b, a), EsDe.recent(listOf(a, b, c), 5))
-        assertEquals(listOf(a, c), EsDe.favorites(listOf(a, b, c)))
+        val app = EsDe.Game("androidapps", "Settings", "settings", false, 500, 1, null)
+        assertEquals(listOf(b, a), EsDe.recent(listOf(a, b, c, app), 5))
     }
 }

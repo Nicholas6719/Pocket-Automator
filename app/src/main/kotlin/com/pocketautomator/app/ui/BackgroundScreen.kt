@@ -4,13 +4,18 @@ import android.os.SystemClock
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -34,11 +39,12 @@ import kotlinx.coroutines.delay
 
 /** Auto-close: the switch, the delay, and which emulators it applies to. */
 @Composable
-fun BackgroundScreen(apps: List<InstalledApp>, onBack: () -> Unit) {
+fun BackgroundScreen(apps: List<InstalledApp>, onAddApps: () -> Unit, onBack: () -> Unit) {
     val store = Store.get(LocalContext.current)
     val profiles by store.profiles.collectAsStateWithLifecycle()
     val on by store.autoClose.collectAsStateWithLifecycle()
     val seconds by store.autoCloseDelay.collectAsStateWithLifecycle()
+    val extras by store.autoCloseApps.collectAsStateWithLifecycle()
     var waiting by remember { mutableStateOf(emptyMap<String, Long>()) }
     LaunchedEffect(Unit) {
         while (true) {
@@ -82,7 +88,7 @@ fun BackgroundScreen(apps: List<InstalledApp>, onBack: () -> Unit) {
                     SectionCard { Text("${app?.label ?: pkg} closes in $left s") }
                 }
             }
-            item { Heading("Choose which apps auto-close") }
+            item { Heading("Emulators") }
             val emulators = profiles.filter { !it.isDefault && it.apps.isNotEmpty() }
             if (emulators.isEmpty()) item { Muted("Link apps to a profile and they show up here.") }
             items(emulators, key = { it.id }) { profile ->
@@ -105,8 +111,35 @@ fun BackgroundScreen(apps: List<InstalledApp>, onBack: () -> Unit) {
                 }
             }
             item {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Heading("Other apps", Modifier.weight(1f))
+                    TextButton(onClick = onAddApps, modifier = Modifier.focusOutline(PillShape)) {
+                        Icon(Icons.Rounded.Add, contentDescription = null)
+                        Text("Add apps")
+                    }
+                }
+            }
+            if (extras.isEmpty()) {
+                item { Muted("Add apps without a profile (a browser, say) and they close the same way once you've left them.", Modifier.padding(horizontal = 4.dp)) }
+            }
+            items(extras.sortedBy { pkg -> apps.firstOrNull { it.pkg == pkg }?.label?.lowercase() ?: pkg }, key = { "extra:$it" }) { pkg ->
+                val app = apps.firstOrNull { it.pkg == pkg }
+                SectionCard {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        app?.icon?.let { Image(it, contentDescription = null, modifier = Modifier.size(36.dp).clip(RoundedCornerShape(10.dp))) }
+                        Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
+                            Text(app?.label ?: pkg, fontWeight = FontWeight.SemiBold)
+                            Muted(if (app == null) "Not installed" else "Closes when left behind")
+                        }
+                        TextButton(onClick = { store.setAutoCloseApps(extras - pkg) }, modifier = Modifier.focusOutline(PillShape)) {
+                            Text("Remove")
+                        }
+                    }
+                }
+            }
+            item {
                 Muted(
-                    "Only apps with a profile are ever closed: ES-DE, Syncthing, Shizuku and Pocket Automator never are.",
+                    "Never closed: ES-DE and other home screens, Shizuku, Pocket Automator, and any app you haven't added here.",
                     Modifier.padding(4.dp),
                 )
             }

@@ -105,7 +105,7 @@ private fun facts(context: Context, now: Store.Now): List<String> {
 }
 
 private fun libraryFacts(library: Library): List<String> = listOf(
-    "es-de: ${library.home?.path ?: "not found"} (files access: ${Library.canRead()}), ${library.size} games, ${library.recent.size} recent, ${library.favorites.size} favorites",
+    "es-de: ${library.home?.path ?: "not found"} (files access: ${Library.canRead()}), ${library.size} games, ${library.recent.size} recent",
 )
 
 private fun copy(context: Context, report: List<String>, log: List<String>) {

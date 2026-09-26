@@ -28,7 +28,6 @@ import androidx.compose.material.icons.rounded.AutoDelete
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.VideogameAsset
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -40,6 +39,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,12 +52,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.pocketautomator.app.AutomatorService
 import com.pocketautomator.app.Device
 import com.pocketautomator.app.Knob
 import com.pocketautomator.app.Plan
 import com.pocketautomator.app.Profile
 import com.pocketautomator.app.Shell
 import com.pocketautomator.app.Store
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -81,7 +83,15 @@ fun HomeScreen(
     val now by store.now.collectAsStateWithLifecycle()
     val autoClose by store.autoClose.collectAsStateWithLifecycle()
     val delay by store.autoCloseDelay.collectAsStateWithLifecycle()
+    val extras by store.autoCloseApps.collectAsStateWithLifecycle()
     val ready = shizuku == Shell.Status.READY
+    // Keeps the banner's modes and fan speed current while the home screen is showing.
+    LaunchedEffect(ready) {
+        while (ready) {
+            AutomatorService.current?.refreshReadingsAsync()
+            delay(4_000)
+        }
+    }
     val openGame = { entry: Library.Entry -> onEdit(Plan.profileFor(profiles, entry.emulator).id) }
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
@@ -110,11 +120,7 @@ fun HomeScreen(
 
             if (library.recent.isNotEmpty()) {
                 item { Heading("Jump back in") }
-                item { GameRow(library.recent, apps, openGame) }
-            }
-            if (library.favorites.isNotEmpty()) {
-                item { Heading("Favorites") }
-                item { GameRow(library.favorites, apps, openGame) }
+                item { GameRow(library.recent, apps, profiles, openGame) }
             }
 
             item {
@@ -149,8 +155,8 @@ fun HomeScreen(
                     color = Color(0xFF7C8CFF),
                     title = "Auto-close",
                     text = if (autoClose) {
-                        val count = profiles.count { !it.isDefault && it.apps.isNotEmpty() && it.autoClose }
-                        "On for $count emulator${if (count == 1) "" else "s"} · closes them $delay s after you've left them and the screen goes off or another emulator opens. Choose which apps here."
+                        val count = profiles.count { !it.isDefault && it.apps.isNotEmpty() && it.autoClose } + extras.size
+                        "On for $count app${if (count == 1) "" else "s"} · closes them $delay s after you've left them and the screen goes off or another emulator opens. Choose which apps here."
                     } else {
                         "Off · emulators stay open until you close them"
                     },
@@ -189,7 +195,8 @@ private fun Hero(
     val app = now.app?.let { pkg -> apps.firstOrNull { it.pkg == pkg } }
     val shape = RoundedCornerShape(24.dp)
     Box(Modifier.fillMaxWidth().height(200.dp).clip(shape)) {
-        val banner = library.banner
+        // The game you're likely playing now, when an emulator is in front; otherwise your latest.
+        val banner = now.app?.let { library.lastOn(it)?.wide } ?: library.banner
         if (banner != null) {
             GameArt(banner, Modifier.fillMaxSize(), maxSide = 960)
         } else {
@@ -275,16 +282,17 @@ private fun Hero(
 
 /** A row of covers; each opens the profile of the emulator that runs it. */
 @Composable
-private fun GameRow(games: List<Library.Entry>, apps: List<InstalledApp>, onOpen: (Library.Entry) -> Unit) {
+private fun GameRow(games: List<Library.Entry>, apps: List<InstalledApp>, profiles: List<Profile>, onOpen: (Library.Entry) -> Unit) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         items(games, key = { "${it.game.system}/${it.game.file}" }) { entry ->
-            GameCover(entry, apps.firstOrNull { it.pkg == entry.emulator }, onClick = { onOpen(entry) })
+            val mode = Plan.profileFor(profiles, entry.emulator).settings[Knob.PERFORMANCE]
+            GameCover(entry, apps.firstOrNull { it.pkg == entry.emulator }, mode, onClick = { onOpen(entry) })
         }
     }
 }
 
 @Composable
-private fun GameCover(entry: Library.Entry, emulator: InstalledApp?, onClick: () -> Unit) {
+private fun GameCover(entry: Library.Entry, emulator: InstalledApp?, mode: Int?, onClick: () -> Unit) {
     val shape = RoundedCornerShape(14.dp)
     Column(Modifier.width(108.dp).focusOutline(shape).clickable(onClick = onClick)) {
         Box(Modifier.width(108.dp).height(150.dp).clip(shape)) {
@@ -306,13 +314,16 @@ private fun GameCover(entry: Library.Entry, emulator: InstalledApp?, onClick: ()
                     modifier = Modifier.align(Alignment.BottomStart).padding(6.dp).size(24.dp).clip(RoundedCornerShape(7.dp)),
                 )
             }
-            if (entry.game.favorite) {
-                Icon(
-                    Icons.Rounded.Star,
-                    contentDescription = "Favorite",
-                    tint = Color(0xFFFFD54F),
-                    modifier = Modifier.align(Alignment.TopEnd).padding(4.dp).size(20.dp),
-                )
+            // How this game will run: its emulator's performance mode.
+            mode?.let {
+                val look = performanceLook(it)
+                Box(
+                    Modifier.align(Alignment.TopEnd).padding(6.dp).size(26.dp)
+                        .background(Color(0xCC141418), RoundedCornerShape(50)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(look.icon, contentDescription = look.label, tint = look.color, modifier = Modifier.size(16.dp))
+                }
             }
         }
         Text(

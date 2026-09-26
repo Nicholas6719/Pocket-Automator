@@ -56,14 +56,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AutomatorTheme {
-                // 0 home, 1 edit, 2 apps, 3 diagnostics, 4 background
+                // 0 home, 1 edit, 2 apps, 3 diagnostics, 4 auto-close, 5 auto-close apps
                 var screen by rememberSaveable { mutableStateOf(0) }
                 var profileId by rememberSaveable { mutableStateOf(0) }
                 when (screen) {
                     1 -> EditScreen(profileId, apps, library, knobs, refreshRates, onChooseApps = { screen = 2 }, onBack = { screen = 0 })
                     2 -> AppsScreen(profileId, apps, onBack = { screen = 1 })
                     3 -> DiagnosticsScreen(library, onBack = { screen = 0 })
-                    4 -> BackgroundScreen(apps, onBack = { screen = 0 })
+                    4 -> BackgroundScreen(apps, onAddApps = { screen = 5 }, onBack = { screen = 0 })
+                    5 -> AutoCloseAppsScreen(apps, onBack = { screen = 4 })
                     else -> HomeScreen(
                         shizuku = shizuku,
                         odinTools = odinTools,

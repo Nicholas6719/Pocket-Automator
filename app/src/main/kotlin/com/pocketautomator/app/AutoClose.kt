@@ -1,10 +1,10 @@
 package com.pocketautomator.app
 
 /**
- * Closes emulators you've left behind, kept apart from Android so the rules
- * can be checked without a device.
+ * Closes emulators (and other apps you pick) you've left behind, kept apart
+ * from Android so the rules can be checked without a device.
  *
- * An emulator is *left behind* once something else comes to the front. It is
+ * A tracked app is *left behind* once something else comes to the front. It is
  * closed [delayMs] after either of two things:
  * - the screen turns off (the one in front then is never closed: sleeping
  *   mid-game keeps the game), or
@@ -16,6 +16,8 @@ class AutoClose(
     private val delayMs: () -> Long,
     /** A linked app: an emulator, which also counts as "another game" opening. */
     private val isEmulator: (String) -> Boolean,
+    /** Any app that may be closed once left: emulators, and the extra apps picked for auto-close. */
+    private val tracked: (String) -> Boolean = isEmulator,
     /** Whether this emulator's profile lets it be closed. */
     private val closable: (String) -> Boolean,
 ) {
@@ -31,7 +33,7 @@ class AutoClose(
     fun onFront(pkg: String, now: Long) {
         val before = front
         front = pkg
-        if (before != null && before != pkg && isEmulator(before)) left += before
+        if (before != null && before != pkg && tracked(before)) left += before
         left -= pkg
         pending -= pkg
         if (isEmulator(pkg) && before != pkg) schedule(now)
