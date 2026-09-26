@@ -227,3 +227,15 @@ class BackgroundTest {
         )
     }
 }
+
+class ClearIfQuitTest {
+
+    @Test
+    fun `the quit check leaves running apps alone and clears cards from Recents`() {
+        val script = Commands.CLEAR_IF_QUIT
+        assertEquals(true, script.startsWith("ps -A -o NAME= | grep -qE "))
+        assertEquals(true, script.contains("&& exit 0; "))
+        assertEquals(true, script.contains("dumpsys activity recents"))
+        assertEquals(true, script.contains("do am stack remove"))
+    }
+}

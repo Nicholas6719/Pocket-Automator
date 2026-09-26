@@ -110,6 +110,16 @@ object Commands {
     fun close(pkg: String, taskIds: List<Int>): String =
         (listOf("am force-stop $pkg") + taskIds.map { "am stack remove $it" }).joinToString("; ")
 
+    /**
+     * For the app $1: if none of its processes ("pkg" or "pkg:name") is
+     * running, removes its Recents cards and prints their IDs. A quit app's
+     * card is only in Recents, not the window hierarchy, hence dumpsys.
+     */
+    const val CLEAR_IF_QUIT =
+        "ps -A -o NAME= | grep -qE \"^$1(:|\$)\" && exit 0; " +
+            "for id in \$(dumpsys activity recents | grep -E \"(A=[0-9]+:|I=)$1[}/]\" | sed -n 's/.*#\\([0-9]*\\) type.*/\\1/p'); " +
+            "do am stack remove \$id && echo \$id; done"
+
     /** Hands a running app's task to another screen without restarting it. */
     fun moveTask(taskId: Int, displayId: Int): String = "am display move-stack $taskId $displayId"
 }

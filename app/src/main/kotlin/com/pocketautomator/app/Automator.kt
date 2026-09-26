@@ -48,18 +48,20 @@ class Automator(private val context: Context) {
         delayMs = { store.autoCloseDelay.value * 1000L },
         isEmulator = { pkg -> store.profiles.value.any { !it.isDefault && pkg in it.apps } },
         tracked = { pkg -> pkg in store.autoCloseApps.value || store.profiles.value.any { !it.isDefault && pkg in it.apps } },
-        closable = { pkg ->
-            store.autoClose.value && (
-                pkg in store.autoCloseApps.value ||
-                    Plan.profileFor(store.profiles.value, pkg).let { !it.isDefault && it.autoClose }
-                )
-        },
+        closable = ::canClose,
         open = { tasks.mapNotNull { it.pkg } },
     )
     private val closeDue = Runnable { closeDue() }
     private val wakeLock = context.getSystemService(PowerManager::class.java)
         .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PocketAutomator:autoClose")
         .apply { setReferenceCounted(false) }
+
+    /** Whether [pkg] is one of the apps auto-close may close. */
+    private fun canClose(pkg: String): Boolean =
+        store.autoClose.value && (
+            pkg in store.autoCloseApps.value ||
+                Plan.profileFor(store.profiles.value, pkg).let { !it.isDefault && it.autoClose }
+            )
 
     /** The app in front and the profile last put into effect (main thread). */
     private var app: String? = null
@@ -70,8 +72,10 @@ class Automator(private val context: Context) {
     fun onApp(task: TaskEntry) {
         val pkg = task.pkg ?: return
         if (pkg == app) return
+        val previous = app
         app = pkg
         closer.onFront(pkg, SystemClock.elapsedRealtime())
+        previous?.let(::watchForQuit)
         scheduleClose()
         if (task.type != TaskList.TYPE_HOME && pkg != context.packageName) detectGame(pkg)
         val (key, profile) = effective(pkg)
@@ -123,6 +127,26 @@ class Automator(private val context: Context) {
         val changed = key != appliedKey
         if (changed || profile.settings != appliedSettings) {
             apply(key, profile, announce = changed && app != null, reason = "profiles edited")
+        }
+    }
+
+    /**
+     * [pkg] was just left. If it quit by itself (you quit the game), its
+     * leftover Recents card is cleared within a few seconds: nothing is
+     * running, so there's nothing to lose. One still running closes by the
+     * usual rules (screen off, or another emulator).
+     */
+    private fun watchForQuit(pkg: String) {
+        if (pkg == context.packageName || !canClose(pkg)) return
+        for (wait in longArrayOf(3_000, 8_000)) main.postDelayed({ clearIfQuit(pkg) }, wait)
+    }
+
+    private fun clearIfQuit(pkg: String) {
+        if (pkg == app) return
+        worker.execute {
+            if (!Shell.ready || pkg == app) return@execute
+            val cleared = Shell.sh(Commands.CLEAR_IF_QUIT, pkg).out.lines().filter { it.isNotBlank() }
+            if (cleared.isNotEmpty()) store.log("cleared $pkg from Recents (it had quit)")
         }
     }
 
