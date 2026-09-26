@@ -3,7 +3,8 @@
 Per-game profiles for the **Retroid Pocket Flip 2** (and, once it ships, the
 **Retroid Pocket Duo**). Link an emulator to a profile, and while it's in front
 the handheld switches to that profile's performance mode, fan mode and other
-settings. Leave it, and your **Default** profile comes back.
+settings. Leave it, and your **Default** profile comes back. Emulators you've
+finished with close themselves, and the apps you care about keep running 24/7.
 
 Built on the app-watching approach of
 [Thor Pathfinder](https://github.com/KaitonGxx/thor-pathfinder) (GPL-3.0), retargeted from button
@@ -27,14 +28,15 @@ Every setting can be left on **Don't change**.
 The values were read off a Flip 2 (firmware RPFlip2_V1.0.0.130, Android 13):
 the Quick Settings tiles, the settings they write, and the CPU limits and fan
 duty that follow. Retroid's settings app (`com.rp.settings`) and SystemUI act
-on those settings as soon as they change, so no root is needed.
+on those settings as soon as they change.
 
 **Firmware quirk:** the moment performance mode becomes Standard, Retroid's
 SystemUI sets the fan to Off. Pocket Automator writes the fan again 0.8 s
 after any performance change, so Standard + Smart stays Standard + Smart.
 
 Anything a game's profile changes that Default leaves alone (say, Wi-Fi off)
-is put back how it was when you leave the game.
+is put back how it was when you leave the game. A short message shows each
+switch, over the game.
 
 ## Auto-close
 
@@ -46,32 +48,52 @@ Once you leave an emulator (back to ES-DE, say), it is closed 10 seconds
 - a different emulator opens.
 
 Sleeping mid-game never closes the game you're in, and coming back before the
-10 seconds are up keeps it open. Only apps with a profile are ever closed; pick
-which ones on the **Auto-close** page. Closing is a force stop (then its Recents
-card is cleared), so anything unsaved is lost: save before you leave.
+10 seconds are up keeps it open. Pick which emulators it applies to on the
+**Auto-close** page, and **Add apps** without a profile (a browser, say) to
+close them the same way. Home screens (ES-DE), Shizuku and Pocket Automator
+are never closed. Closing is a force stop (then its Recents card is cleared),
+so anything unsaved is lost: save before you leave.
+
+## Keep alive
+
+Pocket Automator starts Shizuku by itself (after a restart, or if it stops),
+and a small watchdog checks every 20 seconds that Shizuku, Pocket Automator
+and the apps on the **Keep alive** list (Syncthing Fork by default) are
+running, starting any that have stopped, including after a swipe in Recents
+or a force stop. One switch on the Keep alive page turns it all off.
+
+This uses Retroid's built-in root service (`PServerBinder`, the one behind
+"Run script as Root" in Retroid's settings): nothing is rooted or unlocked.
+Two things to know about that service:
+
+- **Any app can use it**, not just Pocket Automator. That's how Retroid's
+  firmware is built; be careful what you install from unknown sources.
+- It cuts commands off at about 255 characters and stops them at their
+  second line of output. So for now the watchdog can't be updated in place,
+  the battery and standby-cleaner exemptions don't apply, and the Keep alive
+  page shows one line of the watchdog's log.
 
 ## Your games
 
-If ES-DE is installed, the home screen shows your recently played games and
-favorites with their cover art, and each emulator's card shows its own games.
+If ES-DE is installed, the home screen's **Jump back in** row shows your
+recently played games with their cover art (and each game's performance mode),
+and each emulator's card shows its own games and what you played last.
 Pocket Automator reads ES-DE's `gamelists` and `downloaded_media` folders
-(internal storage or SD card) and never writes to them. It grants itself
+(internal storage or SD card) and never writes to them; it grants itself
 "all files access" through Shizuku to do that.
 
 ## Requirements
 
 - A Retroid Pocket Flip 2 (tested) or Duo (untested until it ships).
-- [Shizuku](https://github.com/RikkaApps/Shizuku/releases). Without root it has
-  to be started again after every restart: open Shizuku → *Start via Wireless
-  debugging*. Starting it automatically is planned.
+- [Shizuku](https://github.com/RikkaApps/Shizuku/releases), installed and
+  allowed once. With Keep alive on, Pocket Automator starts it from then on.
 
 ## Setup
 
 1. Install the APK and open Pocket Automator.
-2. Start Shizuku, then tap **Allow access**. Pocket Automator then grants
-   itself "display over other apps" for its switch message, takes itself off
-   Retroid's *no auto-run* list, and adds itself to the standby cleaner's
-   ignore list.
+2. Start Shizuku once, then tap **Allow access**. Pocket Automator then grants
+   itself "display over other apps" for its switch message and "all files
+   access" for ES-DE's art, and takes itself off Retroid's cleaner lists.
 3. Edit **Default**, add profiles, and link apps under **Choose apps**.
 
 If OdinTools' App overrides are on, Pocket Automator shows a warning: both
@@ -85,8 +107,21 @@ JDK 17 and the Android SDK (platform 35):
 ./gradlew testDebugUnitTest assembleRelease
 ```
 
-The APK lands in `app/build/outputs/apk/release/` (about 2 MB; without a
-`keystore.properties` it is signed with the local debug key).
+The APK lands in `app/build/outputs/apk/release/` (about 2 MB).
+
+**Signing:** Android only installs an update over the app if it's signed with
+the same key. Builds are signed with the key named in `keystore.properties`
+(gitignored) in the project root:
+
+```
+storeFile=C:/path/to/pocket-automator.jks
+storePassword=…
+keyAlias=…
+keyPassword=…
+```
+
+Without that file, builds fall back to the local debug key, which won't
+update a copy signed with another key.
 
 ## License
 

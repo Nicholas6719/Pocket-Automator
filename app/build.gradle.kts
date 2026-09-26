@@ -7,9 +7,11 @@ plugins {
 }
 
 /**
- * Release signing. The key and its password never live in the repository:
- * they come from keystore.properties in the project root (gitignored).
- * Without it, builds are signed with the local debug key.
+ * Signing. The key and its password never live in the repository: they come
+ * from keystore.properties in the project root (gitignored), which points at
+ * the key kept outside the project. Every build must use the same key, or
+ * Android refuses to install it over the installed app. Without the file,
+ * builds fall back to this PC's debug key.
  */
 val signing = Properties().apply {
     rootProject.file("keystore.properties").takeIf { it.isFile }?.inputStream()?.use { load(it) }
@@ -24,8 +26,8 @@ android {
         // The Flip 2 ships Android 13; the Duo, Android 16.
         minSdk = 33
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     signingConfigs {
@@ -40,6 +42,10 @@ android {
     val releaseKey = signingConfigs.getByName("release").takeIf { it.storeFile?.isFile == true }
 
     buildTypes {
+        debug {
+            // The same key as release builds, so either installs over the other.
+            releaseKey?.let { signingConfig = it }
+        }
         release {
             signingConfig = releaseKey ?: signingConfigs.getByName("debug")
             isMinifyEnabled = true

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pocketautomator.app.AutomatorService
+import com.pocketautomator.app.Background
 import com.pocketautomator.app.BuildConfig
 import com.pocketautomator.app.Device
 import com.pocketautomator.app.RetroidLists
@@ -96,6 +97,12 @@ private fun facts(context: Context, now: Store.Now): List<String> {
     now.readings?.let { r ->
         out += "readings: " + r.values.entries.joinToString { "${it.key.key}=${it.value}" } + (r.fanRpm?.let { ", fanRpm=$it" } ?: "")
     }
+    val store = Store.get(context)
+    val keep = runCatching { Background.status(store.keepAlive.value) }.getOrNull()
+    out += "keep-alive: ${if (store.keepAliveOn.value) "on" else "off"}" + if (keep == null) "" else
+        "; root service ${if (keep.root) "available" else "unavailable"}, watchdog ${if (keep.watchdog) "running" else "not running"}, " +
+            "shizuku ${if (keep.shizuku) "running" else "stopped"}" +
+            keep.apps.entries.joinToString("") { (pkg, up) -> ", $pkg ${if (up) "running" else "stopped"}" }
     if (Shell.ready) {
         for (key in listOf(RetroidLists.AUTO_RUN_DISABLED, "auto_clean_processes", RetroidLists.CLEAN_IGNORED, "smart_fan_mode_switch")) {
             out += "$key: " + runCatching { Shell.run("settings", "get", "system", key).out.trim() }.getOrDefault("?")
