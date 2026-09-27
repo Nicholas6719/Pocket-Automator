@@ -73,6 +73,13 @@ and the apps on the **Keep alive** list (Syncthing Fork by default) are
 running, starting any that have stopped, including after a swipe in Recents
 or a force stop. One switch on the Keep alive page turns it all off.
 
+Pocket Automator itself has a second guard that needs no root: a small
+helper Shizuku runs as the shell user (`Guard`), which keeps running when
+Pocket Automator is force-stopped and starts it again within 10 seconds.
+That matters on the Odin 2 Portal, whose launcher force-stops apps swiped
+away in Recents. The service is exported only to the shell user (it
+requires `android.permission.DUMP`) so the helper can start it.
+
 This uses the handheld's built-in root service (`PServerBinder`, the one
 behind "Run script as Root" in Retroid's settings; AYN's firmware has it too):
 nothing is rooted or unlocked. Things to know about that service:
@@ -84,7 +91,8 @@ nothing is rooted or unlocked. Things to know about that service:
   and the Keep alive page shows one line of the watchdog's log. The battery
   and standby exemptions go through Shizuku instead, which has no such limit.
 - On the Odin 2 Portal the watchdog doesn't start yet (the same limit);
-  Shizuku still starts by itself, and the exemptions still apply.
+  Shizuku still starts by itself, the exemptions still apply, and the
+  Shizuku helper above brings Pocket Automator back after a force stop.
 
 ## Your games
 

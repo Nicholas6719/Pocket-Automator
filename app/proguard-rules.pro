@@ -3,3 +3,6 @@
 
 # Shizuku starts the task watcher by its class name (see AppWatcher).
 -keep class com.pocketautomator.app.TaskWatcher { <init>(); }
+
+# And the restart helper (see GuardLink).
+-keep class com.pocketautomator.app.Guard { <init>(); }

@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pocketautomator.app.Background
+import com.pocketautomator.app.GuardLink
 import com.pocketautomator.app.Shell
 import com.pocketautomator.app.Store
 import kotlinx.coroutines.Dispatchers
@@ -81,6 +82,8 @@ fun KeepAliveScreen(apps: List<InstalledApp>, onAddApps: () -> Unit, onBack: () 
                         StatusLine("Built-in root service", s.root, if (s.root) "available" else "not available on this firmware")
                         StatusLine("Watchdog", s.watchdog, if (s.watchdog) "running" else if (on) "not running" else "off")
                         StatusLine("Shizuku", s.shizuku, if (s.shizuku) "running" else "stopped")
+                        val guard = GuardLink.running
+                        StatusLine("Restart helper", guard, if (guard) "running (through Shizuku)" else if (on) "not running" else "off")
                     }
                 }
             }

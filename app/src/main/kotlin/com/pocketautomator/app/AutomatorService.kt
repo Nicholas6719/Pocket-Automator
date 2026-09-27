@@ -37,6 +37,7 @@ class AutomatorService : Service() {
     private val grants = Executors.newSingleThreadExecutor()
     private lateinit var automator: Automator
     private lateinit var watcher: AppWatcher
+    private lateinit var guard: GuardLink
 
     override fun onCreate() {
         super.onCreate()
@@ -46,6 +47,7 @@ class AutomatorService : Service() {
         automator = Automator(this).also { current = it }
         watcher = AppWatcher(this, automator, ::onShizukuReady)
         watcher.start()
+        guard = GuardLink(this).also { it.start() }
         registerReceiver(screen, IntentFilter(Intent.ACTION_SCREEN_OFF))
         scope.launch { store.profiles.drop(1).collect { watcher.reconsider() } }
         // Games' own settings: handheld ones take effect now, emulator ones go into the emulators' files.
@@ -64,6 +66,7 @@ class AutomatorService : Service() {
         // Keep-alive: start Shizuku if it's down, and the watchdog, now and whenever the settings change.
         scope.launch {
             combine(store.keepAliveOn, store.keepAlive) { on, apps -> on to apps }.collect { (on, apps) ->
+                guard.refresh()
                 grants.execute {
                     runCatching { keepAlive(on, apps) }
                         .onFailure { store.log("keep-alive setup failed: ${it.javaClass.simpleName}: ${it.message}") }
@@ -118,6 +121,7 @@ class AutomatorService : Service() {
         Shizuku.removeBinderDeadListener(shizukuGone)
         runCatching { unregisterReceiver(screen) }
         watcher.stop()
+        guard.stop()
         automator.release()
         super.onDestroy()
     }
@@ -133,6 +137,7 @@ class AutomatorService : Service() {
      * over games, and staying on Retroid's lists of apps it leaves alone.
      */
     private fun onShizukuReady() {
+        guard.refresh()
         grants.execute {
             if (!Settings.canDrawOverlays(this)) {
                 Shell.run("appops", "set", packageName, "SYSTEM_ALERT_WINDOW", "allow")
