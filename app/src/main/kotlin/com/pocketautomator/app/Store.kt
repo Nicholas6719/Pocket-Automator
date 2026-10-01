@@ -248,6 +248,22 @@ class Store private constructor(context: Context) {
         get() = GameSettings.appliedFromJson(prefs.getString(APPLIED, null))
         set(value) = prefs.edit { putString(APPLIED, GameSettings.appliedToJson(value)) }
 
+    /**
+     * RetroArch per-game options files Pocket Automator made (path → every
+     * option it wrote), kept up to date while they still say what it wrote.
+     */
+    var retroArchFiles: Map<String, Map<String, String>>
+        get() = runCatching {
+            val o = JSONObject(prefs.getString(RETROARCH_FILES, null) ?: "{}")
+            o.keys().asSequence().associateWith { path ->
+                val opts = o.getJSONObject(path)
+                opts.keys().asSequence().associateWith { opts.getString(it) }
+            }
+        }.getOrDefault(emptyMap())
+        set(value) = prefs.edit {
+            putString(RETROARCH_FILES, JSONObject().apply { value.forEach { (path, opts) -> put(path, JSONObject(opts)) } }.toString())
+        }
+
     /** Azahar's config.ini on shared storage, once found. */
     var azaharConfig: String?
         get() = prefs.getString(AZAHAR_CONFIG, null)
@@ -302,6 +318,7 @@ class Store private constructor(context: Context) {
         private const val EDEN_IDS = "edenIds"
         private const val APPLIED = "applied"
         private const val AZAHAR_CONFIG = "azaharConfig"
+        private const val RETROARCH_FILES = "retroArchFiles"
         private const val LOG_SIZE = 60
 
         @Volatile private var instance: Store? = null

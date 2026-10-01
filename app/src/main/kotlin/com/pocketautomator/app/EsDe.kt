@@ -88,15 +88,13 @@ object EsDe {
     private val SWITCH get() = listOf("dev.eden.eden_emulator", "io.github.citron_emu.citron", "org.sudachi.sudachi_emu", "org.yuzu.yuzu_emu")
     private val RETROARCH get() = listOf("com.retroarch.aarch64", "com.retroarch", "com.retroarch.ra32")
 
-    /** Systems whose default emulator isn't RetroArch. */
+    /**
+     * Systems whose default emulator (ES-DE's first, used when no other is
+     * picked) isn't RetroArch, from ES-DE's Android es_systems.xml. GameCube,
+     * Wii, 3DS, DS, PSP and PS1 default to RetroArch cores there.
+     */
     private val SYSTEM_DEFAULTS = mapOf(
-        "gc" to listOf("org.dolphinemu.dolphinemu"),
-        "wii" to listOf("org.dolphinemu.dolphinemu"),
-        "n3ds" to listOf("org.azahar_emu.azahar", "io.github.lime3ds.android", "org.citra.emu"),
-        "ps2" to listOf("xyz.aethersx2.android", "com.armsx2"),
-        "psp" to listOf("org.ppsspp.ppsspp"),
-        "psx" to listOf("com.github.stenzek.duckstation"),
-        "nds" to listOf("me.magnum.melonds", "me.magnum.melonds.nightly", "com.dsemu.drastic"),
+        "ps2" to listOf("xyz.aethersx2.android"),
         "switch" to SWITCH,
         "psvita" to listOf("org.vita3k.emulator"),
     )

@@ -75,9 +75,11 @@ or a force stop. One switch on the Keep alive page turns it all off.
 
 Pocket Automator itself has a second guard that needs no root: a small
 helper Shizuku runs as the shell user (`Guard`), which keeps running when
-Pocket Automator is force-stopped and starts it again within 10 seconds.
-That matters on the Odin 2 Portal, whose launcher force-stops apps swiped
-away in Recents. The service is exported only to the shell user (it
+Pocket Automator is force-stopped and starts it again within 10 seconds,
+along with the apps on the Keep alive list (an app it isn't allowed to start
+is tried less and less often). That matters on the Odin 2 Portal, whose
+launcher force-stops apps swiped away in Recents and where the watchdog
+can't start. The service is exported only to the shell user (it
 requires `android.permission.DUMP`) so the helper can start it.
 
 This uses the handheld's built-in root service (`PServerBinder`, the one
@@ -110,7 +112,8 @@ profile) to give it settings of its own. ES-DE stays your frontend:
 
 - **Handheld**: performance, fan and the rest, on top of its emulator's
   profile. Anything left on "Same as profile" follows the profile.
-- **Emulator**: graphics and CPU settings for five emulators:
+- **Emulator**: graphics and CPU settings for eight emulators, five apps
+  and three RetroArch cores (only the emulator ES-DE runs the game in gets them):
   - **Eden**: resolution, GPU accuracy, console mode, CPU accuracy, ASTC
     decoding, asynchronous shaders, GPU driver (only drivers already
     installed), and more (CPU/GPU clocks, VSync, frame pacing, DMA
@@ -122,6 +125,15 @@ profile) to give it settings of its own. ES-DE stays your frontend:
   - **ARMSX2**: resolution, EE cycle rate and skip, blending accuracy,
     hardware download mode, MTVU, texture filtering and upscaling fixes.
   - **DuckStation**: resolution, widescreen, aspect ratio, PGXP and CPU overclock.
+  - **SwanStation** (RetroArch, PS1): resolution, widescreen, aspect ratio,
+    PGXP, true color, texture filtering, CPU clock and renderer. Choices made
+    for DuckStation carry over where SwanStation has the same setting.
+  - **Mupen64Plus-Next** (RetroArch, N64): resolution, aspect ratio
+    (widescreen hack), graphics plugin, framebuffer and RDRAM copies, CPU
+    core, count per op, VI refresh and MSAA.
+  - **Flycast** (RetroArch, Dreamcast): resolution, widescreen cheats and
+    hack, transparency sorting, render-to-texture, framebuffer emulation,
+    frame skip, threaded rendering and frame swapping.
 
 How it knows the game: ES-DE runs "custom event scripts" as a game starts and
 ends. Pocket Automator puts a small script in ES-DE's `scripts/game-start`
@@ -139,15 +151,19 @@ and seeing the setting take effect):
 | Azahar | No per-game settings on Android, so the hook swaps each setting into `config.ini` as the game starts, and puts Azahar's own back once you're in ES-DE again (or Azahar closes) | ROM file name |
 | ARMSX2 | `gamesettings/<serial>_<CRC>.ini` in ARMSX2's folder, which the PS2 core loads over ARMSX2's settings | Serial and CRC from the bundled table (made from PCSX2's game list), or ARMSX2's recent games plus its patch archive |
 | DuckStation | `gamesettings/<serial>.ini`, DuckStation's own per-game settings | Serial from the bundled table |
+| RetroArch cores | `config/<core>/<game>.opt`, RetroArch's own game-specific core options. RetroArch reads that file *instead of* the core's options (missing ones take the core's defaults), so it holds the core's options as they are now with the game's on top, and is kept in step when the core's change; a file made or changed in RetroArch is yours, and only Pocket Automator's own options in it are ever touched. The undo script removes the files it made while they're unchanged. | ROM file name; the core from ES-DE's emulator label (or the system's default) |
 
 ### Community settings
 
-`app/src/main/assets/suggestions.json` holds community reports for 225 games
+`app/src/main/assets/suggestions.json` holds community reports for 314 games
 (matched by system and title as ES-DE shows it): how each runs on a Snapdragon
 865 (Retroid Pocket 5, Mini, Flip 2; the file lists the chip, `SM8250`) and the settings its sources use, each
 with the reason and a link. It was gathered from an RP5 compatibility
 spreadsheet, Flip 2 and RP5 guides and videos, the Dolphin wiki's game
-pages, ARMSX2's release notes and issues, and DuckStation's game database.
+pages, ARMSX2's release notes and issues, DuckStation's game database, and for
+N64 and Dreamcast the GLideN64, Mupen64Plus-Next and Flycast issue trackers,
+Flycast's source and the LaunchBox forums' Dreamcast 16:9 project (those are
+suggestions only: none is applied by itself).
 (EmuReady wasn't used.)
 
 - A game's page shows its report and marks the community's value on each

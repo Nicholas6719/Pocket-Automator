@@ -4,8 +4,8 @@
  "socs": [
   "SM8250"
  ],
- "updated": "2026-09-26",
- "about": "Community reports for these games on Snapdragon 865 handhelds (Retroid Pocket 5, Mini, Flip 2), with the settings their sources use. Only fixes a source calls necessary are applied automatically.",
+ "updated": "2026-10-01",
+ "about": "Community reports for these games on Snapdragon 865 handhelds (Retroid Pocket 5, Mini, Flip 2) and, for N64 and Dreamcast, the Snapdragon 8 Gen 2 (Odin 2), with the settings their sources use. Only fixes a source calls necessary are applied automatically.",
  "games": [
   {
    "system": "gc",
@@ -1442,6 +1442,27 @@
      "why": "Same guide: PGXP Geometry Correction is 'Very important! Solves much of the wobbly geometry'. Only needed if PGXP is not already on globally.",
      "source": "https://projectcerbera.com/gt/1/duckstation/",
      "auto": false
+    },
+    {
+     "key": "swanstation.widescreen",
+     "value": "true",
+     "why": "Project Cerbera's GT1 DuckStation guide: Widescreen Rendering 'Works great in Gran Turismo!'. Optional; fills the 16:9 screen.",
+     "source": "https://projectcerbera.com/gt/1/duckstation/",
+     "auto": false
+    },
+    {
+     "key": "swanstation.aspect",
+     "value": "16:9",
+     "why": "Paired with Widescreen Rendering in the same guide (Aspect Ratio 16:9 'Works brilliantly!'). Needed so the widescreen render is not squashed.",
+     "source": "https://projectcerbera.com/gt/1/duckstation/",
+     "auto": false
+    },
+    {
+     "key": "swanstation.pgxp",
+     "value": "true",
+     "why": "Same guide: PGXP Geometry Correction is 'Very important! Solves much of the wobbly geometry'. Only needed if PGXP is not already on globally.",
+     "source": "https://projectcerbera.com/gt/1/duckstation/",
+     "auto": false
     }
    ]
   },
@@ -1461,6 +1482,13 @@
    "settings": [
     {
      "key": "duckstation.pgxp",
+     "value": "true",
+     "why": "Project Cerbera's GT2 DuckStation guide: PGXP Geometry Correction is 'Very important! Solves much of the wobbly geometry'. Only needed if PGXP is not already on globally.",
+     "source": "https://projectcerbera.com/gt/2/duckstation/",
+     "auto": false
+    },
+    {
+     "key": "swanstation.pgxp",
      "value": "true",
      "why": "Project Cerbera's GT2 DuckStation guide: PGXP Geometry Correction is 'Very important! Solves much of the wobbly geometry'. Only needed if PGXP is not already on globally.",
      "source": "https://projectcerbera.com/gt/2/duckstation/",
@@ -3207,6 +3235,1336 @@
     "https://github.com/dolphin-emu/dolphin/tree/master/Data/Sys/GameSettings"
    ],
    "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Armorines - Project S.W.A.R.M.",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2, and no GLideN64 or core issue for this game.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Bomberman Hero",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Castlevania",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's tracker has only old, closed issues for Castlevania (1999), such as a CRC crash that was fixed. The built-in INI fix and the open slowdown report (GLideN64 #2709) are for Legacy of Darkness, a different game.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+castlevania",
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Diddy Kong Racing",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Doom 64",
+   "status": "unknown",
+   "note": "No reliable report found. GLideN64's tracker has no Doom 64 issue.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+is%3Aopen+%22Doom+64%22"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Duke Nukem 64",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's old menu-transparency and 2D bugs are closed. The only open issue (missing sprites, #468) affects LLE graphics only, not the default HLE path.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+is%3Aopen+%22Wipeout%22+OR+%22Hexen%22+OR+%22Duke+Nukem%22"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Extreme-G",
+   "status": "playable",
+   "note": "GLideN64's built-in INI already turns on N64 depth compare for this game. A user on an Adreno 640 running Mupen64Plus-Next GLES3 saw rotating squares over the title logo (GLideN64 #2778). gonetz said the intro glitch also happens on desktop and that N64 depth compare must be on (#2779).",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/2778",
+    "https://github.com/gonetz/GLideN64/issues/2779",
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "F-1 World Grand Prix",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "F-Zero X",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Hexen",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's built-in INI already enables color buffer copy for Hexen, and its old sky and intro bugs are closed.",
+   "sources": [
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini",
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+is%3Aopen+%22Wipeout%22+OR+%22Hexen%22+OR+%22Duke+Nukem%22"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Killer Instinct Gold",
+   "status": "playable",
+   "note": "Open GLideN64 issues report line seams through the 2D fighters and single-pixel lines on fire effects and health bars (#1914, #2425). On a Raspberry Pi 4 it stutters for the first 10-20 seconds while shaders build (#2649). No handheld-specific report was found, and none of the allowed settings fixes the seams.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/1914",
+    "https://github.com/gonetz/GLideN64/issues/2425",
+    "https://github.com/gonetz/GLideN64/issues/2649"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "The Legend of Zelda : Ocarina of Time",
+   "status": "unknown",
+   "note": "No chip-specific report found. A white or broken pause screen in Mupen64Plus-Next was fixed in the core in 2020 (libretro-nx #172). GLideN64 #1579, still open, reports that MSAA draws black lines in this game.",
+   "sources": [
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/172",
+    "https://github.com/gonetz/GLideN64/issues/1579"
+   ],
+   "settings": [
+    {
+     "key": "mupen64.msaa",
+     "value": "0",
+     "why": "Anti-aliasing draws black lines across the picture in this game, so keep it off.",
+     "source": "https://github.com/gonetz/GLideN64/issues/1579",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "n64",
+   "name": "Mario Party 3",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Mario Tennis",
+   "status": "playable",
+   "note": "Joey's Retro Handhelds (RP5 and Odin 2 guides) says Mario Tennis has texture issues in RetroArch that M64Plus FZ can fix. On an SD865 the scoreboard doesn't clear, and only 'copy auxiliary buffer' fixes it, at a big speed cost (GLideN64 #2952). Random crashes every 3-5 minutes are also reported (libretro-nx #481, Linux).",
+   "sources": [
+    "https://www.joeysretrohandhelds.com/guides/retroid-pocket-5-setup-guide/",
+    "https://www.joeysretrohandhelds.com/guides/ayn-odin-2-setup-guide/",
+    "https://github.com/gonetz/GLideN64/issues/2952",
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/481"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Mega Man 64",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's built-in INI already applies a texrect-coordinate fix for this game.",
+   "sources": [
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Mortal Kombat 4",
+   "status": "unknown",
+   "note": "No handheld report found. Old GLideN64 issues (a black screen and missing 2D elements) are closed.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+%22Mortal+Kombat%22"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Mortal Kombat Mythologies : Sub-Zero",
+   "status": "unknown",
+   "note": "No handheld report found. The only GLideN64 issue (#238, 2015) is closed.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+%22Mortal+Kombat%22"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Mortal Kombat Trilogy",
+   "status": "unknown",
+   "note": "No handheld report found. A screen-border artifact is still open in GLideN64 (#2086, Project64). The Subway stage slowdown issue (#1948) is closed.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/2086",
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+%22Mortal+Kombat%22"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Mystical Ninja Starring Goemon",
+   "status": "unknown",
+   "note": "One report says lr-mupen64plus-next slows down when the camera rotates while mupen64plus-ae did not (libretro-nx #285). The issue was closed for lack of info, and the device was not an Android handheld. GLideN64 graphics issues for this game are closed.",
+   "sources": [
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/285"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Nuclear Strike 64",
+   "status": "unknown",
+   "note": "No reliable report found. GLideN64's tracker has no Nuclear Strike issue.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Paper Mario",
+   "status": "playable",
+   "note": "On Qualcomm/Adreno Android devices in Mupen64Plus-Next GLES3, the File 1-4 tiles on the title menu and the pause menus draw wrong. The issue is still open, and reporters found no core option that fixes it (libretro-nx #431 on a OnePlus 6, #605 in 2025). The game itself plays, and the GLideN64 INI already applies Paper Mario's own fixes.",
+   "sources": [
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/431",
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/605",
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Perfect Dark",
+   "status": "unknown",
+   "note": "No reliable SD865/8 Gen 2 report found. Desktop GLideN64 issues say framebuffer emulation costs speed (#765) and smoke or explosions cause big frame drops (#1381). The pause-screen blur works on Android (the reporter of libretro-nx #379 said the Xbox-only bug did not happen on Android).",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/765",
+    "https://github.com/gonetz/GLideN64/issues/1381",
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/379"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Pilotwings 64",
+   "status": "playable",
+   "note": "A Mupen64Plus-Next GLES3 user on an Adreno 640 said the plane shadow works (GLideN64 #2778). GLideN64 still has open cosmetic issues: junk in the screen borders (#2145) and grey noise in the first-person gyrocopter view (#2695, reported in Mupen64Plus-Next on RetroArch).",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/2778",
+    "https://github.com/gonetz/GLideN64/issues/2145",
+    "https://github.com/gonetz/GLideN64/issues/2695"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Pokémon Stadium",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's built-in INI already turns off depth copy for this game. Transfer Pak works in the core (libretro-nx #107 closed), but using different Game Boy games on each controller is still only a pending PR (#570).",
+   "sources": [
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini",
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues?q=is%3Aissue+stadium"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Pokémon Stadium 2",
+   "status": "unknown",
+   "note": "No handheld report found. The GLideN64 INI already turns off color and depth copy for this game. That covers the white title screen GLideN64 #2054 describes with software depth.",
+   "sources": [
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini",
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+is%3Aopen+%22Smash+Bros%22"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Saban's Power Rangers : Lightspeed Rescue",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Quake II",
+   "status": "unknown",
+   "note": "No handheld report found. All of GLideN64's old Quake II issues (see-through walls, reflections, menu effects) are closed. On a Raspberry Pi 4 it stutters for 10-20 seconds after starting while shaders build (GLideN64 #2649).",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/2649"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Rampage 2 : Universal Tour",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Road Rash 64",
+   "status": "unknown",
+   "note": "No handheld report found. The only GLideN64 issue (#145, fog and title screen) was closed in 2014.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Rush 2 : Extreme Racing USA",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's built-in INI already applies buffer-swap and texrect fixes for this game.",
+   "sources": [
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "San Francisco Rush : Extreme Racing",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's built-in INI already applies buffer-swap and native-res 2D fixes for this game.",
+   "sources": [
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Star Wars : Episode I - Battle for Naboo",
+   "status": "unknown",
+   "note": "GLideN64's wiki documents this game's custom microcode (the request, #1259, is closed). With the dynarec on 64-bit x86 RetroArch it could hang for a minute when a level loads (libretro-nx #268/#222). Interpreters worked, and m4xw said arm64 already had a workaround, so this may not affect Android. No handheld speed report found.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/wiki",
+    "https://github.com/gonetz/GLideN64/issues/1259",
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/268",
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/222"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Super Smash Bros.",
+   "status": "unknown",
+   "note": "No handheld report found. The European version's intro has audio out of sync unless VI Refresh is 1500 (libretro-nx #178). Copying depth from video memory ('FromMem') broke the game in GLideN64 #1433.",
+   "sources": [
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/178",
+    "https://github.com/gonetz/GLideN64/issues/1433"
+   ],
+   "settings": [
+    {
+     "key": "mupen64.vi_refresh",
+     "value": "1500",
+     "why": "European copies only: fixes the intro's sound running out of sync with the picture.",
+     "source": "https://github.com/libretro/mupen64plus-libretro-nx/issues/178",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "mupen64.copy_depth",
+     "value": "Software",
+     "why": "Copying depth from video memory breaks the graphics in this game; the software mode avoids it.",
+     "source": "https://github.com/gonetz/GLideN64/issues/1433",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "n64",
+   "name": "Tom and Jerry in Fists of Furry",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Top Gear Overdrive",
+   "status": "unknown",
+   "note": "No handheld report found. The only open GLideN64 issue is cosmetic dithering (#2451).",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+is%3Aopen+%22Top+Gear%22"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Top Gear Rally 2",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's built-in INI already enables color buffer copy for this game.",
+   "sources": [
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Toy Story 2 : Buzz Lightyear to the Rescue!",
+   "status": "unknown",
+   "note": "No reliable report found. GLideN64's tracker has no open Toy Story issue.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Turok : Rage Wars",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Turok 3 : Shadow of Oblivion",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64 still has an open 'incorrect shadows' issue (#543). The night-vision goggle bug is closed.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+%22Rage+Wars%22+OR+%22Turok+3%22"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "V-Rally Edition '99",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Vigilante 8",
+   "status": "unknown",
+   "note": "No handheld report found. Open GLideN64 issues report menu flicker and black menus, a player 2 HUD that vanishes in 2-player mode (#1285), and wrong menu transitions (#761). None of the allowed settings is known to fix them.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/1285",
+    "https://github.com/gonetz/GLideN64/issues?q=is%3Aissue+vigilante"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Wave Race 64",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's built-in INI already enables color buffer copy for this game.",
+   "sources": [
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "WipEout 64",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "World Cup 98",
+   "status": "unknown",
+   "note": "No reliable report found for Mupen64Plus-Next on SD865/8 Gen 2.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "WWF No Mercy",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64 #2697, still open, reports black outlines on see-through textures such as the cage.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/2697"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Yoshi's Story",
+   "status": "unknown",
+   "note": "On an Adreno 640 (in M64Plus FZ, not RetroArch), smooth-scrolling stages stutter about every 2 seconds (GLideN64 #2783). GLideN64 #1619, still open, reports items and platforms randomly going invisible; the reporter was using the Async color-copy mode.",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/2783",
+    "https://github.com/gonetz/GLideN64/issues/1619"
+   ],
+   "settings": [
+    {
+     "key": "mupen64.copy_color",
+     "value": "Sync",
+     "why": "If fruit, platforms or bubbles randomly turn invisible, the slower Sync copy mode avoids the Async mode they were reported with.",
+     "source": "https://github.com/gonetz/GLideN64/issues/1619",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "n64",
+   "name": "Mario Kart 64",
+   "status": "playable",
+   "note": "Single player is fine, and the GLideN64 INI fixes the character portraits. In 2-4 player split screen with GLideN64, the item box, lap count, timer and minimap show black or disappear. This is a GLideN64 microcode regression (GLideN64 #2894, libretro-nx #593, still open). Resetting the game can also freeze RetroArch (libretro-nx #621).",
+   "sources": [
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/593",
+    "https://github.com/gonetz/GLideN64/issues/2894",
+    "https://retrobat.forumgaming.fr/t3084-mario-kart-64-splitscreen-bug-multiplayer-gliden64",
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues?q=is%3Aissue+mario"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Beetle Adventure Racing!",
+   "status": "unknown",
+   "note": "No handheld report found. GLideN64's fog fix for this game (#1790) was merged.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Donkey Kong 64",
+   "status": "playable",
+   "note": "On Android GLES3 (an SD765G report) the camera floats or glitches, because GLideN64's built-in INI forces depth copy from video memory. fzurita blamed software vs hardware depth, and the reporter fixed it by setting INI Behaviour to 'Prioritize Core Options over INI' (libretro-nx #377, GLideN64 #2392, both open). That option isn't among Pocket Automator's settings, and changing Depth buffer alone is overridden by the INI. Cutscene video also runs slightly behind the audio (libretro-nx #573).",
+   "sources": [
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/377",
+    "https://github.com/gonetz/GLideN64/issues/2392",
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/573",
+    "https://raw.githubusercontent.com/libretro/mupen64plus-libretro-nx/develop/libretro/libretro_core_options.h"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Super Mario 64",
+   "status": "unknown",
+   "note": "No reliable SD865/8 Gen 2 report found. The only open GLideN64 issue is old garbage in the intro (#867, desktop).",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Pokémon Snap",
+   "status": "unplayable",
+   "note": "Joey's Retro Handhelds (RP5 and Odin 2 guides) lists Pokémon Snap as broken in RetroArch. On Android the aiming red dot only shows at 1x resolution, and Professor Oak fails to recognise most photos (GLideN64 #2492, still open).",
+   "sources": [
+    "https://www.joeysretrohandhelds.com/guides/retroid-pocket-5-setup-guide/",
+    "https://www.joeysretrohandhelds.com/guides/ayn-odin-2-setup-guide/",
+    "https://github.com/gonetz/GLideN64/issues/2492"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Mario Golf",
+   "status": "struggles",
+   "note": "Joey's Retro Handhelds (RP5 and Odin 2 guides) lists Mario Golf as broken in RetroArch. A Mupen64Plus-Next GLES3 Android report had animated effects drawn in front of the course (libretro-nx #382, closed without a stated fix).",
+   "sources": [
+    "https://www.joeysretrohandhelds.com/guides/retroid-pocket-5-setup-guide/",
+    "https://www.joeysretrohandhelds.com/guides/ayn-odin-2-setup-guide/",
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/382"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "Banjo-Kazooie",
+   "status": "unknown",
+   "note": "No handheld speed report found. The jigsaw-puzzle transition breaks with Async color copy and works with Sync (GLideN64 #1630), but GLideN64's built-in INI already forces Sync (copyToRDRAM=1) for this game. Cutscene video runs slightly behind the audio (libretro-nx #573, open).",
+   "sources": [
+    "https://github.com/libretro/mupen64plus-libretro-nx/issues/573",
+    "https://github.com/gonetz/GLideN64/issues/1630",
+    "https://raw.githubusercontent.com/gonetz/GLideN64/master/ini/GLideN64.custom.ini"
+   ],
+   "settings": []
+  },
+  {
+   "system": "n64",
+   "name": "GoldenEye 007",
+   "status": "playable",
+   "note": "A Mupen64Plus-Next GLES3 user on an Adreno 640 saw a back wall z-fighting through the front wall with N64 depth compare (GLideN64 #2778). Retro Game Corps says GoldenEye needs 720p on the older Odin Lite/Pro (not SD865/8 Gen 2).",
+   "sources": [
+    "https://github.com/gonetz/GLideN64/issues/2778",
+    "https://retrogamecorps.com/2022/05/28/ayn-odin-starter-guide/"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "18 Wheeler : American Pro Trucker",
+   "status": "unknown",
+   "note": "No game-specific report found for SD865/8 Gen 2. Flycast ships a widescreen patch for the US/EU/JP releases, and Norm's 16:9 project lists it as working cleanly.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Blue Stinger",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Flycast already forces extra transparency layers for this game (emulator.cpp), and Norm's 16:9 project lists the widescreen patch as working.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://github.com/flyinghead/flycast/blob/master/core/emulator.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757",
+    "https://github.com/flyinghead/flycast/issues/622"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Crazy Taxi 2",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Widescreen patch exists for US/EU (JP one is disabled as broken) and Norm lists the US release as working. The Crazy Pyramid window frames can glitch at native res (Flycast issue #1804).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757",
+    "https://github.com/flyinghead/flycast/issues/1804"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Dead or Alive 2",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Widescreen patch exists for all regions and Norm lists it as working; some 30 fps intro scenes can show uneven frame pacing (Flycast issue #1022, flyinghead).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757",
+    "https://github.com/flyinghead/flycast/issues/1022",
+    "https://github.com/flyinghead/flycast/issues/625"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "F1 World Grand Prix",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Norm's 16:9 project says this game has no patch but works well with the generic widescreen hack; the hack breaks split-screen in the sequel F1 WGP II (issue #2259).",
+   "sources": [
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/2259"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen",
+     "value": "enabled",
+     "why": "This game has no widescreen patch, but the generic widescreen hack works well in it (turn it off for split-screen).",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Fighting Force 2",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Flycast already forces extra transparency layers for it, and a background glitch with per-pixel sorting was fixed on master in 2024 (issue #1652).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/emulator.cpp",
+    "https://github.com/flyinghead/flycast/issues/1652"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Hydro Thunder",
+   "status": "unknown",
+   "note": "No game-specific report for these chips and no widescreen patch. Flycast already forces NTSC timing for the PAL release.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/emulator.cpp"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Legacy of Kain : Soul Reaver",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Flycast's widescreen patch exists only for the PAL release (flyinghead, issue #201); several older crash/audio bugs are closed as fixed.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://github.com/flyinghead/flycast/issues/201",
+    "https://github.com/flyinghead/flycast/issues/784"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Looney Tunes : Space Race",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. US widescreen patch exists and Norm lists it as working; the generic widescreen hack breaks the split-screen multiplayer view (issue #2259, flyinghead).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757",
+    "https://github.com/flyinghead/flycast/issues/2259"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "The generic widescreen hack breaks split-screen multiplayer in this game and would stack with the patch.",
+     "source": "https://github.com/flyinghead/flycast/issues/2259",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Marvel vs. Capcom : Clash of Super Heroes",
+   "status": "unknown",
+   "note": "No game-specific report or Flycast issue found for this game (the upscaling sprite glitch in issue #466 is about MvC2, not this one). No widescreen patch.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Mortal Kombat Gold",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Flycast already forces TV/composite output for the US release and turns off native depth interpolation for it; the US widescreen patch is listed as working by Norm.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://github.com/flyinghead/flycast/blob/master/core/emulator.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "NBA 2K2",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Norm notes Flycast has no active widescreen patch for it; an intermittent title-screen texture glitch is still open (issue #1273, not fixed by single-threaded rendering).",
+   "sources": [
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/1273"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Outtrigger",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Widescreen patch exists for US/EU/JP and Norm lists it as working; a versus-mode player icon is missing (issue #564, open).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757",
+    "https://github.com/flyinghead/flycast/issues/564"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Power Stone",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Widescreen patch exists for US/EU and Norm lists the Power Stone series as working.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Power Stone 2",
+   "status": "full",
+   "note": "Held Games says it 'runs perfectly' on handhelds and that Flycast runs flawlessly on Snapdragon 865 and up. Widescreen patch exists for all regions and Norm lists it as working.",
+   "sources": [
+    "https://heldgames.com/guides/best-dreamcast-games",
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Re-Volt",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Flycast already applies a depth fix for all releases; its widescreen patch (with a render fix) exists only for the European release, which Norm lists as working.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/emulator.cpp",
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch gives clean 16:9 on the European release (the US release has no patch, so this does nothing there).",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Ready 2 Rumble Boxing",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Flycast's only widescreen patch is for Round 2 (PAL), not this game; a referee-count audio bug is closed (issue #1030).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/issues/1030",
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "San Francisco Rush 2049",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Flycast forces 152 transparency layers and the right video timing; with per-pixel sorting, heavy tire smoke drops to about 1 fps even on a Radeon 780M (issue #1862, flyinghead says the layer count is very GPU-demanding).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/emulator.cpp",
+    "https://github.com/flyinghead/flycast/issues/1862",
+    "https://github.com/flyinghead/flycast/discussions/1765"
+   ],
+   "settings": [
+    {
+     "key": "flycast.alpha_sorting",
+     "value": "per-triangle (normal)",
+     "why": "Per-pixel sorting makes tire smoke crawl to a slideshow in this game, so keep the normal sorting.",
+     "source": "https://github.com/flyinghead/flycast/issues/1862",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Sega GT",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Widescreen patch exists for US/EU and Norm lists it as working; the generic widescreen hack breaks split-screen (issue #2259).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757",
+    "https://github.com/flyinghead/flycast/issues/2259",
+    "https://github.com/flyinghead/flycast/issues/1754"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "The generic widescreen hack breaks split-screen racing in this game and would stack with the patch.",
+     "source": "https://github.com/flyinghead/flycast/issues/2259",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Sega Rally 2",
+   "status": "playable",
+   "note": "On an Android Snapdragon 865 device the game hung when leaving the Car Settings or Records menus (issue #1877); flyinghead fixed it in dev builds in Oct 2025, so keep the core updated. It is a Windows CE game and Flycast keeps its widescreen patch disabled as not working.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/issues/1877",
+    "https://forums.libretro.com/t/sega-rally-2-issue-on-flycast/47877",
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/"
+   ],
+   "settings": [
+    {
+     "key": "flycast.threaded",
+     "value": "disabled",
+     "why": "Turning off threaded rendering stops the music cutting out on the course loading screen, at some speed cost.",
+     "source": "https://forums.libretro.com/t/sega-rally-2-issue-on-flycast/47877",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Shadow Man",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Widescreen patch exists for US/EU and Norm lists it as working; an SH4 exception when certain movies load is still open (issue #1603).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757",
+    "https://github.com/flyinghead/flycast/issues/1603"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Sonic Adventure",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. The libretro docs say the PAL release needs VGA output or later FMVs freeze RetroArch; a chao-race crash is still open (issue #1623). Norm found the widescreen patch makes scenery pop in on the right edge.",
+   "sources": [
+    "https://docs.libretro.com/library/flycast/",
+    "https://github.com/flyinghead/flycast/issues/1623",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "disabled",
+     "why": "This game's widescreen patch makes scenery pop in on the right edge, so 4:3 looks cleaner.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Sonic Adventure 2",
+   "status": "playable",
+   "note": "Held Games says it runs well even on mid-range handhelds, and The Sixth Axis played it on the RP5 without complaint (emulator not named). Norm found its widescreen patch causes pop-in on the right edge.",
+   "sources": [
+    "https://heldgames.com/guides/best-dreamcast-games",
+    "https://www.thesixthaxis.com/2025/03/20/retroid-pocket-5-review-one-of-the-best-gaming-handhelds-you-can-buy/",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "disabled",
+     "why": "This game's widescreen patch makes scenery pop in on the right edge, so 4:3 looks cleaner.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Spawn : In The Demon's Hand",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Widescreen patch exists for US/EU/JP and Norm lists the US release as working.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Spider-Man",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. No widescreen patch; people play it with the generic widescreen hack, which leaves black bars only in the 3D cutscenes (flyinghead, issue #1550). Texture clipping in later levels is still open (issue #2191).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/issues/1550",
+    "https://github.com/flyinghead/flycast/issues/2191"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen",
+     "value": "enabled",
+     "why": "No widescreen patch exists, but the generic hack shows more of the play area (cutscenes stay letterboxed).",
+     "source": "https://github.com/flyinghead/flycast/issues/1550",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Star Wars : Episode I Jedi Power Battles",
+   "status": "unknown",
+   "note": "No game-specific report, Flycast issue, or widescreen patch found.",
+   "sources": [],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Star Wars : Episode I Racer",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. US widescreen patch (also removes FMV black bars) exists and Norm lists it as working.",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Street Fighter III : 3rd Strike",
+   "status": "full",
+   "note": "Held Games says it 'runs perfectly' on handheld hardware. It is a 2D game, so there is no widescreen patch.",
+   "sources": [
+    "https://heldgames.com/guides/best-dreamcast-games"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Street Fighter III : Double Impact",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Its known black-square bug was specific to D3D11 on Windows and was fixed in 2024 (issue #1619).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/issues/1619"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Tomb Raider : The Last Revelation",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Flycast keeps its widescreen patch disabled because of clipping, and the choppy pistol sound was fixed on master in Nov 2024 (issue #1605).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/1605"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Tomb Raider : Chronicles",
+   "status": "unknown",
+   "note": "No game-specific report for these chips and no widescreen patch; a pistol-sound bug reported alongside The Last Revelation was fixed in Nov 2024 (issue #1605).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/issues/1605"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Unreal Tournament",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. The libretro docs say the US release needs the VGA cable type or it crashes at startup; the generic widescreen hack breaks its split-screen view (issue #2259).",
+   "sources": [
+    "https://docs.libretro.com/library/flycast/",
+    "https://github.com/flyinghead/flycast/issues/2259"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "The generic widescreen hack breaks the split-screen multiplayer view in this game.",
+     "source": "https://github.com/flyinghead/flycast/issues/2259",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Wacky Races",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Norm's 16:9 project says it has its own in-game widescreen option, so no patch or hack is needed. The publisher logos and loading screens don't show (issue #1028, open).",
+   "sources": [
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/1028"
+   ],
+   "settings": []
+  },
+  {
+   "system": "dreamcast",
+   "name": "Crazy Taxi",
+   "status": "full",
+   "note": "Held Games says it 'runs perfectly' on handhelds. Upscaling can add thin lines on menu screens (flyinghead, issue #2144), but native res makes the Crazy Box window frames glitch (issue #1804), so there is no clear best resolution.",
+   "sources": [
+    "https://heldgames.com/guides/best-dreamcast-games",
+    "https://github.com/flyinghead/flycast/issues/2144",
+    "https://github.com/flyinghead/flycast/issues/1804",
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
+  },
+  {
+   "system": "dreamcast",
+   "name": "Zombie Revenge",
+   "status": "unknown",
+   "note": "No game-specific report for these chips. Flycast already forces extra transparency layers for it; widescreen patch exists and Norm lists it as working. An Episode 3 boss can get stuck in a wall (issue #2138, open).",
+   "sources": [
+    "https://github.com/flyinghead/flycast/blob/master/core/emulator.cpp",
+    "https://github.com/flyinghead/flycast/blob/master/core/cheats.cpp",
+    "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+    "https://github.com/flyinghead/flycast/issues/757",
+    "https://github.com/flyinghead/flycast/issues/2138"
+   ],
+   "settings": [
+    {
+     "key": "flycast.widescreen_cheats",
+     "value": "enabled",
+     "why": "Built-in widescreen patch for this game gives clean 16:9 with less edge pop-in than the generic hack.",
+     "source": "https://forums.launchbox-app.com/files/file/3646-sega-dreamcast-norms-true-169-project-no-stretching-play-dreamcast-games-in-widescreen-with-no-pop-in-config-files-for-flycast-core-in-retroarch/",
+     "auto": false,
+     "anyChip": true
+    },
+    {
+     "key": "flycast.widescreen",
+     "value": "disabled",
+     "why": "Leave the generic widescreen hack off so it doesn't stack with the patch and squash the picture to about 21:9.",
+     "source": "https://github.com/flyinghead/flycast/issues/757",
+     "auto": false,
+     "anyChip": true
+    }
+   ]
   }
  ]
 }

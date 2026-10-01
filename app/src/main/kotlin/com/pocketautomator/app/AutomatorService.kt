@@ -67,6 +67,7 @@ class AutomatorService : Service() {
         scope.launch {
             combine(store.keepAliveOn, store.keepAlive) { on, apps -> on to apps }.collect { (on, apps) ->
                 guard.refresh()
+                guard.sendApps()
                 grants.execute {
                     runCatching { keepAlive(on, apps) }
                         .onFailure { store.log("keep-alive setup failed: ${it.javaClass.simpleName}: ${it.message}") }

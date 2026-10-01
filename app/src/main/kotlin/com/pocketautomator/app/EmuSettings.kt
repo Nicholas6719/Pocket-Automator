@@ -4,16 +4,36 @@ import org.json.JSONObject
 import java.io.File
 import java.io.RandomAccessFile
 
-/** The emulators whose settings Pocket Automator can set per game. */
-enum class Emulator(val pkg: String, val title: String) {
+/**
+ * The emulators whose settings Pocket Automator can set per game. RetroArch's
+ * cores share RetroArch's app: [core] is the core's library name (the folder
+ * RetroArch keeps its options in), and [prefix] starts each of its option keys.
+ */
+enum class Emulator(val pkg: String, val title: String, val core: String? = null, val prefix: String = "") {
     EDEN("dev.eden.eden_emulator", "Eden"),
     DOLPHIN("org.dolphinemu.dolphinemu", "Dolphin"),
     AZAHAR("org.azahar_emu.azahar", "Azahar"),
     ARMSX2("com.armsx2", "ARMSX2"),
-    DUCKSTATION("com.github.stenzek.duckstation", "DuckStation");
+    DUCKSTATION("com.github.stenzek.duckstation", "DuckStation"),
+    SWANSTATION(RetroArch.PACKAGE, "SwanStation", "SwanStation", "swanstation_"),
+    MUPEN64(RetroArch.PACKAGE, "Mupen64Plus-Next", "Mupen64Plus-Next", "mupen64plus-"),
+    FLYCAST(RetroArch.PACKAGE, "Flycast", "Flycast", "reicast_");
+
+    val isRetroArch: Boolean get() = core != null
 
     companion object {
-        fun of(pkg: String?): Emulator? = entries.firstOrNull { it.pkg == pkg }
+        /** A standalone emulator by its app. */
+        fun of(pkg: String?): Emulator? = entries.firstOrNull { !it.isRetroArch && it.pkg == pkg }
+
+        /**
+         * The emulator that runs a game: its app ([pkg], see [EsDe.emulatorFor]),
+         * and in RetroArch the core ES-DE starts ([label], else the system's default).
+         */
+        fun forGame(pkg: String?, label: String?, system: String): Emulator? = when {
+            pkg == null -> null
+            pkg in RetroArch.PACKAGES -> RetroArch.coreFor(label, system)
+            else -> of(pkg)
+        }
     }
 }
 
@@ -378,6 +398,150 @@ object EmuKnobs {
         onOff, hint = "Smooths games that dropped frames on a real PS1; can break some.", default = "false", advanced = true,
     )
 
+    // ---- RetroArch cores: config/<core>/<game>.opt, RetroArch's own per-game core options.
+    // Keys and values from each core's libretro_core_options.h.
+
+    private fun swan(key: String, title: String, name: String, options: List<EmuOption>, default: String, hint: String? = null, advanced: Boolean = false) =
+        EmuKnob("swanstation.$key", Emulator.SWANSTATION, title, "", "swanstation_$name", options, hint, advanced, default)
+
+    val SWAN_RESOLUTION = swan(
+        "resolution", "Resolution", "GPU_ResolutionScale",
+        o("1" to "1× · native", "2" to "2×", "3" to "3× · 720p", "4" to "4× · 960p", "5" to "5× · 1200p", "6" to "6×"),
+        "1", hint = "The resolution 3D is drawn at. The screen is 1080p.",
+    )
+    val SWAN_WIDESCREEN = swan(
+        "widescreen", "Widescreen rendering", "GPU_WidescreenHack", onOff, "false",
+        hint = "Draws 3D games in 16:9 (pair with a 16:9 aspect ratio). 2D parts can stretch.",
+    )
+    val SWAN_ASPECT = swan(
+        "aspect", "Aspect ratio", "Display_AspectRatio",
+        o("4:3" to "4:3", "Auto" to "Game's own", "16:9" to "16:9"), "4:3",
+    )
+    val SWAN_PGXP = swan(
+        "pgxp", "PGXP geometry correction", "GPU_PGXPEnable", onOff, "false",
+        hint = "Stops the PS1's wobbly polygons and warping textures.",
+    )
+    val SWAN_PGXP_TEXTURE = swan("pgxp_texture", "PGXP texture correction", "GPU_PGXPTextureCorrection", onOff, "true", advanced = true)
+    val SWAN_PGXP_DEPTH = swan(
+        "pgxp_depth", "PGXP depth buffer", "GPU_PGXPDepthBuffer", onOff, "false",
+        hint = "Fixes polygons drawn in front of each other in the wrong order; breaks some games.", advanced = true,
+    )
+    val SWAN_TRUE_COLOR = swan(
+        "true_color", "True color", "GPU_TrueColor", onOff, "false",
+        hint = "Renders in 24-bit color: smooth gradients instead of dithered bands.", advanced = true,
+    )
+    val SWAN_TEXTURE_FILTER = swan(
+        "texture_filter", "Texture filtering", "GPU_TextureFilter",
+        o("Nearest" to "Off (sharp)", "Bilinear" to "Bilinear", "JINC2" to "JINC2", "xBR" to "xBR"), "Nearest", advanced = true,
+    )
+    val SWAN_OVERCLOCK = swan(
+        "overclock", "CPU clock", "CPU_Overclock",
+        o("100" to "100% · PS1", "125" to "125%", "150" to "150%", "200" to "200%"), "100",
+        hint = "Smooths games that dropped frames on a real PS1; can break some.", advanced = true,
+    )
+    val SWAN_RENDERER = swan(
+        "renderer", "Renderer", "GPU_Renderer",
+        o("Auto" to "Auto", "Vulkan" to "Vulkan", "OpenGL" to "OpenGL", "Software" to "Software"), "Auto",
+        hint = "Software is the most accurate but ignores the resolution.", advanced = true,
+    )
+
+    private fun mupen(key: String, title: String, name: String, options: List<EmuOption>, default: String?, hint: String? = null, advanced: Boolean = false) =
+        EmuKnob("mupen64.$key", Emulator.MUPEN64, title, "", "mupen64plus-$name", options, hint, advanced, default)
+
+    val MUPEN_RESOLUTION = mupen(
+        "resolution", "Resolution", "43screensize",
+        o("640x480" to "640×480 · 2×", "960x720" to "960×720 · 3×", "1280x960" to "1280×960 · 4×", "1440x1080" to "1440×1080 · 1080p", "1920x1440" to "1920×1440 · 6×"),
+        "640x480", hint = "The resolution the game renders at (GLideN64). The screen is 1080p.",
+    )
+    val MUPEN_ASPECT = mupen(
+        "aspect", "Aspect ratio", "aspect",
+        o("4:3" to "4:3", "16:9 adjusted" to "16:9 (widescreen hack)", "16:9" to "16:9 (stretched)"), "4:3",
+        hint = "\"Widescreen hack\" shows more of the scene; menus and 2D can look off.",
+    )
+    val MUPEN_RDP = mupen(
+        "rdp", "Graphics plugin", "rdp-plugin",
+        o("gliden64" to "GLideN64", "parallel" to "ParaLLEl (Vulkan)", "angrylion" to "Angrylion (software)"), "gliden64",
+        hint = "GLideN64 is fastest; ParaLLEl is accurate and needs RetroArch's Vulkan driver.", advanced = true,
+    )
+    val MUPEN_FB = mupen(
+        "framebuffer", "Framebuffer emulation", "EnableFBEmulation", onOffCaps, "True",
+        hint = "Needed for many effects; off is faster but breaks them.", advanced = true,
+    )
+    val MUPEN_COPY_COLOR = mupen(
+        "copy_color", "Color buffer to RDRAM", "EnableCopyColorToRDRAM",
+        o("Off" to "Off", "Sync" to "Sync", "Async" to "Async", "TripleBuffer" to "Triple buffer"), "Async",
+        hint = "Fixes effects the game reads back (Pokémon Snap's photos, pause-screen backgrounds).", advanced = true,
+    )
+    val MUPEN_COPY_DEPTH = mupen(
+        "copy_depth", "Depth buffer to RDRAM", "EnableCopyDepthToRDRAM",
+        o("Off" to "Off", "Software" to "Software", "FromMem" to "From memory"), "Software",
+        hint = "Fixes effects that test depth (Zelda's sun and Lens of Truth, coronas).", advanced = true,
+    )
+    val MUPEN_CPU = mupen(
+        "cpu", "CPU core", "cpucore",
+        o("dynamic_recompiler" to "Dynarec", "cached_interpreter" to "Cached interpreter", "pure_interpreter" to "Pure interpreter"), "dynamic_recompiler",
+        hint = "The interpreters fix a few games that crash, and are slower.", advanced = true,
+    )
+    val MUPEN_COUNT_PER_OP = mupen(
+        "count_per_op", "Count per op", "CountPerOp",
+        o("0" to "Game's own", "1" to "1 · fastest CPU", "2" to "2", "3" to "3"), "0",
+        hint = "Lower numbers run the N64's CPU faster, smoothing some games; can break timing.", advanced = true,
+    )
+    val MUPEN_VI_REFRESH = mupen(
+        "vi_refresh", "VI refresh (overclock)", "virefresh",
+        o("Auto" to "Auto", "1500" to "1500", "2200" to "2200"), "Auto",
+        hint = "Raises the frame rate cap in games limited by the N64's video timing.", advanced = true,
+    )
+    val MUPEN_MSAA = mupen(
+        "msaa", "Anti-aliasing (MSAA)", "MultiSampling",
+        o("0" to "Off", "2" to "2×", "4" to "4×"), "0", advanced = true,
+    )
+
+    private fun fly(key: String, title: String, name: String, options: List<EmuOption>, default: String?, hint: String? = null, advanced: Boolean = false) =
+        EmuKnob("flycast.$key", Emulator.FLYCAST, title, "", "reicast_$name", options, hint, advanced, default)
+
+    private val enabledDisabled = o("enabled" to "On", "disabled" to "Off")
+
+    val FLY_RESOLUTION = fly(
+        "resolution", "Resolution", "internal_resolution",
+        o("640x480" to "640×480 · native", "1280x960" to "1280×960 · 2×", "1440x1080" to "1440×1080 · 1080p", "1920x1440" to "1920×1440 · 3×", "2560x1920" to "2560×1920 · 4×"),
+        "640x480", hint = "The resolution the game renders at. The screen is 1080p.",
+    )
+    val FLY_WIDESCREEN_CHEATS = fly(
+        "widescreen_cheats", "Widescreen cheats", "widescreen_cheats", enabledDisabled, "disabled",
+        hint = "Real 16:9 for games that have a widescreen patch; the cleanest widescreen.",
+    )
+    val FLY_WIDESCREEN = fly(
+        "widescreen", "Widescreen hack", "widescreen_hack", enabledDisabled, "disabled",
+        hint = "16:9 for any game; objects can pop in at the edges.", advanced = true,
+    )
+    val FLY_ALPHA = fly(
+        "alpha_sorting", "Transparency sorting", "alpha_sorting",
+        o("per-triangle (normal)" to "Per triangle", "per-pixel (accurate)" to "Per pixel (accurate)"), "per-triangle (normal)",
+        hint = "Per pixel fixes transparent objects drawn in the wrong order; heavier.", advanced = true,
+    )
+    val FLY_RTTB = fly(
+        "rttb", "Render-to-texture buffer", "enable_rttb", enabledDisabled, "disabled",
+        hint = "Fixes effects drawn into textures (some menus, mirrors, screens in screens).", advanced = true,
+    )
+    val FLY_FRAMEBUFFER = fly(
+        "framebuffer", "Full framebuffer emulation", "emulate_framebuffer", enabledDisabled, "disabled",
+        hint = "Needed by a few games' effects; heavy, and ignores the resolution.", advanced = true,
+    )
+    val FLY_SKIP = fly(
+        "auto_skip", "Auto frame skip", "auto_skip_frame",
+        o("disabled" to "Off", "some" to "Some", "more" to "More"), "disabled",
+        hint = "Skips frames when the game can't keep up.", advanced = true,
+    )
+    val FLY_THREADED = fly(
+        "threaded", "Threaded rendering", "threaded_rendering", enabledDisabled, "enabled",
+        hint = "Faster; off fixes timing problems in a few games.", advanced = true,
+    )
+    val FLY_DELAY_SWAP = fly(
+        "delay_swap", "Delay frame swapping", "delay_frame_swapping", enabledDisabled, "enabled",
+        hint = "Stops flicker and black screens in some games' menus and videos.", advanced = true,
+    )
+
     val all = listOf(
         EDEN_RESOLUTION, EDEN_ACCURACY, EDEN_DOCKED, EDEN_CPU_ACCURACY, EDEN_ASTC, EDEN_ASYNC_SHADERS, EDEN_DRIVER,
         EDEN_ASTC_RECOMPRESSION, EDEN_CPU_CLOCK, EDEN_GPU_CLOCK, EDEN_ANISOTROPY, EDEN_VSYNC, EDEN_FRAME_PACING,
@@ -393,7 +557,50 @@ object EmuKnobs {
         ARMSX2_HW_DOWNLOAD, ARMSX2_FILTER, ARMSX2_USER_HACKS, ARMSX2_HALF_PIXEL, ARMSX2_ROUND_SPRITE,
         DUCKSTATION_RESOLUTION, DUCKSTATION_WIDESCREEN, DUCKSTATION_ASPECT, DUCKSTATION_PGXP,
         DUCKSTATION_PGXP_TEXTURE, DUCKSTATION_OVERCLOCK,
+        SWAN_RESOLUTION, SWAN_WIDESCREEN, SWAN_ASPECT, SWAN_PGXP, SWAN_PGXP_TEXTURE, SWAN_PGXP_DEPTH, SWAN_TRUE_COLOR,
+        SWAN_TEXTURE_FILTER, SWAN_OVERCLOCK, SWAN_RENDERER,
+        MUPEN_RESOLUTION, MUPEN_ASPECT, MUPEN_RDP, MUPEN_FB, MUPEN_COPY_COLOR, MUPEN_COPY_DEPTH, MUPEN_CPU,
+        MUPEN_COUNT_PER_OP, MUPEN_VI_REFRESH, MUPEN_MSAA,
+        FLY_RESOLUTION, FLY_WIDESCREEN_CHEATS, FLY_WIDESCREEN, FLY_ALPHA, FLY_RTTB, FLY_FRAMEBUFFER, FLY_SKIP,
+        FLY_THREADED, FLY_DELAY_SWAP,
     )
+
+    /**
+     * The same setting in the other PS1 emulator, for a game whose settings
+     * were picked for DuckStation and that now runs in SwanStation (or back).
+     */
+    private val PS1_TWINS = mapOf(
+        DUCKSTATION_RESOLUTION to SWAN_RESOLUTION, DUCKSTATION_WIDESCREEN to SWAN_WIDESCREEN,
+        DUCKSTATION_ASPECT to SWAN_ASPECT, DUCKSTATION_PGXP to SWAN_PGXP, DUCKSTATION_PGXP_TEXTURE to SWAN_PGXP_TEXTURE,
+    )
+    private val ASPECT_TWINS = mapOf("Auto (Game Native)" to "Auto", "4:3" to "4:3", "16:9" to "16:9")
+
+    /**
+     * [emu] (a game's emulator settings) for [emulator]: its own settings,
+     * plus ones set for the other PS1 emulator where it has the same setting
+     * and none of its own. Settings for other emulators are left out.
+     */
+    fun forEmulator(emu: Map<String, String>, emulator: Emulator?): Map<String, String> {
+        if (emulator == null) return emu
+        val own = emu.filter { byKey(it.key)?.emulator == emulator }.toMutableMap()
+        for ((duck, swan) in PS1_TWINS) {
+            val (from, to) = when (emulator) {
+                Emulator.SWANSTATION -> duck to swan
+                Emulator.DUCKSTATION -> swan to duck
+                else -> continue
+            }
+            if (to.key in own) continue
+            val value = emu[from.key] ?: continue
+            val translated = when {
+                value == Suggestions.GLOBAL -> value
+                from == DUCKSTATION_ASPECT -> ASPECT_TWINS[value]
+                to == DUCKSTATION_ASPECT -> ASPECT_TWINS.entries.firstOrNull { it.value == value }?.key
+                else -> value
+            } ?: continue
+            if (translated == Suggestions.GLOBAL || to.options.any { it.value == translated }) own[to.key] = translated
+        }
+        return own
+    }
 
     fun byKey(key: String) = all.firstOrNull { it.key == key }
 

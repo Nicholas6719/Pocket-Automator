@@ -77,6 +77,8 @@ class Automator(private val context: Context) {
         app = pkg
         closer.onFront(pkg, SystemClock.elapsedRealtime(), home = task.type == TaskList.TYPE_HOME || pkg in FRONTENDS)
         previous?.let(::watchForQuit)
+        // A core's options may have changed while playing: games' own options files follow them.
+        if (previous in RetroArch.PACKAGES) GameSettings.requestSync(context)
         scheduleClose()
         if (task.type != TaskList.TYPE_HOME && pkg != context.packageName) detectGame(pkg)
         val (key, profile) = effective(pkg)

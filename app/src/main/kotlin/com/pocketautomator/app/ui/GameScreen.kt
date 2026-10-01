@@ -96,7 +96,7 @@ fun GameScreen(
     val emulatorApp = entry?.emulator?.let { pkg -> apps.firstOrNull { it.pkg == pkg } }
     val suggestion = remember(base.system, base.name) { Suggestions.find(context, base.system, base.name) }
     val profile = Plan.profileFor(profiles, entry?.emulator)
-    val emulator = Emulator.of(entry?.emulator)
+    val emulator = Emulator.forGame(entry?.emulator, entry?.game?.emulatorLabel, base.system)
     var resetting by remember { mutableStateOf(false) }
     val same = Look(Icons.Rounded.Link, Color(0xFF8E8E99), "Same as profile", profile.name)
     BackHandler(onBack = onBack)
@@ -161,7 +161,7 @@ fun GameScreen(
             if (emulator == null) {
                 item {
                     Muted(
-                        (emulatorApp?.label ?: "This emulator") + " keeps its own settings for every game. Per-game emulator settings work with Eden, Dolphin, Azahar, ARMSX2 and DuckStation.",
+                        (emulatorApp?.label ?: "This emulator") + " keeps its own settings for every game. Per-game emulator settings work with Eden, Dolphin, Azahar, ARMSX2, DuckStation, and RetroArch's SwanStation (PS1), Mupen64Plus-Next (N64) and Flycast (Dreamcast).",
                         Modifier.padding(horizontal = 4.dp),
                     )
                 }
@@ -287,6 +287,7 @@ private fun EmulatorSettings(
                 Emulator.AZAHAR -> "Azahar has no per-game settings, so these are swapped in as the game starts from ES-DE, and Azahar's own come back once you're back in ES-DE or Azahar closes."
                 Emulator.ARMSX2 -> "Written to the PS2 core's own per-game settings file, which applies over ARMSX2's settings (including ones you set per game in ARMSX2). Anything already in that file stays as it is."
                 Emulator.DUCKSTATION -> "Written to DuckStation's own per-game settings for this game. Anything you've set for it in DuckStation itself stays as you set it."
+                Emulator.SWANSTATION, Emulator.MUPEN64, Emulator.FLYCAST -> "Written to RetroArch's own options for this game, which start as ${emulator.title}'s options for every game, with these on top. Options you've saved for this game in RetroArch itself stay as you set them."
             },
             Modifier.padding(horizontal = 4.dp),
         )

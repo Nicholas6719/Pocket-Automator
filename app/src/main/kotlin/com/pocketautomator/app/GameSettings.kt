@@ -80,7 +80,7 @@ object GameSettings {
             store.log("game settings wait for Shizuku")
         }
         store.setGameStatus(status)
-        if (home != null) writeUndo(home, store.applied, azahar)
+        if (home != null) writeUndo(home, store.applied, azahar, store.retroArchFiles)
     }
 
     /**
@@ -93,9 +93,12 @@ object GameSettings {
         val auto = store.suggestAuto.value
         val mine = store.games.value
         val suggested = Suggestions.byKey(context)
+        val runs = Runs(context, home)
         val out = linkedMapOf<GameProfile, Map<String, String>>()
         for (game in mine) {
-            val emu = Suggestions.effective(game.emu, suggested[Suggestions.key(game.system, game.name)], auto, Suggestions.sameChip)
+            val runner = runs.runner(game.system, game.file)
+            val own = EmuKnobs.forEmulator(game.emu, runner?.emulator)
+            val emu = only(Suggestions.effective(own, suggested[Suggestions.key(game.system, game.name)], auto, Suggestions.sameChip), runner)
             if (emu.isNotEmpty()) out[game] = emu
         }
         // Games of yours the community has settings for, found in ES-DE's lists by name.
@@ -109,11 +112,50 @@ object GameSettings {
                     val s = suggested[Suggestions.key(system, g.name)] ?: continue
                     if (g.id in taken || s.settings.none { Suggestions.used(it) }) continue
                     if (!File(romDir, system + "/" + g.path.removePrefix("./")).isFile) continue
-                    out[GameProfile.of(g)] = Suggestions.effective(null, s, true, Suggestions.sameChip)
+                    val emu = only(Suggestions.effective(null, s, true, Suggestions.sameChip), runs.runner(g))
+                    if (emu.isNotEmpty()) out[GameProfile.of(g)] = emu
                 }
             }
         }
         return out
+    }
+
+    /**
+     * [emu] with only the settings for the emulator that runs the game: none
+     * when it's one Pocket Automator can't set, all when it isn't known.
+     */
+    private fun only(emu: Map<String, String>, runner: Runner?): Map<String, String> = when {
+        runner == null -> emu
+        runner.emulator == null -> emptyMap()
+        else -> emu.filterKeys { EmuKnobs.byKey(it)?.emulator == runner.emulator }
+    }
+
+    /** A game's emulator as ES-DE starts it; null [emulator] for one whose settings Pocket Automator can't set. */
+    private data class Runner(val emulator: Emulator?)
+
+    /**
+     * Which emulator runs each game, as ES-DE starts it: its emulator label
+     * (per game or per system) and the apps installed. Gamelists are read once per sync.
+     */
+    private class Runs(context: Context, private val home: File?) {
+        private val installed: Set<String> by lazy {
+            runCatching { context.packageManager.getInstalledPackages(0).map { it.packageName }.toSet() }.getOrDefault(emptySet())
+        }
+        private val lists = mutableMapOf<String, List<EsDe.Game>>()
+
+        /** Null when the apps can't be listed. */
+        fun runner(game: EsDe.Game): Runner? =
+            if (installed.isEmpty()) null
+            else Runner(Emulator.forGame(EsDe.emulatorFor(game, installed), game.emulatorLabel, game.system))
+
+        /** Null when ES-DE or the game isn't found. */
+        fun runner(system: String, file: String): Runner? {
+            val home = home ?: return null
+            val list = lists.getOrPut(system) {
+                runCatching { EsDe.parse(system, File(home, "gamelists/$system/gamelist.xml").readText()) }.getOrDefault(emptyList())
+            }
+            return list.firstOrNull { it.file == file }?.let(::runner)
+        }
     }
 
     /** Eden's and Dolphin's per-game files. */
@@ -122,10 +164,21 @@ object GameSettings {
         data class Want(val game: GameProfile, val knob: EmuKnob, val value: String)
 
         val wanted = mutableMapOf<Pair<String, String>, Want>()
+        val retroArch = retroArchSetup()
+        // RetroArch: per game options file → the core and the game's own options.
+        val raWanted = mutableMapOf<String, Pair<GameProfile, MutableMap<EmuKnob, String>>>()
         for ((g, emu) in games) {
             for ((key, value) in emu) {
                 val knob = EmuKnobs.byKey(key) ?: continue
                 if (knob.emulator == Emulator.AZAHAR) continue
+                if (knob.emulator.isRetroArch) {
+                    when {
+                        retroArch == null -> status["${g.id}|$key"] = "RetroArch's settings couldn't be read."
+                        !retroArch.gameOptions -> status["${g.id}|$key"] = "Turn on RetroArch's game-specific core options (Settings → Core) for this to apply."
+                        else -> raWanted.getOrPut(retroArch.gameFile(knob.emulator, g.romName)) { g to mutableMapOf() }.second[knob] = value
+                    }
+                    continue
+                }
                 val targets = when (knob.emulator) {
                     Emulator.EDEN -> listOfNotNull(edenId(context, home, g)?.let { "$EDEN_FILES/config/custom/$it.ini" })
                         .ifEmpty { status["${g.id}|$key"] = "Start it once from ES-DE, and Pocket Automator will learn Eden's ID for it."; emptyList() }
@@ -135,7 +188,7 @@ object GameSettings {
                         .ifEmpty { status["${g.id}|$key"] = "Pocket Automator doesn't know this game's PS2 ID yet: start it once from ES-DE."; emptyList() }
                     Emulator.DUCKSTATION -> listOfNotNull(duckstationFile(context, g))
                         .ifEmpty { status["${g.id}|$key"] = "Pocket Automator doesn't know this game's PS1 serial."; emptyList() }
-                    Emulator.AZAHAR -> emptyList()
+                    Emulator.AZAHAR, Emulator.SWANSTATION, Emulator.MUPEN64, Emulator.FLYCAST -> emptyList()
                 }
                 // PS2 games can have a file per disc revision: each gets the setting, the right one is used.
                 for (file in targets) wanted[file to key] = Want(g, knob, value)
@@ -143,7 +196,9 @@ object GameSettings {
         }
 
         val applied = store.applied.toMutableList()
-        val files = (wanted.keys.map { it.first } + applied.map { it.file }).distinct()
+        reconcileRetroArch(store, home, retroArch, raWanted, applied, status)
+        val raFiles = applied.filter { EmuKnobs.byKey(it.knob)?.emulator?.isRetroArch == true }.map { it.file }.toSet()
+        val files = (wanted.keys.map { it.first } + applied.map { it.file }).distinct().filter { it !in raFiles }
         for (file in files) {
             val original = read(file)
             var text = original.orEmpty()
@@ -177,7 +232,9 @@ object GameSettings {
                 applied += Applied(want.game.id, want.knob.key, file, want.value)
             }
             if (text != original.orEmpty()) {
-                if (original != null && home != null) backup(home, file)
+                val emulator = wanted.entries.firstOrNull { it.key.first == file }?.value?.knob?.emulator
+                    ?: store.applied.firstNotNullOfOrNull { a -> EmuKnobs.byKey(a.knob)?.emulator?.takeIf { a.file == file } }
+                if (original != null && home != null) backup(home, file, emulator?.title ?: "Other")
                 if (!write(file, text)) {
                     store.log("couldn't write $file")
                     applied.removeAll { it.file == file && it !in store.applied }
@@ -188,6 +245,115 @@ object GameSettings {
             }
         }
         store.applied = applied
+    }
+
+    /** RetroArch's setup from the installed RetroArch's retroarch.cfg; null without RetroArch (or Shizuku). */
+    private fun retroArchSetup(): RetroArch.Setup? {
+        for (pkg in RetroArch.PACKAGES) {
+            val path = RetroArch.configPath(pkg)
+            val cfg = read(path) ?: continue
+            return RetroArch.setup(cfg, path)
+        }
+        return null
+    }
+
+    private fun isRetroArch(a: Applied) = EmuKnobs.byKey(a.knob)?.emulator?.isRetroArch == true
+
+    /**
+     * RetroArch's per-game options files (see [RetroArch]). A file Pocket
+     * Automator made, still as it wrote it, is kept equal to the core's
+     * options now with the game's on top, and goes once nothing is wanted in
+     * it. A file made or changed in RetroArch is yours: only the options
+     * Pocket Automator set in it are touched, and a value you set there wins.
+     */
+    private fun reconcileRetroArch(
+        store: Store,
+        home: File?,
+        setup: RetroArch.Setup?,
+        wanted: Map<String, Pair<GameProfile, Map<EmuKnob, String>>>,
+        applied: MutableList<Applied>,
+        status: MutableMap<String, String>,
+    ) {
+        // Without RetroArch's settings nothing is known about its files: they're left as they are.
+        if (setup == null) return
+        val written = store.retroArchFiles.toMutableMap()
+        val bases = mutableMapOf<Emulator, Map<String, String>>()
+        fun base(emulator: Emulator) = bases.getOrPut(emulator) { RetroArch.base(setup, emulator, ::read) }
+        val files = (wanted.keys + applied.filter(::isRetroArch).map { it.file } + written.keys).distinct()
+        for (file in files) {
+            val want = wanted[file]
+            val mine = applied.filter { it.file == file && isRetroArch(it) }
+            val emulator = want?.second?.keys?.firstOrNull()?.emulator
+                ?: mine.firstNotNullOfOrNull { EmuKnobs.byKey(it.knob)?.emulator }
+                ?: Emulator.entries.firstOrNull { it.core == file.substringBeforeLast('/').substringAfterLast('/') }
+                ?: continue
+            val current = read(file)?.let(RetroArch::parse)
+            val ours = written[file]
+            if (current == null) {
+                // Never made, or deleted by hand.
+                written.remove(file)
+                applied.removeAll(mine)
+                if (want == null) continue
+            }
+            if (current == null || (ours != null && RetroArch.unchanged(current, ours))) {
+                applied.removeAll(mine)
+                if (want == null) {
+                    if (write(file, "")) {
+                        written.remove(file)
+                        store.log("game settings: removed ${file.substringAfterLast('/')}")
+                    }
+                    continue
+                }
+                val options = LinkedHashMap(base(emulator))
+                want.second.forEach { (knob, value) -> options[knob.name] = value }
+                if (current != options) {
+                    if (!write(file, RetroArch.render(options))) {
+                        store.log("couldn't write $file")
+                        want.second.keys.forEach { status["${want.first.id}|${it.key}"] = "Couldn't write RetroArch's options file." }
+                        continue
+                    }
+                    store.log("game settings: wrote ${file.substringAfterLast('/')}")
+                }
+                written[file] = options
+                want.second.forEach { (knob, value) -> applied += Applied(want.first.id, knob.key, file, value) }
+                continue
+            }
+            // Made or changed in RetroArch: only Pocket Automator's own options in it change.
+            written.remove(file)
+            val updated = LinkedHashMap(current)
+            for (a in mine) {
+                val knob = EmuKnobs.byKey(a.knob) ?: continue
+                if (current[knob.name] != a.value) {
+                    applied.remove(a)
+                } else if (want?.second?.keys?.none { it.key == a.knob } != false) {
+                    base(emulator)[knob.name]?.let { updated[knob.name] = it } ?: updated.remove(knob.name)
+                    applied.remove(a)
+                }
+            }
+            want?.second?.forEach { (knob, value) ->
+                val previous = applied.firstOrNull { it.file == file && it.knob == knob.key }
+                val now = updated[knob.name]
+                if (previous == null && now != null) {
+                    if (now != value) {
+                        status["${want.first.id}|${knob.key}"] = "Set in RetroArch itself for this game (${knob.label(now) ?: now}), so Pocket Automator leaves it alone."
+                    }
+                    return@forEach
+                }
+                updated[knob.name] = value
+                applied.remove(previous)
+                applied += Applied(want.first.id, knob.key, file, value)
+            }
+            if (updated != current) {
+                if (home != null) backup(home, file, "RetroArch")
+                if (write(file, RetroArch.render(updated))) {
+                    store.log("game settings: wrote ${file.substringAfterLast('/')}")
+                } else {
+                    store.log("couldn't write $file")
+                    applied.removeAll { it.file == file && it !in store.applied }
+                }
+            }
+        }
+        store.retroArchFiles = written
     }
 
     /** The game's own value in [text], or null if it follows the emulator's setting. */
@@ -377,6 +543,10 @@ object GameSettings {
             Emulator.EDEN -> EmuKnobs.of(emulator).map { if (it.key == EmuKnobs.EDEN_DRIVER.key) EmuKnobs.edenDriver(edenDrivers()) else it }
             else -> EmuKnobs.of(emulator)
         }
+        if (emulator.isRetroArch) {
+            val base = retroArchSetup()?.let { RetroArch.base(it, emulator, ::read) }.orEmpty()
+            return Inspection(knobs, knobs.associate { it.key to (base[it.name] ?: it.default) })
+        }
         // The emulator-wide config files, read once each.
         val files = mutableMapOf<String?, String>()
         fun config(name: String?): String = files.getOrPut(name) {
@@ -387,6 +557,8 @@ object GameSettings {
                 Emulator.ARMSX2 -> armsx2Root()?.let { runCatching { File(it, "PCSX2-Android.ini").readText() }.getOrNull() }
                 // DuckStation keeps its own settings in private storage.
                 Emulator.DUCKSTATION -> null
+                // Handled above.
+                Emulator.SWANSTATION, Emulator.MUPEN64, Emulator.FLYCAST -> null
             }.orEmpty()
         }
         val global = knobs.associate { k ->
@@ -413,27 +585,30 @@ object GameSettings {
     }
 
     /** A copy of [path] as it was before Pocket Automator first changed it. */
-    private fun backup(home: File, path: String) {
-        val emulator = when {
-            path.contains("eden") -> "Eden"
-            path.contains("dolphin") -> "Dolphin"
-            path.contains("duckstation") -> "DuckStation"
-            path.contains("/gamesettings/") -> "ARMSX2"
-            else -> "Other"
-        }
+    private fun backup(home: File, path: String, emulator: String) {
         val dir = File(Hooks.folder(home), "backups/$emulator").path
         Shell.sh("mkdir -p \"$2\" && { [ -f \"$2/\${1##*/}\" ] || cp \"$1\" \"$2/\"; }", path, dir)
     }
 
     /** Undo script and README in the "Pocket Automator" folder, for when the app isn't there. */
-    private fun writeUndo(home: File, applied: List<Applied>, azahar: String?) {
+    private fun writeUndo(home: File, applied: List<Applied>, azahar: String?, retroArchFiles: Map<String, Map<String, String>>) {
         val folder = Hooks.folder(home)
         if (!folder.isDirectory) return
-        Hooks.writeIfChanged(File(folder, Hooks.UNDO), undoScript(home, applied, azahar))
+        // The cores' own values, to put back in options files made in RetroArch.
+        val setup = if (Shell.ready && applied.any { isRetroArch(it) && it.file !in retroArchFiles }) retroArchSetup() else null
+        val bases = mutableMapOf<Emulator, Map<String, String>>()
+        val base = { knob: EmuKnob -> setup?.let { s -> bases.getOrPut(knob.emulator) { RetroArch.base(s, knob.emulator, ::read) }[knob.name] } }
+        Hooks.writeIfChanged(File(folder, Hooks.UNDO), undoScript(home, applied, azahar, retroArchFiles, base))
         Hooks.writeIfChanged(File(folder, "README.txt"), README)
     }
 
-    fun undoScript(home: File, applied: List<Applied>, azahar: String?): String {
+    fun undoScript(
+        home: File,
+        applied: List<Applied>,
+        azahar: String?,
+        retroArchFiles: Map<String, Map<String, String>> = emptyMap(),
+        retroArchBase: (EmuKnob) -> String? = { null },
+    ): String {
         val folder = Hooks.folder(home)
         val q = Hooks::quote
         val out = StringBuilder()
@@ -447,9 +622,21 @@ object GameSettings {
             |
             |""".trimMargin(),
         )
+        for ((file, options) in retroArchFiles.toSortedMap()) {
+            out.append("# A RetroArch options file Pocket Automator made: removed while it's as it wrote it\n")
+            out.append("f=${q(file)}; [ \"\$(md5sum \"\$f\" 2>/dev/null | cut -d' ' -f1)\" = ${md5(RetroArch.render(options))} ] && rm -f \"\$f\"\n")
+        }
         for (a in applied.sortedBy { it.file }) {
             val knob = EmuKnobs.byKey(a.knob) ?: continue
+            if (knob.emulator.isRetroArch && a.file in retroArchFiles) continue
             out.append("# ${a.game}: ${knob.emulator.title} ${knob.title.lowercase()}\n")
+            if (knob.emulator.isRetroArch) {
+                // An options file made in RetroArch: the core's own value back, where Pocket Automator's is still there.
+                val line = "^${knob.name} = \"${a.value}\"\$"
+                val action = retroArchBase(knob)?.let { own -> "s|$line|${knob.name} = \"$own\"|" } ?: "\\|$line|d"
+                out.append("f=${q(a.file)}; [ -f \"\$f\" ] && sed -i '$action' \"\$f\"\n")
+                continue
+            }
             val sed = when (knob.emulator) {
                 Emulator.EDEN -> "-e 's/^${knob.name}\\\\use_global=false\$/${knob.name}\\\\use_global=true/' " +
                     "-e '/^${knob.name}\\\\default=/d' -e '/^${knob.name}=/d'"
@@ -478,13 +665,17 @@ object GameSettings {
         |Pocket Automator: per-game settings
         |
         |Pocket Automator can give a game its own settings: the handheld's (performance,
-        |fan...) and some of its emulator's (resolution, GPU accuracy, GPU driver). The
+        |fan...) and some of its emulator's (resolution, accuracy, fixes). The
         |emulator ones are written where the emulators keep their own per-game settings:
         |
-        |  Eden     Android/data/dev.eden.eden_emulator/files/config/custom/<title ID>.ini
-        |  Dolphin  Android/data/org.dolphinemu.dolphinemu/files/GameSettings/<game ID>.ini
-        |  Azahar   (no per-game settings) the resolution is swapped in as the game starts
-        |           from ES-DE, and put back when you're back in ES-DE or Azahar closes.
+        |  Eden         Android/data/dev.eden.eden_emulator/files/config/custom/<title ID>.ini
+        |  Dolphin      Android/data/org.dolphinemu.dolphinemu/files/GameSettings/<game ID>.ini
+        |  ARMSX2       gamesettings/<serial>_<CRC>.ini in ARMSX2's folder
+        |  DuckStation  Android/data/com.github.stenzek.duckstation/files/gamesettings/<serial>.ini
+        |  RetroArch    RetroArch/config/<core>/<game>.opt (SwanStation, Mupen64Plus-Next,
+        |               Flycast): the core's options for every game, with the game's on top
+        |  Azahar       (no per-game settings) they're swapped in as the game starts
+        |               from ES-DE, and put back when you're back in ES-DE or Azahar closes.
         |
         |A setting you gave a game in the emulator itself is never changed.
         |
@@ -503,6 +694,9 @@ object GameSettings {
         |""".trimMargin()
 
     private const val UNDO_NAME = Hooks.UNDO
+
+    private fun md5(text: String): String =
+        java.security.MessageDigest.getInstance("MD5").digest(text.toByteArray()).joinToString("") { "%02x".format(it) }
 
     fun appliedToJson(list: List<Applied>): String = JSONArray().apply {
         list.forEach { a -> put(JSONObject().put("game", a.game).put("knob", a.knob).put("file", a.file).put("value", a.value)) }

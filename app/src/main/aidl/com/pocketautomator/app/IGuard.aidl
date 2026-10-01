@@ -8,4 +8,7 @@ interface IGuard {
 
     /** Starts the service [component] ("package/class") again whenever its app isn't running. */
     void keep(String component) = 1;
+
+    /** The keep-alive list, one "package [service component]" line per app; started again when stopped. */
+    void keepApps(in String[] lines) = 2;
 }

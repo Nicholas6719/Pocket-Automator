@@ -245,10 +245,13 @@ class EsDeTest {
         assertEquals("com.armsx2", EsDe.emulatorFor(game("ps2", "ARMSX2 (Standalone)"), installed))
         // A RetroArch core.
         assertEquals("com.retroarch.aarch64", EsDe.emulatorFor(game("gba", "mGBA"), installed))
-        // No label: the system's usual emulator.
-        assertEquals("org.dolphinemu.dolphinemu", EsDe.emulatorFor(game("gc", null), installed))
-        assertEquals("me.magnum.melonds.nightly", EsDe.emulatorFor(game("nds", null), installed))
+        // No label: ES-DE's default, a RetroArch core for most systems (GameCube's is RetroArch's Dolphin).
+        assertEquals("com.retroarch.aarch64", EsDe.emulatorFor(game("gc", null), installed))
+        assertEquals("com.retroarch.aarch64", EsDe.emulatorFor(game("nds", null), installed))
+        assertEquals("com.retroarch.aarch64", EsDe.emulatorFor(game("psx", null), installed))
         assertEquals("com.retroarch.aarch64", EsDe.emulatorFor(game("snes", null), installed))
+        assertEquals("xyz.aethersx2.android", EsDe.emulatorFor(game("ps2", null), installed))
+        assertEquals("dev.eden.eden_emulator", EsDe.emulatorFor(game("switch", null), installed))
         assertNull(EsDe.emulatorFor(game("androidgames", null), installed))
     }
 

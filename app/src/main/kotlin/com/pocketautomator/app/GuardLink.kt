@@ -18,6 +18,7 @@ class GuardLink(private val context: Context) {
     private val store = Store.get(context)
     private var bound = false
     private var started = false
+    private var guard: IGuard? = null
 
     private val args by lazy {
         val version = runCatching {
@@ -37,10 +38,13 @@ class GuardLink(private val context: Context) {
             val guard = binder?.takeIf { it.pingBinder() }?.let { IGuard.Stub.asInterface(it) } ?: return
             runCatching { guard.keep(ComponentName(context, AutomatorService::class.java).flattenToString()) }
                 .onFailure { store.log("couldn't start the restart helper: ${it.message}") }
+            this@GuardLink.guard = guard
             running = true
+            sendApps()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            guard = null
             running = false
             // It stopped by itself: look again shortly.
             handler.postDelayed({ if (bound) { bound = false; refresh() } }, RETRY_MS)
@@ -50,7 +54,15 @@ class GuardLink(private val context: Context) {
     private val shizukuUp = Shizuku.OnBinderReceivedListener { refresh() }
     private val shizukuGone = Shizuku.OnBinderDeadListener {
         bound = false
+        guard = null
         running = false
+    }
+
+    /** The keep-alive list, for the helper to keep running too. */
+    fun sendApps() {
+        val guard = guard ?: return
+        val lines = Background.keepAliveFile(store.keepAlive.value).lines().filter { it.isNotBlank() }
+        runCatching { guard.keepApps(lines.toTypedArray()) }
     }
 
     fun start() {
@@ -70,6 +82,7 @@ class GuardLink(private val context: Context) {
         // Leaves the helper running: this is the app going away, which is what it's for.
         if (bound) runCatching { Shizuku.unbindUserService(args, connection, false) }
         bound = false
+        guard = null
     }
 
     /** Starts the helper when keep-alive is on, and stops it (for good) when it's off. */
@@ -82,6 +95,7 @@ class GuardLink(private val context: Context) {
                 .isSuccess
         } else if (!wanted && bound && Shell.ready) {
             bound = false
+            guard = null
             running = false
             runCatching { Shizuku.unbindUserService(args, connection, true) }
         }
